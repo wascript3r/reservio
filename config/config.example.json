@@ -1,0 +1,15 @@
+{
+	"log": {
+		"showTimestamp": true
+	},
+	"database": {
+		"postgres": {
+			"dsn": "postgres://postgres:secret@db/reservio?sslmode=disable",
+			"queryTimeout": "10s"
+		}
+	},
+	"http": {
+		"port": "80",
+		"enablePprof": false
+	}
+}
