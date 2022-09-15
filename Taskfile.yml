@@ -1,0 +1,48 @@
+version: '3'
+
+vars:
+  # Docker Compose
+  COMPOSE_DIR: docker/compose
+  DBMATE_DIR: db/migrations
+
+silent: false
+
+dotenv:
+  - 'compose.env'
+  - 'dbmate.env'
+
+tasks:
+  compose-stop:
+    desc: Stops docker compose containers
+    dir: "{{ .COMPOSE_DIR }}"
+    cmds:
+      - docker compose stop
+
+  compose-up:
+    desc: Runs docker compose
+    dir: "{{ .COMPOSE_DIR }}"
+    cmds:
+      - docker compose up -d
+
+  db-migrate:
+    desc: Migrates DB schema
+    cmds:
+      - dbmate -d {{ .DBMATE_DIR }} up
+
+  db-fresh:
+    desc: Drops and recreates DB schema
+    cmds:
+      - dbmate -d {{ .DBMATE_DIR }} drop
+      - task: db-migrate
+
+  test:
+    desc: Runs tests
+    cmds:
+      - go test -v ./...
+
+  test-cover:
+    desc: Runs tests with coverage
+    cmds:
+      - go test -coverprofile=coverage.out ./...
+      - go tool cover -html=coverage.out
+      - rm coverage.out
