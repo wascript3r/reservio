@@ -1,6 +1,6 @@
 package validator
 
-type Rule[T any] interface {
-	Name() string
-	IsValid(d T) bool
+type Rule interface {
+	Alias() string
+	Tags() string
 }
