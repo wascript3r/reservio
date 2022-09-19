@@ -22,6 +22,9 @@ github.com/lib/pq/scram
 # github.com/wascript3r/cryptopay v0.0.6
 ## explicit; go 1.13
 github.com/wascript3r/cryptopay/pkg/errcode
+# github.com/wascript3r/gocipher v0.0.0-20201105141458-6510a149f009
+## explicit; go 1.13
+github.com/wascript3r/gocipher/bcrypt
 # github.com/wascript3r/gostr v0.0.0-20200222144921-e78b2166c216
 ## explicit; go 1.13
 github.com/wascript3r/gostr
@@ -30,6 +33,8 @@ github.com/wascript3r/gostr
 github.com/wascript3r/httputil/json
 # golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
 ## explicit; go 1.17
+golang.org/x/crypto/bcrypt
+golang.org/x/crypto/blowfish
 golang.org/x/crypto/sha3
 # golang.org/x/sys v0.0.0-20210806184541-e5e7981a1069
 ## explicit; go 1.17

@@ -53,6 +53,10 @@ type Config struct {
 		} `json:"postgres"`
 	} `json:"database"`
 
+	Auth struct {
+		PasswordCost int `json:"passwordCost"`
+	} `json:"auth"`
+
 	HTTP struct {
 		Port        string `json:"port"`
 		EnablePprof bool   `json:"enablePprof"`

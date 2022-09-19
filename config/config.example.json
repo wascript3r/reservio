@@ -8,6 +8,9 @@
 			"queryTimeout": "10s"
 		}
 	},
+	"auth": {
+		"passwordCost": 10
+	},
 	"http": {
 		"port": "80",
 		"enablePprof": false

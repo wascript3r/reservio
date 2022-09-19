@@ -57,7 +57,10 @@ func main() {
 
 	// Registries
 	globalReg := registry.NewGlobal(Cfg, dbConn)
+	userReg := registry.NewUser(globalReg)
+
 	globalReg.
+		SetUserReg(userReg).
 		SetLoggerReg(loggerReg)
 
 	// Graceful shutdown
@@ -74,7 +77,7 @@ func main() {
 		httpRouter.Handler(http.MethodGet, "/debug/pprof/*item", http.DefaultServeMux)
 	}
 
-	// userReg.ServeHTTP(httpRouter)
+	userReg.ServeHTTP(httpRouter)
 
 	httpServer := &http.Server{
 		Addr:    ":" + Cfg.HTTP.Port,

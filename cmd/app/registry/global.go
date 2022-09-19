@@ -8,6 +8,7 @@ type GlobalReg struct {
 	cfg *Config
 	db  *pgsql.Database
 
+	userReg   *UserReg
 	loggerReg *LoggerReg
 }
 
@@ -16,6 +17,11 @@ func NewGlobal(cfg *Config, db *pgsql.Database) *GlobalReg {
 		cfg: cfg,
 		db:  db,
 	}
+}
+
+func (r *GlobalReg) SetUserReg(userReg *UserReg) *GlobalReg {
+	r.userReg = userReg
+	return r
 }
 
 func (r *GlobalReg) SetLoggerReg(loggerReg *LoggerReg) *GlobalReg {
