@@ -28,9 +28,11 @@ func New(ur user.Repository, t time.Duration, ph user.PwHasher, v user.Validator
 	}
 }
 
-func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) error {
-	if err := u.validator.RawRequest(req); err != nil {
-		return user.InvalidInputError
+func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq, validateReq bool) (string, error) {
+	if validateReq {
+		if err := u.validator.RawRequest(req); err != nil {
+			return "", user.InvalidInputError
+		}
 	}
 
 	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
@@ -40,15 +42,12 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) error {
 
 	err = u.validator.EmailUniqueness(c, req.Email)
 	if err != nil {
-		if err == user.ErrEmailExists {
-			return user.EmailAlreadyExistsError
-		}
-		return err
+		return "", err
 	}
 
 	hash, err := u.pwHasher.Hash(req.Password)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	us := &models.User{
@@ -57,10 +56,5 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) error {
 		Role:     models.ClientRole,
 	}
 
-	_, err = u.userRepo.Insert(c, us)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return u.userRepo.Insert(c, us)
 }

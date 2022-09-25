@@ -7,5 +7,5 @@ import (
 )
 
 type Usecase interface {
-	Create(ctx context.Context, req *dto.CreateReq) error
+	Create(ctx context.Context, req *dto.CreateReq, validateReq bool) (id string, err error)
 }

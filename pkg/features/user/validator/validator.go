@@ -46,7 +46,7 @@ func (v *Validator) EmailUniqueness(ctx context.Context, email string) error {
 	}
 
 	if exists {
-		return user.ErrEmailExists
+		return user.EmailAlreadyExistsError
 	}
 
 	return nil

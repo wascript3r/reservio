@@ -1,34 +1,30 @@
 package validator
 
 import (
-	"context"
-
-	"github.com/go-playground/validator/v10"
+	gvalidator "github.com/go-playground/validator/v10"
 	"github.com/wascript3r/reservio/pkg/features/user"
+	"github.com/wascript3r/reservio/pkg/validator"
+	"github.com/wascript3r/reservio/pkg/validator/gov"
 )
 
 type Validator struct {
-	govalidate    *validator.Validate
-	userValidator user.SharedValidator
+	govalidate *gvalidator.Validate
 }
 
 func New(uv user.SharedValidator) *Validator {
-	v := validator.New()
+	v := gvalidator.New()
 
 	r := newRules()
 	r.attachTo(v)
 	r.attachExtTo(uv.GetRules(), v)
 
-	return &Validator{
-		govalidate:    v,
-		userValidator: uv,
+	return &Validator{v}
+}
+
+func (v *Validator) RawRequest(s any) validator.Error {
+	err := v.govalidate.Struct(s)
+	if err != nil {
+		return gov.Translate(err)
 	}
-}
-
-func (v *Validator) RawRequest(s any) error {
-	return v.govalidate.Struct(s)
-}
-
-func (v *Validator) EmailUniqueness(ctx context.Context, email string) error {
-	return v.userValidator.EmailUniqueness(ctx, email)
+	return nil
 }
