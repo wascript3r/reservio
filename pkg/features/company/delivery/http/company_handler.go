@@ -23,6 +23,7 @@ func NewHTTPHandler(r *httprouter.Router, cu company.Usecase) {
 	}
 
 	r.POST("/company", handler.Create)
+	r.GET("/companies", handler.GetAll)
 }
 
 func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -35,6 +36,17 @@ func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, _ httproute
 	}
 
 	res, err := h.companyUcase.Create(r.Context(), req)
+	if err != nil {
+		et, code := parseErr(err)
+		errutil.ServeHTTP(w, et, code)
+		return
+	}
+
+	httpjson.ServeJSON(w, res)
+}
+
+func (h *HTTPHandler) GetAll(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	res, err := h.companyUcase.GetAll(r.Context())
 	if err != nil {
 		et, code := parseErr(err)
 		errutil.ServeHTTP(w, et, code)

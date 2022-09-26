@@ -8,4 +8,5 @@ import (
 
 type Usecase interface {
 	Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRes, error)
+	GetAll(ctx context.Context) (*dto.GetAllRes, error)
 }

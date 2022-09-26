@@ -61,6 +61,31 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 	}
 
 	return &dto.CreateRes{
-		CompanyID: companyID,
+		ID: companyID,
 	}, nil
+}
+
+func (u *Usecase) GetAll(ctx context.Context) (*dto.GetAllRes, error) {
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	cis, err := u.companyRepo.GetAll(c)
+	if err != nil {
+		return nil, err
+	}
+
+	res := &dto.GetAllRes{
+		Companies: make([]*dto.Company, len(cis)),
+	}
+	for i, ci := range cis {
+		res.Companies[i] = &dto.Company{
+			ID:          ci.UserID,
+			Name:        ci.Name,
+			Address:     ci.Address,
+			Description: ci.Description,
+			Email:       ci.Email,
+		}
+	}
+
+	return res, nil
 }

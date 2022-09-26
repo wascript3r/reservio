@@ -8,8 +8,8 @@ type Company struct {
 }
 
 type CompanyInfo struct {
-	Company
 	Email string
+	Company
 }
 
 type CompanyUpdate struct {

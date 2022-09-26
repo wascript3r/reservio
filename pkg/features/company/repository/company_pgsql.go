@@ -40,11 +40,11 @@ func (p *PgRepo) Insert(ctx context.Context, cs *models.Company) error {
 func scanInfo(row pgsql.Row) (*models.CompanyInfo, error) {
 	ci := &models.CompanyInfo{}
 	err := row.Scan(
+		&ci.Email,
 		&ci.UserID,
 		&ci.Name,
 		&ci.Address,
 		&ci.Description,
-		&ci.Email,
 	)
 
 	if err != nil {

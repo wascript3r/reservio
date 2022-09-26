@@ -14,5 +14,23 @@ type CreateReq struct {
 }
 
 type CreateRes struct {
-	CompanyID string `json:"companyID"`
+	ID string `json:"id"`
 }
+
+// GetAll
+
+type Company struct {
+	ID          string `json:"id"`
+	Email       string `json:"email"`
+	Name        string `json:"name"`
+	Address     string `json:"address"`
+	Description string `json:"description"`
+}
+
+type GetAllRes struct {
+	Companies []*Company `json:"companies"`
+}
+
+// Get
+
+type GetRes Company
