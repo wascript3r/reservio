@@ -65,6 +65,31 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 	}, nil
 }
 
+func (u *Usecase) Get(ctx context.Context, req *dto.GetReq) (*dto.GetRes, error) {
+	if err := u.validator.RawRequest(req); err != nil {
+		return nil, company.InvalidInputError.SetData(err.GetData())
+	}
+
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	ci, err := u.companyRepo.Get(c, req.CompanyID)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return nil, company.NotFoundError
+		}
+		return nil, err
+	}
+
+	return &dto.GetRes{
+		ID:          ci.UserID,
+		Name:        ci.Name,
+		Address:     ci.Address,
+		Description: ci.Description,
+		Email:       ci.Email,
+	}, nil
+}
+
 func (u *Usecase) GetAll(ctx context.Context) (*dto.GetAllRes, error) {
 	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
 	defer cancel()

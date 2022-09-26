@@ -33,4 +33,8 @@ type GetAllRes struct {
 
 // Get
 
+type GetReq struct {
+	CompanyID string `json:"companyID" validate:"required,uuid"`
+}
+
 type GetRes Company

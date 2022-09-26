@@ -27,6 +27,9 @@ var (
 		"email": func(_ validator.FieldError) string {
 			return "must be a valid email"
 		},
+		"uuid": func(_ validator.FieldError) string {
+			return "must be a valid id"
+		},
 	}
 )
 
@@ -56,7 +59,8 @@ func Translate(err error) *Error {
 			continue
 		}
 		field := fe.Field()
-		data[strings.ToLower(field)] = fmt.Sprintf("%s %s", fe.Field(), tagFn(fe))
+		lower := strings.ToLower(field[:1]) + field[1:]
+		data[lower] = fmt.Sprintf("%s %s", fe.Field(), tagFn(fe))
 	}
 
 	return &Error{
