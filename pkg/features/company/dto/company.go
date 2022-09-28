@@ -34,7 +34,20 @@ type GetAllRes struct {
 // Get
 
 type GetReq struct {
-	CompanyID string `json:"companyID" validate:"required,uuid"`
+	CompanyID string `json:"-" validate:"required,uuid"`
 }
 
 type GetRes Company
+
+// Update
+
+type UpdateReq struct {
+	GetReq
+	Name        *string `json:"name" validate:"omitempty,c_name"`
+	Address     *string `json:"address" validate:"omitempty,c_address"`
+	Description *string `json:"description" validate:"omitempty,c_description"`
+}
+
+// Delete
+
+type DeleteReq GetReq

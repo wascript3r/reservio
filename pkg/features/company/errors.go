@@ -16,4 +16,9 @@ var (
 		"company_not_found",
 		errors.New("company not found"),
 	)
+
+	NothingToUpdateError = errcode.New(
+		"nothing_to_update",
+		errors.New("nothing to update"),
+	)
 )

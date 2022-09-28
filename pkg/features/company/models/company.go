@@ -13,7 +13,11 @@ type CompanyInfo struct {
 }
 
 type CompanyUpdate struct {
-	Name        string
-	Address     string
-	Description string
+	Name        *string
+	Address     *string
+	Description *string
+}
+
+func (c *CompanyUpdate) IsEmpty() bool {
+	return c.Name == nil && c.Address == nil && c.Description == nil
 }

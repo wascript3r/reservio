@@ -14,16 +14,18 @@ import (
 type Usecase struct {
 	tx          repository.Transactor
 	companyRepo company.Repository
+	userRepo    user.Repository
 	ctxTimeout  time.Duration
 
 	validator company.Validator
 	userUcase user.Usecase
 }
 
-func New(tx repository.Transactor, cr company.Repository, t time.Duration, v company.Validator, uu user.Usecase) *Usecase {
+func New(tx repository.Transactor, cr company.Repository, ur user.Repository, t time.Duration, v company.Validator, uu user.Usecase) *Usecase {
 	return &Usecase{
 		tx:          tx,
 		companyRepo: cr,
+		userRepo:    ur,
 		ctxTimeout:  t,
 
 		validator: v,
@@ -113,4 +115,55 @@ func (u *Usecase) GetAll(ctx context.Context) (*dto.GetAllRes, error) {
 	}
 
 	return res, nil
+}
+
+func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
+	if err := u.validator.RawRequest(req); err != nil {
+		return company.InvalidInputError.SetData(err.GetData())
+	}
+
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	err := u.companyRepo.Update(c, req.CompanyID, &models.CompanyUpdate{
+		Name:        req.Name,
+		Address:     req.Address,
+		Description: req.Description,
+	})
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return company.NotFoundError
+		} else if err == repository.ErrInvalidParamInput {
+			return company.NothingToUpdateError
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (u *Usecase) Delete(ctx context.Context, req *dto.DeleteReq) error {
+	if err := u.validator.RawRequest(req); err != nil {
+		return company.InvalidInputError.SetData(err.GetData())
+	}
+
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	err := u.tx.WithinTx(c, func(c context.Context) error {
+		err := u.companyRepo.Delete(c, req.CompanyID)
+		if err != nil {
+			return err
+		}
+
+		return u.userRepo.Delete(c, req.CompanyID)
+	})
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return company.NotFoundError
+		}
+		return err
+	}
+
+	return nil
 }

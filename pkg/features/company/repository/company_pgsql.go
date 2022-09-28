@@ -13,7 +13,13 @@ const (
 	insert = "INSERT INTO companies (user_id, name, address, description) VALUES ($1, $2, $3, $4)"
 	get    = "SELECT c.user_id, c.name, c.address, c.description, u.email FROM companies c INNER JOIN users u ON u.id = c.user_id WHERE c.user_id = $1"
 	getAll = "SELECT c.user_id, c.name, c.address, c.description, u.email FROM companies c INNER JOIN users u ON u.id = c.user_id ORDER BY c.created_at DESC"
-	update = "UPDATE companies SET name = $2, address = $3, description = $4 WHERE user_id = $1"
+
+	update         = "UPDATE companies <set> WHERE user_id = $1"
+	setName        = "name = ?"
+	setAddress     = "address = ?"
+	setDescription = "description = ?"
+
+	deleteq = "DELETE FROM companies WHERE user_id = $1"
 )
 
 type PgRepo struct {
@@ -78,15 +84,38 @@ func (p *PgRepo) GetAll(ctx context.Context) ([]*models.CompanyInfo, error) {
 }
 
 func (p *PgRepo) Update(ctx context.Context, userID string, cu *models.CompanyUpdate) error {
-	res, err := p.db.ExecContext(
-		ctx,
-		update,
+	if cu.IsEmpty() {
+		return repository.ErrInvalidParamInput
+	}
+	builder := pgsql.NewQueryBuilder(pgsql.UpdateQuery, update, 2)
 
-		userID,
-		cu.Name,
-		cu.Address,
-		cu.Description,
-	)
+	if cu.Name != nil {
+		builder.Add(setName, *cu.Name)
+	}
+	if cu.Address != nil {
+		builder.Add(setAddress, *cu.Address)
+	}
+	if cu.Description != nil {
+		builder.Add(setDescription, *cu.Description)
+	}
+
+	res, err := p.db.ExecContext(ctx, builder.GetQuery(), builder.GetParams(userID)...)
+	if err != nil {
+		return pgsql.ParseWriteErr(err)
+	}
+
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	} else if n == 0 {
+		return repository.ErrNoItems
+	}
+
+	return nil
+}
+
+func (p *PgRepo) Delete(ctx context.Context, userID string) error {
+	res, err := p.db.ExecContext(ctx, deleteq, userID)
 	if err != nil {
 		return pgsql.ParseWriteErr(err)
 	}

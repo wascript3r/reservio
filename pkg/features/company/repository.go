@@ -11,4 +11,5 @@ type Repository interface {
 	Get(ctx context.Context, userID string) (*models.CompanyInfo, error)
 	GetAll(ctx context.Context) ([]*models.CompanyInfo, error)
 	Update(ctx context.Context, userID string, cu *models.CompanyUpdate) error
+	Delete(ctx context.Context, userID string) error
 }
