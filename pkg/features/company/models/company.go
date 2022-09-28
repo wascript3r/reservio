@@ -1,7 +1,7 @@
 package models
 
 type Company struct {
-	CompanyID   string
+	ID          string
 	Name        string
 	Address     string
 	Description string

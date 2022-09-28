@@ -50,7 +50,7 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 		}
 
 		cs := &models.Company{
-			CompanyID:   companyID,
+			ID:          companyID,
 			Name:        req.Name,
 			Address:     req.Address,
 			Description: req.Description,
@@ -84,7 +84,7 @@ func (u *Usecase) Get(ctx context.Context, req *dto.GetReq, onlyApproved bool) (
 	}
 
 	return &dto.GetRes{
-		ID:          ci.CompanyID,
+		ID:          ci.ID,
 		Name:        ci.Name,
 		Address:     ci.Address,
 		Description: ci.Description,
@@ -107,7 +107,7 @@ func (u *Usecase) GetAll(ctx context.Context, onlyApproved bool) (*dto.GetAllRes
 	}
 	for i, ci := range cis {
 		res.Companies[i] = &dto.Company{
-			ID:          ci.CompanyID,
+			ID:          ci.ID,
 			Name:        ci.Name,
 			Address:     ci.Address,
 			Description: ci.Description,
