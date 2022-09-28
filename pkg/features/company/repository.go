@@ -8,8 +8,8 @@ import (
 
 type Repository interface {
 	Insert(ctx context.Context, cs *models.Company) error
-	Get(ctx context.Context, userID string) (*models.CompanyInfo, error)
-	GetAll(ctx context.Context) ([]*models.CompanyInfo, error)
+	Get(ctx context.Context, userID string, onlyApproved bool) (*models.CompanyInfo, error)
+	GetAll(ctx context.Context, onlyApproved bool) ([]*models.CompanyInfo, error)
 	Update(ctx context.Context, userID string, cu *models.CompanyUpdate) error
 	Delete(ctx context.Context, userID string) error
 }

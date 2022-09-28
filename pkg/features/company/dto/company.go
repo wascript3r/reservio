@@ -25,6 +25,7 @@ type Company struct {
 	Name        string `json:"name"`
 	Address     string `json:"address"`
 	Description string `json:"description"`
+	Approved    bool   `json:"approved"`
 }
 
 type GetAllRes struct {

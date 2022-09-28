@@ -3,16 +3,17 @@ package repository
 import (
 	"context"
 
-	"github.com/wascript3r/reservio/pkg/repository"
-
 	"github.com/wascript3r/reservio/pkg/features/company/models"
+	"github.com/wascript3r/reservio/pkg/repository"
 	"github.com/wascript3r/reservio/pkg/repository/pgsql"
 )
 
 const (
-	insert = "INSERT INTO companies (user_id, name, address, description) VALUES ($1, $2, $3, $4)"
-	get    = "SELECT c.user_id, c.name, c.address, c.description, u.email FROM companies c INNER JOIN users u ON u.id = c.user_id WHERE c.user_id = $1"
-	getAll = "SELECT c.user_id, c.name, c.address, c.description, u.email FROM companies c INNER JOIN users u ON u.id = c.user_id ORDER BY c.created_at DESC"
+	insert         = "INSERT INTO companies (user_id, name, address, description) VALUES ($1, $2, $3, $4)"
+	get            = "SELECT u.email, c.user_id, c.name, c.address, c.description, c.approved FROM companies c INNER JOIN users u ON u.id = c.user_id WHERE c.user_id = $1"
+	getApproved    = get + " AND c.approved = true"
+	getAll         = "SELECT u.email, c.user_id, c.name, c.address, c.description, c.approved FROM companies c INNER JOIN users u ON u.id = c.user_id ORDER BY c.created_at DESC"
+	getAllApproved = "SELECT u.email, c.user_id, c.name, c.address, c.description, c.approved FROM companies c INNER JOIN users u ON u.id = c.user_id WHERE c.approved = TRUE ORDER BY c.created_at DESC"
 
 	update         = "UPDATE companies <set> WHERE user_id = $1"
 	setName        = "name = ?"
@@ -51,6 +52,7 @@ func scanInfo(row pgsql.Row) (*models.CompanyInfo, error) {
 		&ci.Name,
 		&ci.Address,
 		&ci.Description,
+		&ci.Approved,
 	)
 
 	if err != nil {
@@ -59,13 +61,23 @@ func scanInfo(row pgsql.Row) (*models.CompanyInfo, error) {
 	return ci, nil
 }
 
-func (p *PgRepo) Get(ctx context.Context, userID string) (*models.CompanyInfo, error) {
-	row := p.db.QueryRowContext(ctx, get, userID)
+func (p *PgRepo) Get(ctx context.Context, userID string, onlyApproved bool) (*models.CompanyInfo, error) {
+	q := get
+	if onlyApproved {
+		q = getApproved
+	}
+
+	row := p.db.QueryRowContext(ctx, q, userID)
 	return scanInfo(row)
 }
 
-func (p *PgRepo) GetAll(ctx context.Context) ([]*models.CompanyInfo, error) {
-	rows, err := p.db.QueryContext(ctx, getAll)
+func (p *PgRepo) GetAll(ctx context.Context, onlyApproved bool) ([]*models.CompanyInfo, error) {
+	q := getAll
+	if onlyApproved {
+		q = getAllApproved
+	}
+
+	rows, err := p.db.QueryContext(ctx, q)
 	if err != nil {
 		return nil, pgsql.ParseReadErr(err)
 	}

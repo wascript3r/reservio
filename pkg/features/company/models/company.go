@@ -10,6 +10,7 @@ type Company struct {
 type CompanyInfo struct {
 	Email string
 	Company
+	Approved bool
 }
 
 type CompanyUpdate struct {

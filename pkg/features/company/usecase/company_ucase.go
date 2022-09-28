@@ -67,7 +67,7 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 	}, nil
 }
 
-func (u *Usecase) Get(ctx context.Context, req *dto.GetReq) (*dto.GetRes, error) {
+func (u *Usecase) Get(ctx context.Context, req *dto.GetReq, onlyApproved bool) (*dto.GetRes, error) {
 	if err := u.validator.RawRequest(req); err != nil {
 		return nil, company.InvalidInputError.SetData(err.GetData())
 	}
@@ -75,7 +75,7 @@ func (u *Usecase) Get(ctx context.Context, req *dto.GetReq) (*dto.GetRes, error)
 	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
 	defer cancel()
 
-	ci, err := u.companyRepo.Get(c, req.CompanyID)
+	ci, err := u.companyRepo.Get(c, req.CompanyID, onlyApproved)
 	if err != nil {
 		if err == repository.ErrNoItems {
 			return nil, company.NotFoundError
@@ -89,14 +89,15 @@ func (u *Usecase) Get(ctx context.Context, req *dto.GetReq) (*dto.GetRes, error)
 		Address:     ci.Address,
 		Description: ci.Description,
 		Email:       ci.Email,
+		Approved:    ci.Approved,
 	}, nil
 }
 
-func (u *Usecase) GetAll(ctx context.Context) (*dto.GetAllRes, error) {
+func (u *Usecase) GetAll(ctx context.Context, onlyApproved bool) (*dto.GetAllRes, error) {
 	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
 	defer cancel()
 
-	cis, err := u.companyRepo.GetAll(c)
+	cis, err := u.companyRepo.GetAll(c, onlyApproved)
 	if err != nil {
 		return nil, err
 	}
@@ -111,6 +112,7 @@ func (u *Usecase) GetAll(ctx context.Context) (*dto.GetAllRes, error) {
 			Address:     ci.Address,
 			Description: ci.Description,
 			Email:       ci.Email,
+			Approved:    ci.Approved,
 		}
 	}
 

@@ -24,6 +24,7 @@ CREATE TABLE companies
     name        varchar(100)                           NOT NULL,
     address     varchar(200)                           NOT NULL,
     description text                                   NOT NULL,
+    approved    boolean                  DEFAULT FALSE NOT NULL,
     created_at  timestamp WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 

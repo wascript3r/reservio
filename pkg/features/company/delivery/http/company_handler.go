@@ -50,7 +50,7 @@ func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, _ httproute
 
 func (h *HTTPHandler) Get(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	req := &dto.GetReq{CompanyID: p.ByName("companyID")}
-	res, err := h.companyUcase.Get(r.Context(), req)
+	res, err := h.companyUcase.Get(r.Context(), req, false)
 	if err != nil {
 		et, code := parseErr(err)
 		errutil.ServeHTTP(w, et, code)
@@ -61,7 +61,7 @@ func (h *HTTPHandler) Get(w http.ResponseWriter, r *http.Request, p httprouter.P
 }
 
 func (h *HTTPHandler) GetAll(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	res, err := h.companyUcase.GetAll(r.Context())
+	res, err := h.companyUcase.GetAll(r.Context(), false)
 	if err != nil {
 		et, code := parseErr(err)
 		errutil.ServeHTTP(w, et, code)
