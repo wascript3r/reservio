@@ -9,18 +9,18 @@ import (
 )
 
 const (
-	insert         = "INSERT INTO companies (user_id, name, address, description) VALUES ($1, $2, $3, $4)"
-	get            = "SELECT u.email, c.user_id, c.name, c.address, c.description, c.approved FROM companies c INNER JOIN users u ON u.id = c.user_id WHERE c.user_id = $1"
+	insert         = "INSERT INTO companies (company_id, name, address, description) VALUES ($1, $2, $3, $4)"
+	get            = "SELECT u.email, c.company_id, c.name, c.address, c.description, c.approved FROM companies c INNER JOIN users u ON u.id = c.company_id WHERE c.company_id = $1"
 	getApproved    = get + " AND c.approved = true"
-	getAll         = "SELECT u.email, c.user_id, c.name, c.address, c.description, c.approved FROM companies c INNER JOIN users u ON u.id = c.user_id ORDER BY c.created_at DESC"
-	getAllApproved = "SELECT u.email, c.user_id, c.name, c.address, c.description, c.approved FROM companies c INNER JOIN users u ON u.id = c.user_id WHERE c.approved = TRUE ORDER BY c.created_at DESC"
+	getAll         = "SELECT u.email, c.company_id, c.name, c.address, c.description, c.approved FROM companies c INNER JOIN users u ON u.id = c.company_id ORDER BY c.created_at DESC"
+	getAllApproved = "SELECT u.email, c.company_id, c.name, c.address, c.description, c.approved FROM companies c INNER JOIN users u ON u.id = c.company_id WHERE c.approved = TRUE ORDER BY c.created_at DESC"
 
-	update         = "UPDATE companies <set> WHERE user_id = $1"
+	update         = "UPDATE companies <set> WHERE company_id = $1"
 	setName        = "name = ?"
 	setAddress     = "address = ?"
 	setDescription = "description = ?"
 
-	deleteq = "DELETE FROM companies WHERE user_id = $1"
+	deleteq = "DELETE FROM companies WHERE company_id = $1"
 )
 
 type PgRepo struct {
@@ -36,7 +36,7 @@ func (p *PgRepo) Insert(ctx context.Context, cs *models.Company) error {
 		ctx,
 		insert,
 
-		cs.UserID,
+		cs.CompanyID,
 		cs.Name,
 		cs.Address,
 		cs.Description,
@@ -48,7 +48,7 @@ func scanInfo(row pgsql.Row) (*models.CompanyInfo, error) {
 	ci := &models.CompanyInfo{}
 	err := row.Scan(
 		&ci.Email,
-		&ci.UserID,
+		&ci.CompanyID,
 		&ci.Name,
 		&ci.Address,
 		&ci.Description,
@@ -61,13 +61,13 @@ func scanInfo(row pgsql.Row) (*models.CompanyInfo, error) {
 	return ci, nil
 }
 
-func (p *PgRepo) Get(ctx context.Context, userID string, onlyApproved bool) (*models.CompanyInfo, error) {
+func (p *PgRepo) Get(ctx context.Context, companyID string, onlyApproved bool) (*models.CompanyInfo, error) {
 	q := get
 	if onlyApproved {
 		q = getApproved
 	}
 
-	row := p.db.QueryRowContext(ctx, q, userID)
+	row := p.db.QueryRowContext(ctx, q, companyID)
 	return scanInfo(row)
 }
 
@@ -95,7 +95,7 @@ func (p *PgRepo) GetAll(ctx context.Context, onlyApproved bool) ([]*models.Compa
 	return cis, nil
 }
 
-func (p *PgRepo) Update(ctx context.Context, userID string, cu *models.CompanyUpdate) error {
+func (p *PgRepo) Update(ctx context.Context, companyID string, cu *models.CompanyUpdate) error {
 	if cu.IsEmpty() {
 		return repository.ErrInvalidParamInput
 	}
@@ -111,7 +111,7 @@ func (p *PgRepo) Update(ctx context.Context, userID string, cu *models.CompanyUp
 		builder.Add(setDescription, *cu.Description)
 	}
 
-	res, err := p.db.ExecContext(ctx, builder.GetQuery(), builder.GetParams(userID)...)
+	res, err := p.db.ExecContext(ctx, builder.GetQuery(), builder.GetParams(companyID)...)
 	if err != nil {
 		return pgsql.ParseWriteErr(err)
 	}
@@ -126,8 +126,8 @@ func (p *PgRepo) Update(ctx context.Context, userID string, cu *models.CompanyUp
 	return nil
 }
 
-func (p *PgRepo) Delete(ctx context.Context, userID string) error {
-	res, err := p.db.ExecContext(ctx, deleteq, userID)
+func (p *PgRepo) Delete(ctx context.Context, companyID string) error {
+	res, err := p.db.ExecContext(ctx, deleteq, companyID)
 	if err != nil {
 		return pgsql.ParseWriteErr(err)
 	}

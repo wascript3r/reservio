@@ -18,7 +18,7 @@ CREATE UNIQUE INDEX users_email_uindex
 
 CREATE TABLE companies
 (
-    user_id     uuid                                   NOT NULL
+    company_id  uuid                                   NOT NULL
         PRIMARY KEY
         REFERENCES users,
     name        varchar(100)                           NOT NULL,
