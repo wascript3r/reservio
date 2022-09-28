@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"html"
 	"time"
 
 	"github.com/wascript3r/reservio/pkg/features/company"
@@ -51,9 +52,9 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 
 		cs := &models.Company{
 			ID:          companyID,
-			Name:        req.Name,
-			Address:     req.Address,
-			Description: req.Description,
+			Name:        html.EscapeString(req.Name),
+			Address:     html.EscapeString(req.Address),
+			Description: html.EscapeString(req.Description),
 		}
 
 		return u.companyRepo.Insert(c, cs)
@@ -126,6 +127,16 @@ func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
 
 	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
 	defer cancel()
+
+	if req.Name != nil {
+		*req.Name = html.EscapeString(*req.Name)
+	}
+	if req.Address != nil {
+		*req.Address = html.EscapeString(*req.Address)
+	}
+	if req.Description != nil {
+		*req.Description = html.EscapeString(*req.Description)
+	}
 
 	err := u.companyRepo.Update(c, req.CompanyID, &models.CompanyUpdate{
 		Name:        req.Name,
