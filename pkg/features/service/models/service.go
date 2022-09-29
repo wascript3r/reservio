@@ -37,3 +37,16 @@ type Service struct {
 	SpecialistPhone *string
 	WorkSchedule    WorkSchedule
 }
+
+type ServiceUpdate struct {
+	Title           *string
+	Description     *string
+	SpecialistName  **string
+	SpecialistPhone **string
+	WorkSchedule    *WorkSchedule
+}
+
+func (s *ServiceUpdate) IsEmpty() bool {
+	return s.Title == nil && s.Description == nil && s.SpecialistName == nil &&
+		s.SpecialistPhone == nil && s.WorkSchedule == nil
+}

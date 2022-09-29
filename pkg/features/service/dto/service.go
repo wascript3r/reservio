@@ -12,7 +12,7 @@ type WorkHours struct {
 	To   string `json:"to" validate:"required,s_time"`
 }
 
-type WorkSchedule map[models.Weekday]WorkHours
+type WorkSchedule map[models.Weekday]*WorkHours
 
 type CreateReq struct {
 	cdto.CompanyReq
@@ -26,3 +26,24 @@ type CreateReq struct {
 type CreateRes struct {
 	ID string `json:"id"`
 }
+
+// Get
+
+type ServiceReq struct {
+	cdto.CompanyReq
+	ServiceID string `json:"-" validate:"required,uuid"`
+}
+
+type GetReq ServiceReq
+
+type Service struct {
+	ID              string       `json:"id"`
+	CompanyID       string       `json:"companyID"`
+	Title           string       `json:"title"`
+	Description     string       `json:"description"`
+	SpecialistName  *string      `json:"specialistName"`
+	SpecialistPhone *string      `json:"specialistPhone"`
+	WorkSchedule    WorkSchedule `json:"workSchedule"`
+}
+
+type GetRes Service

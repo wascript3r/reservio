@@ -17,7 +17,13 @@ type CreateRes struct {
 	ID string `json:"id"`
 }
 
-// GetAll
+// Get
+
+type CompanyReq struct {
+	CompanyID string `json:"-" validate:"required,uuid"`
+}
+
+type GetReq CompanyReq
 
 type Company struct {
 	ID          string `json:"id"`
@@ -28,19 +34,13 @@ type Company struct {
 	Approved    bool   `json:"approved"`
 }
 
+type GetRes Company
+
+// GetAll
+
 type GetAllRes struct {
 	Companies []*Company `json:"companies"`
 }
-
-// Get
-
-type CompanyReq struct {
-	CompanyID string `json:"-" validate:"required,uuid"`
-}
-
-type GetReq CompanyReq
-
-type GetRes Company
 
 // Update
 

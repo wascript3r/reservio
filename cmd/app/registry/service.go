@@ -42,6 +42,7 @@ func (r *ServiceReg) Usecase() *usecase.Usecase {
 	if r.usecase == nil {
 		r.usecase = usecase.New(
 			r.Repository(),
+			r.companyReg.Repository(),
 			r.cfg.Database.Postgres.QueryTimeout.Duration,
 
 			r.Validator(),

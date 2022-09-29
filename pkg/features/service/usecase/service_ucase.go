@@ -5,23 +5,24 @@ import (
 	"time"
 
 	"github.com/wascript3r/reservio/pkg/features/company"
-	"github.com/wascript3r/reservio/pkg/repository"
-
 	"github.com/wascript3r/reservio/pkg/features/service"
 	"github.com/wascript3r/reservio/pkg/features/service/dto"
 	"github.com/wascript3r/reservio/pkg/features/service/models"
+	"github.com/wascript3r/reservio/pkg/repository"
 )
 
 type Usecase struct {
 	serviceRepo service.Repository
+	companyRepo company.Repository
 	ctxTimeout  time.Duration
 
 	validator service.Validator
 }
 
-func New(sr service.Repository, t time.Duration, v service.Validator) *Usecase {
+func New(sr service.Repository, cr company.Repository, t time.Duration, v service.Validator) *Usecase {
 	return &Usecase{
 		serviceRepo: sr,
+		companyRepo: cr,
 		ctxTimeout:  t,
 
 		validator: v,
@@ -63,5 +64,45 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 
 	return &dto.CreateRes{
 		ID: id,
+	}, nil
+}
+
+func (u *Usecase) Get(ctx context.Context, req *dto.GetReq, onlyApprovedCompany bool) (*dto.GetRes, error) {
+	if err := u.validator.RawRequest(req); err != nil {
+		return nil, service.InvalidInputError.SetData(err.GetData())
+	}
+
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	_, err := u.companyRepo.Get(c, req.CompanyID, onlyApprovedCompany)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return nil, company.NotFoundError
+		}
+		return nil, err
+	}
+
+	ss, err := u.serviceRepo.Get(c, req.CompanyID, req.ServiceID, onlyApprovedCompany)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return nil, service.NotFoundError
+		}
+		return nil, err
+	}
+
+	ws := make(dto.WorkSchedule)
+	for k, v := range ss.WorkSchedule {
+		ws[k] = (*dto.WorkHours)(v)
+	}
+
+	return &dto.GetRes{
+		ID:              ss.ID,
+		CompanyID:       ss.CompanyID,
+		Title:           ss.Title,
+		Description:     ss.Description,
+		SpecialistName:  ss.SpecialistName,
+		SpecialistPhone: ss.SpecialistPhone,
+		WorkSchedule:    ws,
 	}, nil
 }
