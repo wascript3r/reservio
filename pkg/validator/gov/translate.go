@@ -16,6 +16,9 @@ var (
 			return fmt.Sprintf("must be greater than or equal to %s characters", fe.Param())
 		},
 		"gt": func(fe validator.FieldError) string {
+			if fe.Param() == "0" {
+				return "must be set"
+			}
 			return fmt.Sprintf("must be greater than %s characters", fe.Param())
 		},
 		"lte": func(fe validator.FieldError) string {
@@ -29,6 +32,15 @@ var (
 		},
 		"uuid": func(_ validator.FieldError) string {
 			return "must be a valid id"
+		},
+		"s_work_schedule": func(_ validator.FieldError) string {
+			return "must contain valid week days"
+		},
+		"s_time": func(_ validator.FieldError) string {
+			return "must be a valid time"
+		},
+		"e164": func(_ validator.FieldError) string {
+			return "must be a valid phone number"
 		},
 	}
 )

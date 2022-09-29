@@ -30,15 +30,16 @@ CREATE TABLE companies
 
 CREATE TABLE services
 (
-    id               uuid DEFAULT gen_random_uuid() NOT NULL
+    id               uuid                     DEFAULT gen_random_uuid() NOT NULL
         PRIMARY KEY,
-    company_id       uuid                           NOT NULL
+    company_id       uuid                                               NOT NULL
         REFERENCES companies,
-    title            varchar(100)                   NOT NULL,
-    description      text                           NOT NULL,
+    title            varchar(100)                                       NOT NULL,
+    description      text                                               NOT NULL,
     specialist_name  varchar(100),
     specialist_phone varchar(20),
-    created_at       timestamp WITH TIME ZONE       NOT NULL
+    work_schedule    jsonb                                              NOT NULL,
+    created_at       timestamp WITH TIME ZONE DEFAULT NOW()             NOT NULL
 );
 
 

@@ -10,6 +10,7 @@ type GlobalReg struct {
 
 	userReg    *UserReg
 	companyReg *CompanyReg
+	serviceReg *ServiceReg
 	loggerReg  *LoggerReg
 }
 
@@ -27,6 +28,11 @@ func (r *GlobalReg) SetUserReg(userReg *UserReg) *GlobalReg {
 
 func (r *GlobalReg) SetCompanyReg(companyReg *CompanyReg) *GlobalReg {
 	r.companyReg = companyReg
+	return r
+}
+
+func (r *GlobalReg) SetServiceReg(serviceReg *ServiceReg) *GlobalReg {
+	r.serviceReg = serviceReg
 	return r
 }
 

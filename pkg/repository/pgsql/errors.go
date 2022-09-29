@@ -12,6 +12,7 @@ type ErrCode string
 const (
 	UniqueViolationErrCode ErrCode = "23505"
 	CheckViolationErrCode  ErrCode = "23514"
+	ForeignKeyViolationErr ErrCode = "23503"
 )
 
 func ParseReadErr(err error) error {
@@ -38,6 +39,9 @@ func ParseWriteErr(err error) error {
 
 		case CheckViolationErrCode:
 			return repository.ErrIntegrityViolation
+
+		case ForeignKeyViolationErr:
+			return repository.ErrNoRelatedItems
 		}
 	}
 	return err

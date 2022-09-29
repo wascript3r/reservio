@@ -17,13 +17,13 @@ const (
 
 func ParseErrFunc(invalidInputErr, unknownErr *errcode.Error) func(error) (ErrType, *errcode.Error) {
 	return func(err error) (ErrType, *errcode.Error) {
-		if err == invalidInputErr {
-			return InvalidInputErrType, invalidInputErr
-		}
-
 		code := errcode.UnwrapErr(err, unknownErr)
-		if code == unknownErr {
-			return UnkownErrType, unknownErr
+		name := code.Name()
+
+		if name == invalidInputErr.Name() {
+			return InvalidInputErrType, code
+		} else if name == unknownErr.Name() {
+			return UnkownErrType, code
 		}
 
 		return OtherErrType, code
