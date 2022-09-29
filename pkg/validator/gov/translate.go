@@ -70,9 +70,8 @@ func Translate(err error) *Error {
 		if !ok {
 			continue
 		}
-		field := fe.Field()
-		lower := strings.ToLower(field[:1]) + field[1:]
-		data[lower] = fmt.Sprintf("%s %s", fe.Field(), tagFn(fe))
+		field := strings.Join(strings.Split(fe.StructNamespace(), ".")[1:], ".")
+		data[field] = fmt.Sprintf("%s %s", fe.Field(), tagFn(fe))
 	}
 
 	return &Error{

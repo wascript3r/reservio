@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"html"
+
 	cdto "github.com/wascript3r/reservio/pkg/features/company/dto"
 	"github.com/wascript3r/reservio/pkg/features/service/models"
 )
@@ -21,6 +23,17 @@ type CreateReq struct {
 	SpecialistName  *string      `json:"specialistName" validate:"omitempty,s_specialist_name"`
 	SpecialistPhone *string      `json:"specialistPhone" validate:"omitempty,s_phone"`
 	WorkSchedule    WorkSchedule `json:"workSchedule" validate:"required,gt=0,s_work_schedule,dive,required"`
+}
+
+func (c *CreateReq) Escape() {
+	c.Title = html.EscapeString(c.Title)
+	c.Description = html.EscapeString(c.Description)
+	if c.SpecialistName != nil {
+		*c.SpecialistName = html.EscapeString(*c.SpecialistName)
+	}
+	if c.SpecialistPhone != nil {
+		*c.SpecialistPhone = html.EscapeString(*c.SpecialistPhone)
+	}
 }
 
 type CreateRes struct {
@@ -54,4 +67,34 @@ type GetAllReq cdto.CompanyReq
 
 type GetAllRes struct {
 	Services []*Service `json:"services"`
+}
+
+// Update
+
+type UpdateReq struct {
+	ServiceReq
+	Title          *string `json:"title" validate:"omitempty,s_title"`
+	Description    *string `json:"description" validate:"omitempty,s_description"`
+	SpecialistName *struct {
+		Value *string `json:"value" validate:"omitempty,s_specialist_name"`
+	} `json:"specialistName" validate:"omitempty,dive"`
+	SpecialistPhone *struct {
+		Value *string `json:"value" validate:"omitempty,s_phone"`
+	} `json:"specialistPhone" validate:"omitempty,dive"`
+	WorkSchedule *WorkSchedule `json:"workSchedule" validate:"omitempty,gt=0,s_work_schedule,dive,required"`
+}
+
+func (u *UpdateReq) Escape() {
+	if u.Title != nil {
+		*u.Title = html.EscapeString(*u.Title)
+	}
+	if u.Description != nil {
+		*u.Description = html.EscapeString(*u.Description)
+	}
+	if u.SpecialistName != nil && u.SpecialistName.Value != nil {
+		*u.SpecialistName.Value = html.EscapeString(*u.SpecialistName.Value)
+	}
+	if u.SpecialistPhone != nil && u.SpecialistPhone.Value != nil {
+		*u.SpecialistPhone.Value = html.EscapeString(*u.SpecialistPhone.Value)
+	}
 }

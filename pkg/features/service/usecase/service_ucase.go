@@ -37,6 +37,7 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
 	defer cancel()
 
+	req.Escape()
 	ws := make(models.WorkSchedule)
 	for k, v := range req.WorkSchedule {
 		ws[k] = &models.WorkHours{
@@ -149,4 +150,58 @@ func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCo
 	}
 
 	return res, nil
+}
+
+func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
+	if err := u.validator.RawRequest(req); err != nil {
+		return service.InvalidInputError.SetData(err.GetData())
+	}
+
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	_, err := u.companyRepo.Get(c, req.CompanyID, false)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return company.NotFoundError
+		}
+		return err
+	}
+
+	req.Escape()
+	var ws *models.WorkSchedule
+	if req.WorkSchedule != nil {
+		w := make(models.WorkSchedule)
+		ws = &w
+		for k, v := range *req.WorkSchedule {
+			w[k] = &models.WorkHours{
+				From: v.From,
+				To:   v.To,
+			}
+		}
+	}
+
+	su := &models.ServiceUpdate{
+		Title:           req.Title,
+		Description:     req.Description,
+		SpecialistName:  nil,
+		SpecialistPhone: nil,
+		WorkSchedule:    ws,
+	}
+	if req.SpecialistName != nil {
+		su.SpecialistName = &req.SpecialistName.Value
+	}
+	if req.SpecialistPhone != nil {
+		su.SpecialistPhone = &req.SpecialistPhone.Value
+	}
+
+	err = u.serviceRepo.Update(c, req.CompanyID, req.ServiceID, su)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return service.NotFoundError
+		}
+		return err
+	}
+
+	return nil
 }

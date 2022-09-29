@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"html"
 	"time"
 
 	"github.com/wascript3r/reservio/pkg/features/user"
@@ -50,8 +49,9 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq, validateReq bo
 		return "", err
 	}
 
+	req.Escape()
 	us := &models.User{
-		Email:    html.EscapeString(req.Email),
+		Email:    req.Email,
 		Password: hash,
 		Role:     models.ClientRole,
 	}

@@ -27,6 +27,7 @@ func NewHTTPHandler(r *httprouter.Router, su service.Usecase) {
 	r.POST(InitRoute+"/service", handler.Create)
 	r.GET(InitRoute+"/service/:serviceID", handler.Get)
 	r.GET(InitRoute+"/services", handler.GetAll)
+	r.PATCH(InitRoute+"/service/:serviceID", handler.Update)
 }
 
 func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -75,4 +76,25 @@ func (h *HTTPHandler) GetAll(w http.ResponseWriter, r *http.Request, p httproute
 	}
 
 	httpjson.ServeJSON(w, res)
+}
+
+func (h *HTTPHandler) Update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	req := &dto.UpdateReq{}
+
+	err := json.NewDecoder(r.Body).Decode(req)
+	if err != nil {
+		httpjson.BadRequest(w, nil)
+		return
+	}
+	req.CompanyID = p.ByName("companyID")
+	req.ServiceID = p.ByName("serviceID")
+
+	err = h.serviceUcase.Update(r.Context(), req)
+	if err != nil {
+		et, code := parseErr(err)
+		errutil.ServeHTTP(w, et, code)
+		return
+	}
+
+	httpjson.ServeJSON(w, nil)
 }

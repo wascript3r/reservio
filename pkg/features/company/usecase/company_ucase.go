@@ -50,11 +50,12 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 			return err
 		}
 
+		req.Escape(false)
 		cs := &models.Company{
 			ID:          companyID,
-			Name:        html.EscapeString(req.Name),
-			Address:     html.EscapeString(req.Address),
-			Description: html.EscapeString(req.Description),
+			Name:        req.Name,
+			Address:     req.Address,
+			Description: req.Description,
 		}
 
 		return u.companyRepo.Insert(c, cs)
