@@ -23,6 +23,9 @@ const (
 	setSpecialistName  = "specialist_name = ?"
 	setSpecialistPhone = "specialist_phone = ?"
 	setWorkSchedule    = "work_schedule = ?"
+
+	deleteq           = "DELETE FROM services WHERE company_id = $1 AND id = $2"
+	deleteByCompanyID = "DELETE FROM services WHERE company_id = $1"
 )
 
 type PgRepo struct {
@@ -153,4 +156,25 @@ func (p *PgRepo) Update(ctx context.Context, companyID, serviceID string, su *mo
 	}
 
 	return nil
+}
+
+func (p *PgRepo) Delete(ctx context.Context, companyID, serviceID string) error {
+	res, err := p.db.ExecContext(ctx, deleteq, companyID, serviceID)
+	if err != nil {
+		return pgsql.ParseWriteErr(err)
+	}
+
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	} else if n == 0 {
+		return repository.ErrNoItems
+	}
+
+	return nil
+}
+
+func (p *PgRepo) DeleteByCompany(ctx context.Context, companyID string) error {
+	_, err := p.db.ExecContext(ctx, deleteByCompanyID, companyID)
+	return pgsql.ParseWriteErr(err)
 }

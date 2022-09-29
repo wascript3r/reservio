@@ -98,3 +98,7 @@ func (u *UpdateReq) Escape() {
 		*u.SpecialistPhone.Value = html.EscapeString(*u.SpecialistPhone.Value)
 	}
 }
+
+// Delete
+
+type DeleteReq ServiceReq

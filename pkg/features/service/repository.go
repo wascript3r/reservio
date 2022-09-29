@@ -11,4 +11,6 @@ type Repository interface {
 	Get(ctx context.Context, companyID, serviceID string, onlyApprovedCompany bool) (*models.Service, error)
 	GetAll(ctx context.Context, companyID string, onlyApprovedCompany bool) ([]*models.Service, error)
 	Update(ctx context.Context, companyID, serviceID string, su *models.ServiceUpdate) error
+	Delete(ctx context.Context, companyID, serviceID string) error
+	DeleteByCompany(ctx context.Context, companyID string) error
 }

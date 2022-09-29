@@ -28,6 +28,7 @@ func NewHTTPHandler(r *httprouter.Router, su service.Usecase) {
 	r.GET(InitRoute+"/service/:serviceID", handler.Get)
 	r.GET(InitRoute+"/services", handler.GetAll)
 	r.PATCH(InitRoute+"/service/:serviceID", handler.Update)
+	r.DELETE(InitRoute+"/service/:serviceID", handler.Delete)
 }
 
 func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -90,6 +91,21 @@ func (h *HTTPHandler) Update(w http.ResponseWriter, r *http.Request, p httproute
 	req.ServiceID = p.ByName("serviceID")
 
 	err = h.serviceUcase.Update(r.Context(), req)
+	if err != nil {
+		et, code := parseErr(err)
+		errutil.ServeHTTP(w, et, code)
+		return
+	}
+
+	httpjson.ServeJSON(w, nil)
+}
+
+func (h *HTTPHandler) Delete(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	req := &dto.DeleteReq{}
+	req.CompanyID = p.ByName("companyID")
+	req.ServiceID = p.ByName("serviceID")
+
+	err := h.serviceUcase.Delete(r.Context(), req)
 	if err != nil {
 		et, code := parseErr(err)
 		errutil.ServeHTTP(w, et, code)

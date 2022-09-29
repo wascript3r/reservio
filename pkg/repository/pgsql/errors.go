@@ -41,7 +41,7 @@ func ParseWriteErr(err error) error {
 			return repository.ErrIntegrityViolation
 
 		case ForeignKeyViolationErr:
-			return repository.ErrNoRelatedItems
+			return repository.ErrConflictWithRelatedItems
 		}
 	}
 	return err

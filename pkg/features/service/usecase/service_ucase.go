@@ -57,7 +57,7 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 
 	id, err := u.serviceRepo.Insert(c, ss)
 	if err != nil {
-		if err == repository.ErrNoRelatedItems {
+		if err == repository.ErrConflictWithRelatedItems {
 			return nil, company.NotFoundError
 		}
 		return nil, err
@@ -196,6 +196,33 @@ func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
 	}
 
 	err = u.serviceRepo.Update(c, req.CompanyID, req.ServiceID, su)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return service.NotFoundError
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (u *Usecase) Delete(ctx context.Context, req *dto.DeleteReq) error {
+	if err := u.validator.RawRequest(req); err != nil {
+		return service.InvalidInputError.SetData(err.GetData())
+	}
+
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	_, err := u.companyRepo.Get(c, req.CompanyID, false)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return company.NotFoundError
+		}
+		return err
+	}
+
+	err = u.serviceRepo.Delete(c, req.CompanyID, req.ServiceID)
 	if err != nil {
 		if err == repository.ErrNoItems {
 			return service.NotFoundError
