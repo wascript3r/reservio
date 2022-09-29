@@ -26,6 +26,7 @@ func NewHTTPHandler(r *httprouter.Router, su service.Usecase) {
 
 	r.POST(InitRoute+"/service", handler.Create)
 	r.GET(InitRoute+"/service/:serviceID", handler.Get)
+	r.GET(InitRoute+"/services", handler.GetAll)
 }
 
 func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -54,6 +55,19 @@ func (h *HTTPHandler) Get(w http.ResponseWriter, r *http.Request, p httprouter.P
 	req.ServiceID = p.ByName("serviceID")
 
 	res, err := h.serviceUcase.Get(r.Context(), req, false)
+	if err != nil {
+		et, code := parseErr(err)
+		errutil.ServeHTTP(w, et, code)
+		return
+	}
+
+	httpjson.ServeJSON(w, res)
+}
+
+func (h *HTTPHandler) GetAll(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	req := &dto.GetAllReq{CompanyID: p.ByName("companyID")}
+
+	res, err := h.serviceUcase.GetAll(r.Context(), req, false)
 	if err != nil {
 		et, code := parseErr(err)
 		errutil.ServeHTTP(w, et, code)

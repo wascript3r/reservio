@@ -47,3 +47,11 @@ type Service struct {
 }
 
 type GetRes Service
+
+// GetAll
+
+type GetAllReq cdto.CompanyReq
+
+type GetAllRes struct {
+	Services []*Service `json:"services"`
+}

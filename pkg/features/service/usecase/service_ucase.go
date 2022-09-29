@@ -106,3 +106,47 @@ func (u *Usecase) Get(ctx context.Context, req *dto.GetReq, onlyApprovedCompany 
 		WorkSchedule:    ws,
 	}, nil
 }
+
+func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCompany bool) (*dto.GetAllRes, error) {
+	if err := u.validator.RawRequest(req); err != nil {
+		return nil, service.InvalidInputError.SetData(err.GetData())
+	}
+
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	_, err := u.companyRepo.Get(c, req.CompanyID, onlyApprovedCompany)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return nil, company.NotFoundError
+		}
+		return nil, err
+	}
+
+	ss, err := u.serviceRepo.GetAll(c, req.CompanyID, onlyApprovedCompany)
+	if err != nil {
+		return nil, err
+	}
+
+	res := &dto.GetAllRes{
+		Services: make([]*dto.Service, 0, len(ss)),
+	}
+	for _, s := range ss {
+		ws := make(dto.WorkSchedule)
+		for k, v := range s.WorkSchedule {
+			ws[k] = (*dto.WorkHours)(v)
+		}
+
+		res.Services = append(res.Services, &dto.Service{
+			ID:              s.ID,
+			CompanyID:       s.CompanyID,
+			Title:           s.Title,
+			Description:     s.Description,
+			SpecialistName:  s.SpecialistName,
+			SpecialistPhone: s.SpecialistPhone,
+			WorkSchedule:    ws,
+		})
+	}
+
+	return res, nil
+}

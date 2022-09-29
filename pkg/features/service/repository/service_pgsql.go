@@ -9,9 +9,11 @@ import (
 )
 
 const (
-	insert      = "INSERT INTO services (company_id, title, description, specialist_name, specialist_phone, work_schedule) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id"
-	get         = "SELECT id, company_id, title, description, specialist_name, specialist_phone, work_schedule FROM services WHERE company_id = $1 AND id = $2"
-	getApproved = "SELECT s.id, s.company_id, s.title, s.description, s.specialist_name, s.specialist_phone, s.work_schedule FROM services s INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND s.id = $2 AND c.approved = TRUE"
+	insert         = "INSERT INTO services (company_id, title, description, specialist_name, specialist_phone, work_schedule) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id"
+	get            = "SELECT id, company_id, title, description, specialist_name, specialist_phone, work_schedule FROM services WHERE company_id = $1 AND id = $2"
+	getApproved    = "SELECT s.id, s.company_id, s.title, s.description, s.specialist_name, s.specialist_phone, s.work_schedule FROM services s INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND s.id = $2 AND c.approved = TRUE"
+	getAll         = "SELECT id, company_id, title, description, specialist_name, specialist_phone, work_schedule FROM services WHERE company_id = $1 ORDER BY created_at DESC"
+	getAllApproved = "SELECT s.id, s.company_id, s.title, s.description, s.specialist_name, s.specialist_phone, s.work_schedule FROM services s INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND c.approved = TRUE ORDER BY s.created_at DESC"
 )
 
 type PgRepo struct {
@@ -77,4 +79,28 @@ func (p *PgRepo) Get(ctx context.Context, companyID, serviceID string, onlyAppro
 
 	row := p.db.QueryRowContext(ctx, q, companyID, serviceID)
 	return scanService(row)
+}
+
+func (p *PgRepo) GetAll(ctx context.Context, companyID string, onlyApprovedCompany bool) ([]*models.Service, error) {
+	q := getAll
+	if onlyApprovedCompany {
+		q = getAllApproved
+	}
+
+	rows, err := p.db.QueryContext(ctx, q, companyID)
+	if err != nil {
+		return nil, pgsql.ParseReadErr(err)
+	}
+	defer rows.Close()
+
+	var services []*models.Service
+	for rows.Next() {
+		s, err := scanService(rows)
+		if err != nil {
+			return nil, err
+		}
+		services = append(services, s)
+	}
+
+	return services, nil
 }
