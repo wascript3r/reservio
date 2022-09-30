@@ -35,6 +35,7 @@ type Service struct {
 	Description     string
 	SpecialistName  *string
 	SpecialistPhone *string
+	VisitDuration   int
 	WorkSchedule    WorkSchedule
 }
 

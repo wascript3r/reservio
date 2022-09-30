@@ -4,18 +4,17 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/wascript3r/reservio/pkg/repository"
-
 	"github.com/wascript3r/reservio/pkg/features/service/models"
+	"github.com/wascript3r/reservio/pkg/repository"
 	"github.com/wascript3r/reservio/pkg/repository/pgsql"
 )
 
 const (
-	insert         = "INSERT INTO services (company_id, title, description, specialist_name, specialist_phone, work_schedule) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id"
-	get            = "SELECT id, company_id, title, description, specialist_name, specialist_phone, work_schedule FROM services WHERE company_id = $1 AND id = $2"
-	getApproved    = "SELECT s.id, s.company_id, s.title, s.description, s.specialist_name, s.specialist_phone, s.work_schedule FROM services s INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND s.id = $2 AND c.approved = TRUE"
-	getAll         = "SELECT id, company_id, title, description, specialist_name, specialist_phone, work_schedule FROM services WHERE company_id = $1 ORDER BY created_at DESC"
-	getAllApproved = "SELECT s.id, s.company_id, s.title, s.description, s.specialist_name, s.specialist_phone, s.work_schedule FROM services s INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND c.approved = TRUE ORDER BY s.created_at DESC"
+	insert         = "INSERT INTO services (company_id, title, description, specialist_name, specialist_phone, visit_duration, work_schedule) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id"
+	get            = "SELECT id, company_id, title, description, specialist_name, specialist_phone, visit_duration, work_schedule FROM services WHERE company_id = $1 AND id = $2"
+	getApproved    = "SELECT s.id, s.company_id, s.title, s.description, s.specialist_name, s.specialist_phone, s.visit_duration, s.work_schedule FROM services s INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND s.id = $2 AND c.approved = TRUE"
+	getAll         = "SELECT id, company_id, title, description, specialist_name, specialist_phone, visit_duration, work_schedule FROM services WHERE company_id = $1 ORDER BY created_at DESC"
+	getAllApproved = "SELECT s.id, s.company_id, s.title, s.description, s.specialist_name, s.specialist_phone, s.visit_duration, s.work_schedule FROM services s INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND c.approved = TRUE ORDER BY s.created_at DESC"
 
 	update             = "UPDATE services <set> WHERE company_id = $1 AND id = $2"
 	setTitle           = "title = ?"
@@ -52,6 +51,7 @@ func (p *PgRepo) Insert(ctx context.Context, ss *models.Service) (string, error)
 		ss.Description,
 		ss.SpecialistName,
 		ss.SpecialistPhone,
+		ss.VisitDuration,
 		bs,
 	).Scan(&id)
 
@@ -68,6 +68,7 @@ func scanService(row pgsql.Row) (*models.Service, error) {
 		&s.Description,
 		&s.SpecialistName,
 		&s.SpecialistPhone,
+		&s.VisitDuration,
 		&bs,
 	)
 

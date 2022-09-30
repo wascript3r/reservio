@@ -38,6 +38,7 @@ CREATE TABLE services
     description      text                                               NOT NULL,
     specialist_name  varchar(100),
     specialist_phone varchar(20),
+    visit_duration   integer                                            NOT NULL,
     work_schedule    jsonb                                              NOT NULL,
     created_at       timestamp WITH TIME ZONE DEFAULT NOW()             NOT NULL
 );

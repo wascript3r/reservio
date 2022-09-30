@@ -22,6 +22,7 @@ type CreateReq struct {
 	Description     string       `json:"description" validate:"required,s_description"`
 	SpecialistName  *string      `json:"specialistName" validate:"omitempty,s_specialist_name"`
 	SpecialistPhone *string      `json:"specialistPhone" validate:"omitempty,s_phone"`
+	VisitDuration   int          `json:"visitDuration" validate:"required,gt=0"`
 	WorkSchedule    WorkSchedule `json:"workSchedule" validate:"required,gt=0,s_work_schedule,dive,required"`
 }
 
@@ -56,6 +57,7 @@ type Service struct {
 	Description     string       `json:"description"`
 	SpecialistName  *string      `json:"specialistName"`
 	SpecialistPhone *string      `json:"specialistPhone"`
+	VisitDuration   int          `json:"visitDuration"`
 	WorkSchedule    WorkSchedule `json:"workSchedule"`
 }
 

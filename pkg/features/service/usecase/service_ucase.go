@@ -52,6 +52,7 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 		Description:     req.Description,
 		SpecialistName:  req.SpecialistName,
 		SpecialistPhone: req.SpecialistPhone,
+		VisitDuration:   req.VisitDuration,
 		WorkSchedule:    ws,
 	}
 
@@ -104,6 +105,7 @@ func (u *Usecase) Get(ctx context.Context, req *dto.GetReq, onlyApprovedCompany 
 		Description:     ss.Description,
 		SpecialistName:  ss.SpecialistName,
 		SpecialistPhone: ss.SpecialistPhone,
+		VisitDuration:   ss.VisitDuration,
 		WorkSchedule:    ws,
 	}, nil
 }
@@ -145,6 +147,7 @@ func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCo
 			Description:     s.Description,
 			SpecialistName:  s.SpecialistName,
 			SpecialistPhone: s.SpecialistPhone,
+			VisitDuration:   s.VisitDuration,
 			WorkSchedule:    ws,
 		})
 	}

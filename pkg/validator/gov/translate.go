@@ -2,6 +2,7 @@ package gov
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -16,7 +17,10 @@ var (
 			return fmt.Sprintf("must be greater than or equal to %s characters", fe.Param())
 		},
 		"gt": func(fe validator.FieldError) string {
-			if fe.Param() == "0" {
+			kind := fe.Kind()
+			if kind == reflect.Int || kind == reflect.Int8 || kind == reflect.Int16 || kind == reflect.Int32 || kind == reflect.Int64 {
+				return fmt.Sprintf("must be greater than %s", fe.Param())
+			} else if fe.Param() == "0" {
 				return "must be set"
 			}
 			return fmt.Sprintf("must be greater than %s characters", fe.Param())
