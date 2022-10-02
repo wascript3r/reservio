@@ -23,7 +23,12 @@ func (c *CreateReq) Escape() {
 }
 
 type CreateRes struct {
-	ID string `json:"id"`
+	ID        string  `json:"id"`
+	ServiceID string  `json:"serviceID"`
+	ClientID  string  `json:"clientID"`
+	Date      string  `json:"date"`
+	Comment   *string `json:"comment"`
+	Approved  bool    `json:"approved"`
 }
 
 // Get

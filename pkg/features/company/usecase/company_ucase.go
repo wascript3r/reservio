@@ -72,7 +72,12 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 	}
 
 	return &dto.CreateRes{
-		ID: companyID,
+		ID:          companyID,
+		Email:       req.Email,
+		Name:        req.Name,
+		Address:     req.Address,
+		Description: req.Description,
+		Approved:    false,
 	}, nil
 }
 

@@ -96,7 +96,12 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 	}
 
 	return &dto.CreateRes{
-		ID: id,
+		ID:        id,
+		ServiceID: req.ServiceID,
+		ClientID:  req.ClientID,
+		Date:      date.UTC().Format(dateFormat),
+		Comment:   req.Comment,
+		Approved:  false,
 	}, nil
 }
 

@@ -24,18 +24,6 @@ func (c *CreateReq) Escape(escapeUser bool) {
 	c.Description = html.EscapeString(c.Description)
 }
 
-type CreateRes struct {
-	ID string `json:"id"`
-}
-
-// Get
-
-type CompanyReq struct {
-	CompanyID string `json:"-" validate:"required,uuid"`
-}
-
-type GetReq CompanyReq
-
 type Company struct {
 	ID          string `json:"id"`
 	Email       string `json:"email"`
@@ -44,6 +32,16 @@ type Company struct {
 	Description string `json:"description"`
 	Approved    bool   `json:"approved"`
 }
+
+type CreateRes Company
+
+// Get
+
+type CompanyReq struct {
+	CompanyID string `json:"-" validate:"required,uuid"`
+}
+
+type GetReq CompanyReq
 
 type GetRes Company
 

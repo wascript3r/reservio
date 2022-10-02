@@ -24,20 +24,18 @@ func (c *CreateReq) Escape(escapeUser bool) {
 	c.Phone = html.EscapeString(c.Phone)
 }
 
-type CreateRes struct {
-	ID string `json:"id"`
-}
-
-// Get
-
-type ClientReq struct {
-	ClientID string `json:"-" validate:"required,uuid"`
-}
-
 type Client struct {
 	ID        string `json:"id"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Phone     string `json:"phone"`
 	Email     string `json:"email"`
+}
+
+type CreateRes Client
+
+// Get
+
+type ClientReq struct {
+	ClientID string `json:"-" validate:"required,uuid"`
 }

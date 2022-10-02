@@ -37,19 +37,6 @@ func (c *CreateReq) Escape() {
 	}
 }
 
-type CreateRes struct {
-	ID string `json:"id"`
-}
-
-// Get
-
-type ServiceReq struct {
-	cdto.CompanyReq
-	ServiceID string `json:"-" validate:"required,uuid"`
-}
-
-type GetReq ServiceReq
-
 type Service struct {
 	ID              string       `json:"id"`
 	CompanyID       string       `json:"companyID"`
@@ -60,6 +47,17 @@ type Service struct {
 	VisitDuration   int          `json:"visitDuration"`
 	WorkSchedule    WorkSchedule `json:"workSchedule"`
 }
+
+type CreateRes Service
+
+// Get
+
+type ServiceReq struct {
+	cdto.CompanyReq
+	ServiceID string `json:"-" validate:"required,uuid"`
+}
+
+type GetReq ServiceReq
 
 type FullService struct {
 	ID              string        `json:"id"`
