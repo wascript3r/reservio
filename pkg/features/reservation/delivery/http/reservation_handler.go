@@ -25,7 +25,7 @@ func NewHTTPHandler(r *httprouter.Router, ru reservation.Usecase) {
 	}
 
 	r.POST(InitRoute+"/reservation", handler.Create)
-	// r.GET(InitRoute+"/reservation/:reservationID", handler.Get)
+	r.GET(InitRoute+"/reservation/:reservationID", handler.Get)
 	// r.GET(InitRoute+"/reservations", handler.GetAll)
 	// r.PATCH(InitRoute+"/reservation/:reservationID", handler.Update)
 	// r.DELETE(InitRoute+"/reservation/:reservationID", handler.Delete)
@@ -52,22 +52,22 @@ func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, p httproute
 	httpjson.ServeJSON(w, res)
 }
 
-// func (h *HTTPHandler) Get(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-// 	req := &dto.GetReq{}
-// 	req.CompanyID = p.ByName("companyID")
-// 	req.ServiceID = p.ByName("serviceID")
-// 	req.ReservationID = p.ByName("reservationID")
-//
-// 	res, err := h.reservationUcase.Get(r.Context(), req, false)
-// 	if err != nil {
-// 		et, code := parseErr(err)
-// 		errutil.ServeHTTP(w, et, code)
-// 		return
-// 	}
-//
-// 	httpjson.ServeJSON(w, res)
-// }
-//
+func (h *HTTPHandler) Get(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	req := &dto.GetReq{}
+	req.CompanyID = p.ByName("companyID")
+	req.ServiceID = p.ByName("serviceID")
+	req.ReservationID = p.ByName("reservationID")
+
+	res, err := h.reservationUcase.Get(r.Context(), req, false)
+	if err != nil {
+		et, code := parseErr(err)
+		errutil.ServeHTTP(w, et, code)
+		return
+	}
+
+	httpjson.ServeJSON(w, res)
+}
+
 // func (h *HTTPHandler) GetAll(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 // 	req := &dto.GetAllReq{}
 // 	req.CompanyID = p.ByName("companyID")

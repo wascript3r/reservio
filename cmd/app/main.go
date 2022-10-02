@@ -33,6 +33,8 @@ func init() {
 	if err != nil {
 		fatalError(err)
 	}
+
+	os.Setenv("TZ", "UTC")
 }
 
 func fatalError(err error) {

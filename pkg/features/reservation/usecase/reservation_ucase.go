@@ -2,15 +2,15 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"time"
-
-	"github.com/wascript3r/reservio/pkg/repository"
 
 	"github.com/wascript3r/reservio/pkg/features/company"
 	"github.com/wascript3r/reservio/pkg/features/reservation"
 	"github.com/wascript3r/reservio/pkg/features/reservation/dto"
 	"github.com/wascript3r/reservio/pkg/features/reservation/models"
 	"github.com/wascript3r/reservio/pkg/features/service"
+	"github.com/wascript3r/reservio/pkg/repository"
 )
 
 const dateFormat = "2006-01-02 15:04"
@@ -47,6 +47,7 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 	if err != nil {
 		return nil, reservation.InvalidInputError
 	}
+	fmt.Println(date.Location(), date)
 
 	_, err = u.companyRepo.Get(c, req.CompanyID, false)
 	if err != nil {
@@ -91,5 +92,45 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 
 	return &dto.CreateRes{
 		ID: id,
+	}, nil
+}
+
+func (u *Usecase) Get(ctx context.Context, req *dto.GetReq, onlyApprovedCompany bool) (*dto.GetRes, error) {
+	if err := u.validator.RawRequest(req); err != nil {
+		return nil, reservation.InvalidInputError.SetData(err.GetData())
+	}
+
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	_, err := u.companyRepo.Get(c, req.CompanyID, onlyApprovedCompany)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return nil, company.NotFoundError
+		}
+		return nil, err
+	}
+
+	_, err = u.serviceRepo.Get(c, req.CompanyID, req.ServiceID, onlyApprovedCompany)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return nil, service.NotFoundError
+		}
+		return nil, err
+	}
+
+	rs, err := u.reservationRepo.Get(c, req.CompanyID, req.ServiceID, req.ReservationID, onlyApprovedCompany)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return nil, reservation.NotFoundError
+		}
+		return nil, err
+	}
+
+	return &dto.GetRes{
+		ID:        rs.ID,
+		ServiceID: rs.ServiceID,
+		Date:      rs.Date.UTC().Format(dateFormat),
+		Comment:   rs.Comment,
 	}, nil
 }
