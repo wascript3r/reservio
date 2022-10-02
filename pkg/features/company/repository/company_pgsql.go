@@ -19,6 +19,7 @@ const (
 	setName        = "name = ?"
 	setAddress     = "address = ?"
 	setDescription = "description = ?"
+	setApproved    = "approved = ?"
 
 	deleteq = "DELETE FROM companies WHERE id = $1"
 )
@@ -109,6 +110,9 @@ func (p *PgRepo) Update(ctx context.Context, id string, cu *models.CompanyUpdate
 	}
 	if cu.Description != nil {
 		builder.Add(setDescription, *cu.Description)
+	}
+	if cu.Approved != nil {
+		builder.Add(setApproved, *cu.Approved)
 	}
 
 	res, err := p.db.ExecContext(ctx, builder.GetQuery(), builder.GetParams(id)...)

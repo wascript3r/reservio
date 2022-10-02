@@ -17,8 +17,9 @@ type CompanyUpdate struct {
 	Name        *string
 	Address     *string
 	Description *string
+	Approved    *bool
 }
 
 func (c *CompanyUpdate) IsEmpty() bool {
-	return c.Name == nil && c.Address == nil && c.Description == nil
+	return c.Name == nil && c.Address == nil && c.Description == nil && c.Approved == nil
 }

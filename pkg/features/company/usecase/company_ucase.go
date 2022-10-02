@@ -146,6 +146,7 @@ func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
 		Name:        req.Name,
 		Address:     req.Address,
 		Description: req.Description,
+		Approved:    req.Approved,
 	})
 	if err != nil {
 		if err == repository.ErrNoItems {

@@ -60,6 +60,7 @@ type UpdateReq struct {
 	Name        *string `json:"name" validate:"omitempty,c_name"`
 	Address     *string `json:"address" validate:"omitempty,c_address"`
 	Description *string `json:"description" validate:"omitempty,c_description"`
+	Approved    *bool   `json:"approved" validate:"omitempty"`
 }
 
 func (u *UpdateReq) Escape() {
