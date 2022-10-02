@@ -37,6 +37,14 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
 	defer cancel()
 
+	_, err := u.companyRepo.Get(c, req.CompanyID, false)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return nil, company.NotFoundError
+		}
+		return nil, err
+	}
+
 	req.Escape()
 	ws := make(models.WorkSchedule)
 	for k, v := range req.WorkSchedule {

@@ -1,5 +1,11 @@
 package models
 
+import (
+	"errors"
+)
+
+var ErrInvalidWeekday = errors.New("invalid weekday")
+
 type Weekday string
 
 const (
@@ -11,6 +17,23 @@ const (
 	Saturday  Weekday = "saturday"
 	Sunday    Weekday = "sunday"
 )
+
+var weekdays = map[int]Weekday{
+	0: Sunday,
+	1: Monday,
+	2: Tuesday,
+	3: Wednesday,
+	4: Thursday,
+	5: Friday,
+	6: Saturday,
+}
+
+func NewWeekday(d int) (Weekday, error) {
+	if w, ok := weekdays[d]; ok {
+		return w, nil
+	}
+	return "", ErrInvalidWeekday
+}
 
 func (w Weekday) IsValid() bool {
 	switch w {

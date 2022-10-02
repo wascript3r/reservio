@@ -46,6 +46,9 @@ var (
 		"e164": func(_ validator.FieldError) string {
 			return "must be a valid phone number"
 		},
+		"r_date": func(_ validator.FieldError) string {
+			return "must be a valid date"
+		},
 	}
 )
 

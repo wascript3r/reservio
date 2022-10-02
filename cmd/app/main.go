@@ -60,11 +60,13 @@ func main() {
 	userReg := registry.NewUser(globalReg)
 	companyReg := registry.NewCompany(globalReg)
 	serviceReg := registry.NewService(globalReg)
+	reservationReg := registry.NewReservation(globalReg)
 
 	globalReg.
 		SetUserReg(userReg).
 		SetCompanyReg(companyReg).
 		SetServiceReg(serviceReg).
+		SetReservationReg(reservationReg).
 		SetLoggerReg(loggerReg)
 
 	// Graceful shutdown
@@ -84,6 +86,7 @@ func main() {
 	userReg.ServeHTTP(httpRouter)
 	companyReg.ServeHTTP(httpRouter)
 	serviceReg.ServeHTTP(httpRouter)
+	reservationReg.ServeHTTP(httpRouter)
 
 	httpServer := &http.Server{
 		Addr:    ":" + Cfg.HTTP.Port,
