@@ -134,3 +134,47 @@ func (u *Usecase) Get(ctx context.Context, req *dto.GetReq, onlyApprovedCompany 
 		Comment:   rs.Comment,
 	}, nil
 }
+
+func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCompany bool) (*dto.GetAllRes, error) {
+	if err := u.validator.RawRequest(req); err != nil {
+		return nil, reservation.InvalidInputError.SetData(err.GetData())
+	}
+
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	_, err := u.companyRepo.Get(c, req.CompanyID, onlyApprovedCompany)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return nil, company.NotFoundError
+		}
+		return nil, err
+	}
+
+	_, err = u.serviceRepo.Get(c, req.CompanyID, req.ServiceID, onlyApprovedCompany)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return nil, service.NotFoundError
+		}
+		return nil, err
+	}
+
+	rss, err := u.reservationRepo.GetAll(c, req.CompanyID, req.ServiceID, onlyApprovedCompany)
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]*dto.Reservation, len(rss))
+	for i, rs := range rss {
+		res[i] = &dto.Reservation{
+			ID:        rs.ID,
+			ServiceID: rs.ServiceID,
+			Date:      rs.Date.UTC().Format(dateFormat),
+			Comment:   rs.Comment,
+		}
+	}
+
+	return &dto.GetAllRes{
+		Reservations: res,
+	}, nil
+}

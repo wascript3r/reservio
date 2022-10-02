@@ -47,7 +47,7 @@ type GetRes Reservation
 type GetAllReq sdto.ServiceReq
 
 type GetAllRes struct {
-	Reservations []Reservation `json:"reservations"`
+	Reservations []*Reservation `json:"reservations"`
 }
 
 // Update

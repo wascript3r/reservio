@@ -142,13 +142,13 @@ func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCo
 	res := &dto.GetAllRes{
 		Services: make([]*dto.Service, 0, len(ss)),
 	}
-	for _, s := range ss {
+	for i, s := range ss {
 		ws := make(dto.WorkSchedule)
 		for k, v := range s.WorkSchedule {
 			ws[k] = (*dto.WorkHours)(v)
 		}
 
-		res.Services = append(res.Services, &dto.Service{
+		res.Services[i] = &dto.Service{
 			ID:              s.ID,
 			CompanyID:       s.CompanyID,
 			Title:           s.Title,
@@ -157,7 +157,7 @@ func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCo
 			SpecialistPhone: s.SpecialistPhone,
 			VisitDuration:   s.VisitDuration,
 			WorkSchedule:    ws,
-		})
+		}
 	}
 
 	return res, nil
