@@ -104,7 +104,7 @@ func (h *HTTPHandler) Update(w http.ResponseWriter, r *http.Request, p httproute
 		return
 	}
 
-	httpjson.ServeJSON(w, nil)
+	httpjson.Status(w, http.StatusNoContent)
 }
 
 func (h *HTTPHandler) Delete(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
