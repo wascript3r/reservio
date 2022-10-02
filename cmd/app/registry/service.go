@@ -41,7 +41,9 @@ func (r *ServiceReg) Validator() *validator.Validator {
 func (r *ServiceReg) Usecase() *usecase.Usecase {
 	if r.usecase == nil {
 		r.usecase = usecase.New(
+			r.db,
 			r.Repository(),
+			r.reservationReg.Repository(),
 			r.companyReg.Repository(),
 			r.cfg.Database.Postgres.QueryTimeout.Duration,
 

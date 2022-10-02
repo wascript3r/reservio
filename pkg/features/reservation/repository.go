@@ -14,4 +14,6 @@ type Repository interface {
 	Update(ctx context.Context, companyID, serviceID, reservationID string, ru *models.ReservationUpdate) error
 	Delete(ctx context.Context, companyID, serviceID, reservationID string) error
 	Exists(ctx context.Context, companyID, serviceID string, date time.Time) (bool, error)
+	DeleteByCompany(ctx context.Context, companyID string) error
+	DeleteByService(ctx context.Context, serviceID string) error
 }

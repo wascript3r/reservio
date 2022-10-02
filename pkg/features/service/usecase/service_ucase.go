@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wascript3r/reservio/pkg/features/company"
+	"github.com/wascript3r/reservio/pkg/features/reservation"
 	"github.com/wascript3r/reservio/pkg/features/service"
 	"github.com/wascript3r/reservio/pkg/features/service/dto"
 	"github.com/wascript3r/reservio/pkg/features/service/models"
@@ -12,18 +13,22 @@ import (
 )
 
 type Usecase struct {
-	serviceRepo service.Repository
-	companyRepo company.Repository
-	ctxTimeout  time.Duration
+	tx              repository.Transactor
+	serviceRepo     service.Repository
+	reservationRepo reservation.Repository
+	companyRepo     company.Repository
+	ctxTimeout      time.Duration
 
 	validator service.Validator
 }
 
-func New(sr service.Repository, cr company.Repository, t time.Duration, v service.Validator) *Usecase {
+func New(tx repository.Transactor, sr service.Repository, rs reservation.Repository, cr company.Repository, t time.Duration, v service.Validator) *Usecase {
 	return &Usecase{
-		serviceRepo: sr,
-		companyRepo: cr,
-		ctxTimeout:  t,
+		tx:              tx,
+		serviceRepo:     sr,
+		reservationRepo: rs,
+		companyRepo:     cr,
+		ctxTimeout:      t,
 
 		validator: v,
 	}
@@ -140,7 +145,7 @@ func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCo
 	}
 
 	res := &dto.GetAllRes{
-		Services: make([]*dto.Service, 0, len(ss)),
+		Services: make([]*dto.Service, len(ss)),
 	}
 	for i, s := range ss {
 		ws := make(dto.WorkSchedule)
@@ -231,7 +236,14 @@ func (u *Usecase) Delete(ctx context.Context, req *dto.DeleteReq) error {
 		return err
 	}
 
-	err = u.serviceRepo.Delete(c, req.CompanyID, req.ServiceID)
+	err = u.tx.WithinTx(c, func(c context.Context) error {
+		err := u.reservationRepo.DeleteByService(c, req.ServiceID)
+		if err != nil {
+			return err
+		}
+
+		return u.serviceRepo.Delete(c, req.CompanyID, req.ServiceID)
+	})
 	if err != nil {
 		if err == repository.ErrNoItems {
 			return service.NotFoundError

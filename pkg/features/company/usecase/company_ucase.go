@@ -5,6 +5,8 @@ import (
 	"html"
 	"time"
 
+	"github.com/wascript3r/reservio/pkg/features/reservation"
+
 	"github.com/wascript3r/reservio/pkg/features/company"
 	"github.com/wascript3r/reservio/pkg/features/company/dto"
 	"github.com/wascript3r/reservio/pkg/features/company/models"
@@ -14,23 +16,25 @@ import (
 )
 
 type Usecase struct {
-	tx          repository.Transactor
-	companyRepo company.Repository
-	serviceRepo service.Repository
-	userRepo    user.Repository
-	ctxTimeout  time.Duration
+	tx              repository.Transactor
+	companyRepo     company.Repository
+	serviceRepo     service.Repository
+	reservationRepo reservation.Repository
+	userRepo        user.Repository
+	ctxTimeout      time.Duration
 
 	validator company.Validator
 	userUcase user.Usecase
 }
 
-func New(tx repository.Transactor, cr company.Repository, sr service.Repository, ur user.Repository, t time.Duration, v company.Validator, uu user.Usecase) *Usecase {
+func New(tx repository.Transactor, cr company.Repository, sr service.Repository, rs reservation.Repository, ur user.Repository, t time.Duration, v company.Validator, uu user.Usecase) *Usecase {
 	return &Usecase{
-		tx:          tx,
-		companyRepo: cr,
-		serviceRepo: sr,
-		userRepo:    ur,
-		ctxTimeout:  t,
+		tx:              tx,
+		companyRepo:     cr,
+		serviceRepo:     sr,
+		reservationRepo: rs,
+		userRepo:        ur,
+		ctxTimeout:      t,
 
 		validator: v,
 		userUcase: uu,
@@ -169,7 +173,12 @@ func (u *Usecase) Delete(ctx context.Context, req *dto.DeleteReq) error {
 	defer cancel()
 
 	err := u.tx.WithinTx(c, func(c context.Context) error {
-		err := u.serviceRepo.DeleteByCompany(c, req.CompanyID)
+		err := u.reservationRepo.DeleteByCompany(c, req.CompanyID)
+		if err != nil {
+			return err
+		}
+
+		err = u.serviceRepo.DeleteByCompany(c, req.CompanyID)
 		if err != nil {
 			return err
 		}

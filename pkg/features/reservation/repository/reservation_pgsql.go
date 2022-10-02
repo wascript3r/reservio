@@ -21,8 +21,10 @@ const (
 	setDate    = "date = ?"
 	setComment = "comment = ?"
 
-	deleteq = "DELETE FROM reservations r USING services s WHERE s.id = r.service_id AND s.company_id = $1 AND s.id = $2 AND r.id = $3"
-	exists  = "SELECT EXISTS (SELECT 1 FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 AND r.date = $3)"
+	deleteq         = "DELETE FROM reservations r USING services s WHERE s.id = r.service_id AND s.company_id = $1 AND s.id = $2 AND r.id = $3"
+	exists          = "SELECT EXISTS (SELECT 1 FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 AND r.date = $3)"
+	deleteByCompany = "DELETE FROM reservations r USING services s WHERE s.id = r.service_id AND s.company_id = $1"
+	deleteByService = "DELETE FROM reservations WHERE service_id = $1"
 )
 
 type PgRepo struct {
@@ -141,4 +143,14 @@ func (p *PgRepo) Exists(ctx context.Context, companyID, serviceID string, date t
 		return false, pgsql.ParseReadErr(err)
 	}
 	return ex, nil
+}
+
+func (p *PgRepo) DeleteByCompany(ctx context.Context, companyID string) error {
+	_, err := p.db.ExecContext(ctx, deleteByCompany, companyID)
+	return pgsql.ParseWriteErr(err)
+}
+
+func (p *PgRepo) DeleteByService(ctx context.Context, serviceID string) error {
+	_, err := p.db.ExecContext(ctx, deleteByService, serviceID)
+	return pgsql.ParseWriteErr(err)
 }
