@@ -11,6 +11,8 @@ import (
 	"github.com/wascript3r/reservio/pkg/features/company/dto"
 )
 
+const InitRoute = "/api/v1/companies"
+
 type HTTPHandler struct {
 	mapper       *httpjson.CodeMapper
 	companyUcase company.Usecase
@@ -23,11 +25,11 @@ func NewHTTPHandler(r *httprouter.Router, mp *httpjson.CodeMapper, cu company.Us
 	}
 	handler.initErrs()
 
-	r.POST("/company", handler.Create)
-	r.GET("/company/:companyID", handler.Get)
-	r.GET("/companies", handler.GetAll)
-	r.PATCH("/company/:companyID", handler.Update)
-	r.DELETE("/company/:companyID", handler.Delete)
+	r.POST(InitRoute, handler.Create)
+	r.GET(InitRoute+"/:companyID", handler.Get)
+	r.GET(InitRoute, handler.GetAll)
+	r.PATCH(InitRoute+"/:companyID", handler.Update)
+	r.DELETE(InitRoute+"/:companyID", handler.Delete)
 }
 
 func (h *HTTPHandler) initErrs() {

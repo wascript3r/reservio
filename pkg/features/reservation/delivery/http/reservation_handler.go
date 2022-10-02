@@ -11,7 +11,7 @@ import (
 	"github.com/wascript3r/reservio/pkg/features/reservation/dto"
 )
 
-const InitRoute = "/company/:companyID/service/:serviceID"
+const InitRoute = "/api/v1/companies/:companyID/services/:serviceID/reservations"
 
 type HTTPHandler struct {
 	mapper           *httpjson.CodeMapper
@@ -25,11 +25,11 @@ func NewHTTPHandler(r *httprouter.Router, cm *httpjson.CodeMapper, ru reservatio
 	}
 	handler.initErrs()
 
-	r.POST(InitRoute+"/reservation", handler.Create)
-	r.GET(InitRoute+"/reservation/:reservationID", handler.Get)
-	r.GET(InitRoute+"/reservations", handler.GetAll)
-	r.PATCH(InitRoute+"/reservation/:reservationID", handler.Update)
-	r.DELETE(InitRoute+"/reservation/:reservationID", handler.Delete)
+	r.POST(InitRoute, handler.Create)
+	r.GET(InitRoute+"/:reservationID", handler.Get)
+	r.GET(InitRoute, handler.GetAll)
+	r.PATCH(InitRoute+"/:reservationID", handler.Update)
+	r.DELETE(InitRoute+"/:reservationID", handler.Delete)
 }
 
 func (h *HTTPHandler) initErrs() {
