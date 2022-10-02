@@ -3,6 +3,7 @@ package dto
 import (
 	"html"
 
+	cdto "github.com/wascript3r/reservio/pkg/features/client/dto"
 	sdto "github.com/wascript3r/reservio/pkg/features/service/dto"
 )
 
@@ -10,6 +11,7 @@ import (
 
 type CreateReq struct {
 	sdto.ServiceReq
+	cdto.ClientReq
 	Date    string  `json:"date" validate:"required,r_date"`
 	Comment *string `json:"comment" validate:"omitempty,r_comment"`
 }

@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	insert         = "INSERT INTO reservations (service_id, date, comment) VALUES ($1, $2, $3) RETURNING id"
+	insert         = "INSERT INTO reservations (service_id, client_id, date, comment) VALUES ($1, $2, $3, $4) RETURNING id"
 	get            = "SELECT r.id, r.service_id, r.date, r.comment, r.approved FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3"
 	getApproved    = "SELECT r.id, r.service_id, r.date, r.comment, r.approved FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3 AND c.approved = TRUE"
 	getAll         = "SELECT r.id, r.service_id, r.date, r.comment, r.approved FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 ORDER BY r.date"
@@ -42,6 +42,7 @@ func (p *PgRepo) Insert(ctx context.Context, rs *models.Reservation) (string, er
 		insert,
 
 		rs.ServiceID,
+		rs.ClientID,
 		rs.Date,
 		rs.Comment,
 	).Scan(&id)

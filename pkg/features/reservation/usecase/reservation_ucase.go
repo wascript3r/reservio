@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/wascript3r/reservio/pkg/features/client"
 	"github.com/wascript3r/reservio/pkg/features/company"
 	"github.com/wascript3r/reservio/pkg/features/reservation"
 	"github.com/wascript3r/reservio/pkg/features/reservation/dto"
@@ -77,6 +78,7 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 	req.Escape()
 	rs := &models.Reservation{
 		ServiceID: req.ServiceID,
+		ClientID:  req.ClientID,
 		Date:      date,
 		Comment:   req.Comment,
 	}
@@ -84,7 +86,7 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 	id, err := u.reservationRepo.Insert(c, rs)
 	if err != nil {
 		if err == repository.ErrConflictWithRelatedItems {
-			return nil, service.NotFoundError
+			return nil, client.NotFoundError
 		}
 	}
 

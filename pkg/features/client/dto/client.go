@@ -27,3 +27,7 @@ func (c *CreateReq) Escape(escapeUser bool) {
 type CreateRes struct {
 	ID string `json:"id"`
 }
+
+type ClientReq struct {
+	ClientID string `json:"-" validate:"required,uuid"`
+}

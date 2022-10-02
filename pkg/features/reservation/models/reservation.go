@@ -7,6 +7,7 @@ import (
 type Reservation struct {
 	ID        string
 	ServiceID string
+	ClientID  string
 	Date      time.Time
 	Comment   *string
 	Approved  bool
