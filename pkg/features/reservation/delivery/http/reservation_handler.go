@@ -28,7 +28,7 @@ func NewHTTPHandler(r *httprouter.Router, ru reservation.Usecase) {
 	r.GET(InitRoute+"/reservation/:reservationID", handler.Get)
 	r.GET(InitRoute+"/reservations", handler.GetAll)
 	r.PATCH(InitRoute+"/reservation/:reservationID", handler.Update)
-	// r.DELETE(InitRoute+"/reservation/:reservationID", handler.Delete)
+	r.DELETE(InitRoute+"/reservation/:reservationID", handler.Delete)
 }
 
 func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -105,18 +105,18 @@ func (h *HTTPHandler) Update(w http.ResponseWriter, r *http.Request, p httproute
 	httpjson.ServeJSON(w, nil)
 }
 
-// func (h *HTTPHandler) Delete(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-// 	req := &dto.DeleteReq{}
-// 	req.CompanyID = p.ByName("companyID")
-// 	req.ServiceID = p.ByName("serviceID")
-// 	req.ReservationID = p.ByName("reservationID")
-//
-// 	err := h.reservationUcase.Delete(r.Context(), req)
-// 	if err != nil {
-// 		et, code := parseErr(err)
-// 		errutil.ServeHTTP(w, et, code)
-// 		return
-// 	}
-//
-// 	httpjson.ServeJSON(w, nil)
-// }
+func (h *HTTPHandler) Delete(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	req := &dto.DeleteReq{}
+	req.CompanyID = p.ByName("companyID")
+	req.ServiceID = p.ByName("serviceID")
+	req.ReservationID = p.ByName("reservationID")
+
+	err := h.reservationUcase.Delete(r.Context(), req)
+	if err != nil {
+		et, code := parseErr(err)
+		errutil.ServeHTTP(w, et, code)
+		return
+	}
+
+	httpjson.ServeJSON(w, nil)
+}

@@ -248,3 +248,37 @@ func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
 
 	return nil
 }
+
+func (u *Usecase) Delete(ctx context.Context, req *dto.DeleteReq) error {
+	if err := u.validator.RawRequest(req); err != nil {
+		return reservation.InvalidInputError.SetData(err.GetData())
+	}
+
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	_, err := u.companyRepo.Get(c, req.CompanyID, false)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return company.NotFoundError
+		}
+		return err
+	}
+
+	_, err = u.serviceRepo.Get(c, req.CompanyID, req.ServiceID, false)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return service.NotFoundError
+		}
+		return err
+	}
+
+	err = u.reservationRepo.Delete(c, req.CompanyID, req.ServiceID, req.ReservationID)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return reservation.NotFoundError
+		}
+	}
+
+	return nil
+}

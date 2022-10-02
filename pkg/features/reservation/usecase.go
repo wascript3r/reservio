@@ -11,5 +11,5 @@ type Usecase interface {
 	Get(ctx context.Context, req *dto.GetReq, onlyApprovedCompany bool) (*dto.GetRes, error)
 	GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCompany bool) (*dto.GetAllRes, error)
 	Update(ctx context.Context, req *dto.UpdateReq) error
-	// Delete(ctx context.Context, req *dto.DeleteReq) error
+	Delete(ctx context.Context, req *dto.DeleteReq) error
 }
