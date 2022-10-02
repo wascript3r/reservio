@@ -55,6 +55,17 @@ CREATE TABLE reservations
     created_at timestamp WITH TIME ZONE DEFAULT NOW()             NOT NULL
 );
 
+CREATE TABLE clients
+(
+    id         uuid                                   NOT NULL
+        PRIMARY KEY
+        REFERENCES users,
+    first_name varchar(50)                            NOT NULL,
+    last_name  varchar(50)                            NOT NULL,
+    phone      varchar(20)                            NOT NULL,
+    created_at timestamp WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
 
 -- migrate:down
 
