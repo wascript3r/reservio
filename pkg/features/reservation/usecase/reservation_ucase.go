@@ -325,6 +325,8 @@ func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
 	if err != nil {
 		if err == repository.ErrNoItems {
 			return reservation.NotFoundError
+		} else if err == repository.ErrInvalidParamInput {
+			return reservation.NothingToUpdateError
 		}
 	}
 

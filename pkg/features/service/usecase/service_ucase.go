@@ -213,6 +213,8 @@ func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
 	if err != nil {
 		if err == repository.ErrNoItems {
 			return service.NotFoundError
+		} else if err == repository.ErrInvalidParamInput {
+			return service.NothingToUpdateError
 		}
 		return err
 	}
