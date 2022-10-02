@@ -6,27 +6,34 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	httpjson "github.com/wascript3r/httputil/json"
-	"github.com/wascript3r/reservio/pkg/errutil"
+	"github.com/wascript3r/reservio/pkg/errcode"
 	"github.com/wascript3r/reservio/pkg/features/company"
 	"github.com/wascript3r/reservio/pkg/features/company/dto"
 )
 
-var parseErr = errutil.ParseErrFunc(company.InvalidInputError, company.UnknownError)
-
 type HTTPHandler struct {
+	mapper       *httpjson.CodeMapper
 	companyUcase company.Usecase
 }
 
-func NewHTTPHandler(r *httprouter.Router, cu company.Usecase) {
+func NewHTTPHandler(r *httprouter.Router, mp *httpjson.CodeMapper, cu company.Usecase) {
 	handler := &HTTPHandler{
+		mapper:       mp,
 		companyUcase: cu,
 	}
+	handler.initErrs()
 
 	r.POST("/company", handler.Create)
 	r.GET("/company/:companyID", handler.Get)
 	r.GET("/companies", handler.GetAll)
 	r.PATCH("/company/:companyID", handler.Update)
 	r.DELETE("/company/:companyID", handler.Delete)
+}
+
+func (h *HTTPHandler) initErrs() {
+	h.mapper.Register(http.StatusBadRequest, company.InvalidInputError, company.NothingToUpdateError)
+	h.mapper.Register(http.StatusNotFound, company.NotFoundError)
+	h.mapper.Register(http.StatusInternalServerError, company.UnknownError)
 }
 
 func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -40,8 +47,8 @@ func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, _ httproute
 
 	res, err := h.companyUcase.Create(r.Context(), req)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, company.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 
@@ -52,8 +59,8 @@ func (h *HTTPHandler) Get(w http.ResponseWriter, r *http.Request, p httprouter.P
 	req := &dto.GetReq{CompanyID: p.ByName("companyID")}
 	res, err := h.companyUcase.Get(r.Context(), req, false)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, company.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 
@@ -63,8 +70,8 @@ func (h *HTTPHandler) Get(w http.ResponseWriter, r *http.Request, p httprouter.P
 func (h *HTTPHandler) GetAll(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	res, err := h.companyUcase.GetAll(r.Context(), false)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, company.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 
@@ -83,8 +90,8 @@ func (h *HTTPHandler) Update(w http.ResponseWriter, r *http.Request, p httproute
 
 	err = h.companyUcase.Update(r.Context(), req)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, company.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 
@@ -95,8 +102,8 @@ func (h *HTTPHandler) Delete(w http.ResponseWriter, r *http.Request, p httproute
 	req := &dto.DeleteReq{CompanyID: p.ByName("companyID")}
 	err := h.companyUcase.Delete(r.Context(), req)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, company.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 

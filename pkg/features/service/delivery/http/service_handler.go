@@ -6,29 +6,36 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	httpjson "github.com/wascript3r/httputil/json"
-	"github.com/wascript3r/reservio/pkg/errutil"
+	"github.com/wascript3r/reservio/pkg/errcode"
 	"github.com/wascript3r/reservio/pkg/features/service"
 	"github.com/wascript3r/reservio/pkg/features/service/dto"
 )
 
 const InitRoute = "/company/:companyID"
 
-var parseErr = errutil.ParseErrFunc(service.InvalidInputError, service.UnknownError)
-
 type HTTPHandler struct {
+	mapper       *httpjson.CodeMapper
 	serviceUcase service.Usecase
 }
 
-func NewHTTPHandler(r *httprouter.Router, su service.Usecase) {
+func NewHTTPHandler(r *httprouter.Router, cm *httpjson.CodeMapper, su service.Usecase) {
 	handler := &HTTPHandler{
+		mapper:       cm,
 		serviceUcase: su,
 	}
+	handler.initErrs()
 
 	r.POST(InitRoute+"/service", handler.Create)
 	r.GET(InitRoute+"/service/:serviceID", handler.Get)
 	r.GET(InitRoute+"/services", handler.GetAll)
 	r.PATCH(InitRoute+"/service/:serviceID", handler.Update)
 	r.DELETE(InitRoute+"/service/:serviceID", handler.Delete)
+}
+
+func (h *HTTPHandler) initErrs() {
+	h.mapper.Register(http.StatusBadRequest, service.InvalidInputError, service.NothingToUpdateError)
+	h.mapper.Register(http.StatusNotFound, service.NotFoundError)
+	h.mapper.Register(http.StatusInternalServerError, service.UnknownError)
 }
 
 func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -43,8 +50,8 @@ func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, p httproute
 
 	res, err := h.serviceUcase.Create(r.Context(), req)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, service.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 
@@ -58,8 +65,8 @@ func (h *HTTPHandler) Get(w http.ResponseWriter, r *http.Request, p httprouter.P
 
 	res, err := h.serviceUcase.Get(r.Context(), req, false)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, service.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 
@@ -71,8 +78,8 @@ func (h *HTTPHandler) GetAll(w http.ResponseWriter, r *http.Request, p httproute
 
 	res, err := h.serviceUcase.GetAll(r.Context(), req, false)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, service.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 
@@ -92,8 +99,8 @@ func (h *HTTPHandler) Update(w http.ResponseWriter, r *http.Request, p httproute
 
 	err = h.serviceUcase.Update(r.Context(), req)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, service.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 
@@ -107,8 +114,8 @@ func (h *HTTPHandler) Delete(w http.ResponseWriter, r *http.Request, p httproute
 
 	err := h.serviceUcase.Delete(r.Context(), req)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, service.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 

@@ -10,6 +10,8 @@ import (
 	"runtime"
 	"syscall"
 
+	httpjson "github.com/wascript3r/httputil/json"
+
 	"github.com/julienschmidt/httprouter"
 	_ "github.com/lib/pq"
 
@@ -57,8 +59,10 @@ func main() {
 	}
 	logger.Info("... Connected to database ...")
 
+	mapper := httpjson.NewCodeMapper()
+
 	// Registries
-	globalReg := registry.NewGlobal(Cfg, dbConn)
+	globalReg := registry.NewGlobal(Cfg, dbConn, mapper)
 	userReg := registry.NewUser(globalReg)
 	companyReg := registry.NewCompany(globalReg)
 	serviceReg := registry.NewService(globalReg)
@@ -87,7 +91,6 @@ func main() {
 		httpRouter.Handler(http.MethodGet, "/debug/pprof/*item", http.DefaultServeMux)
 	}
 
-	userReg.ServeHTTP(httpRouter)
 	companyReg.ServeHTTP(httpRouter)
 	serviceReg.ServeHTTP(httpRouter)
 	reservationReg.ServeHTTP(httpRouter)

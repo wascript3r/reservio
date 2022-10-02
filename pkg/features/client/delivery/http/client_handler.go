@@ -4,30 +4,38 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/wascript3r/reservio/pkg/errcode"
+
 	"github.com/julienschmidt/httprouter"
 	httpjson "github.com/wascript3r/httputil/json"
-	"github.com/wascript3r/reservio/pkg/errutil"
 	"github.com/wascript3r/reservio/pkg/features/client"
 	"github.com/wascript3r/reservio/pkg/features/client/dto"
 	"github.com/wascript3r/reservio/pkg/features/reservation"
 	rdto "github.com/wascript3r/reservio/pkg/features/reservation/dto"
 )
 
-var parseErr = errutil.ParseErrFunc(client.InvalidInputError, client.UnknownError)
-
 type HTTPHandler struct {
+	mapper           *httpjson.CodeMapper
 	clientUcase      client.Usecase
 	reservationUcase reservation.Usecase
 }
 
-func NewHTTPHandler(r *httprouter.Router, cu client.Usecase, ru reservation.Usecase) {
+func NewHTTPHandler(r *httprouter.Router, cm *httpjson.CodeMapper, cu client.Usecase, ru reservation.Usecase) {
 	handler := &HTTPHandler{
+		mapper:           cm,
 		clientUcase:      cu,
 		reservationUcase: ru,
 	}
+	handler.initErrs()
 
 	r.POST("/client", handler.Create)
 	r.GET("/client/:id/reservations", handler.GetReservations)
+}
+
+func (h *HTTPHandler) initErrs() {
+	h.mapper.Register(http.StatusBadRequest, client.InvalidInputError)
+	h.mapper.Register(http.StatusNotFound, client.NotFoundError)
+	h.mapper.Register(http.StatusInternalServerError, client.UnknownError)
 }
 
 func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -41,8 +49,8 @@ func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, _ httproute
 
 	res, err := h.clientUcase.Create(r.Context(), req)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, client.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 
@@ -54,8 +62,8 @@ func (h *HTTPHandler) GetReservations(w http.ResponseWriter, r *http.Request, p 
 
 	res, err := h.reservationUcase.GetAllByClient(r.Context(), req)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, client.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 

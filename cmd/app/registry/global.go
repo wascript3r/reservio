@@ -1,12 +1,14 @@
 package registry
 
 import (
+	httpjson "github.com/wascript3r/httputil/json"
 	"github.com/wascript3r/reservio/pkg/repository/pgsql"
 )
 
 type GlobalReg struct {
-	cfg *Config
-	db  *pgsql.Database
+	cfg    *Config
+	db     *pgsql.Database
+	mapper *httpjson.CodeMapper
 
 	userReg        *UserReg
 	companyReg     *CompanyReg
@@ -16,10 +18,11 @@ type GlobalReg struct {
 	loggerReg      *LoggerReg
 }
 
-func NewGlobal(cfg *Config, db *pgsql.Database) *GlobalReg {
+func NewGlobal(cfg *Config, db *pgsql.Database, cm *httpjson.CodeMapper) *GlobalReg {
 	return &GlobalReg{
-		cfg: cfg,
-		db:  db,
+		cfg:    cfg,
+		db:     db,
+		mapper: cm,
 	}
 }
 

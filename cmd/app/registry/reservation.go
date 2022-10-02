@@ -55,5 +55,5 @@ func (r *ReservationReg) Usecase() *usecase.Usecase {
 }
 
 func (r *ReservationReg) ServeHTTP(router *httprouter.Router) {
-	httpHnd.NewHTTPHandler(router, r.Usecase())
+	httpHnd.NewHTTPHandler(router, r.mapper, r.Usecase())
 }

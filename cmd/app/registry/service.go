@@ -55,5 +55,5 @@ func (r *ServiceReg) Usecase() *usecase.Usecase {
 }
 
 func (r *ServiceReg) ServeHTTP(router *httprouter.Router) {
-	httpHnd.NewHTTPHandler(router, r.Usecase())
+	httpHnd.NewHTTPHandler(router, r.mapper, r.Usecase())
 }

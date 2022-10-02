@@ -6,29 +6,44 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	httpjson "github.com/wascript3r/httputil/json"
-	"github.com/wascript3r/reservio/pkg/errutil"
+	"github.com/wascript3r/reservio/pkg/errcode"
 	"github.com/wascript3r/reservio/pkg/features/reservation"
 	"github.com/wascript3r/reservio/pkg/features/reservation/dto"
 )
 
 const InitRoute = "/company/:companyID/service/:serviceID"
 
-var parseErr = errutil.ParseErrFunc(reservation.InvalidInputError, reservation.UnknownError)
-
 type HTTPHandler struct {
+	mapper           *httpjson.CodeMapper
 	reservationUcase reservation.Usecase
 }
 
-func NewHTTPHandler(r *httprouter.Router, ru reservation.Usecase) {
+func NewHTTPHandler(r *httprouter.Router, cm *httpjson.CodeMapper, ru reservation.Usecase) {
 	handler := &HTTPHandler{
+		mapper:           cm,
 		reservationUcase: ru,
 	}
+	handler.initErrs()
 
 	r.POST(InitRoute+"/reservation", handler.Create)
 	r.GET(InitRoute+"/reservation/:reservationID", handler.Get)
 	r.GET(InitRoute+"/reservations", handler.GetAll)
 	r.PATCH(InitRoute+"/reservation/:reservationID", handler.Update)
 	r.DELETE(InitRoute+"/reservation/:reservationID", handler.Delete)
+}
+
+func (h *HTTPHandler) initErrs() {
+	h.mapper.Register(
+		http.StatusBadRequest,
+		reservation.InvalidInputError,
+		reservation.NothingToUpdateError,
+		reservation.DateIsInPastError,
+		reservation.InvalidTimeError,
+		reservation.ServiceNotAvailableError,
+	)
+	h.mapper.Register(http.StatusNotFound, reservation.NotFoundError)
+	h.mapper.Register(http.StatusUnprocessableEntity, reservation.AlreadyExistsError)
+	h.mapper.Register(http.StatusInternalServerError, reservation.UnknownError)
 }
 
 func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -44,8 +59,8 @@ func (h *HTTPHandler) Create(w http.ResponseWriter, r *http.Request, p httproute
 
 	res, err := h.reservationUcase.Create(r.Context(), req)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, reservation.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 
@@ -60,8 +75,8 @@ func (h *HTTPHandler) Get(w http.ResponseWriter, r *http.Request, p httprouter.P
 
 	res, err := h.reservationUcase.Get(r.Context(), req, false)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, reservation.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 
@@ -75,8 +90,8 @@ func (h *HTTPHandler) GetAll(w http.ResponseWriter, r *http.Request, p httproute
 
 	res, err := h.reservationUcase.GetAll(r.Context(), req, false)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, reservation.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 
@@ -97,8 +112,8 @@ func (h *HTTPHandler) Update(w http.ResponseWriter, r *http.Request, p httproute
 
 	err = h.reservationUcase.Update(r.Context(), req)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, reservation.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 
@@ -113,8 +128,8 @@ func (h *HTTPHandler) Delete(w http.ResponseWriter, r *http.Request, p httproute
 
 	err := h.reservationUcase.Delete(r.Context(), req)
 	if err != nil {
-		et, code := parseErr(err)
-		errutil.ServeHTTP(w, et, code)
+		code := errcode.UnwrapErr(err, reservation.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
 		return
 	}
 
