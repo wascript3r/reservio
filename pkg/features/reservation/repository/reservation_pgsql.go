@@ -4,22 +4,22 @@ import (
 	"context"
 	"time"
 
-	"github.com/wascript3r/reservio/pkg/repository"
-
 	"github.com/wascript3r/reservio/pkg/features/reservation/models"
+	"github.com/wascript3r/reservio/pkg/repository"
 	"github.com/wascript3r/reservio/pkg/repository/pgsql"
 )
 
 const (
 	insert         = "INSERT INTO reservations (service_id, date, comment) VALUES ($1, $2, $3) RETURNING id"
-	get            = "SELECT r.id, r.service_id, r.date, r.comment FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3"
-	getApproved    = "SELECT r.id, r.service_id, r.date, r.comment FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3 AND c.approved = TRUE"
-	getAll         = "SELECT r.id, r.service_id, r.date, r.comment FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 ORDER BY r.date"
-	getAllApproved = "SELECT r.id, r.service_id, r.date, r.comment FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND s.id = $2 AND c.approved = TRUE ORDER BY r.date"
+	get            = "SELECT r.id, r.service_id, r.date, r.comment, r.approved FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3"
+	getApproved    = "SELECT r.id, r.service_id, r.date, r.comment, r.approved FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3 AND c.approved = TRUE"
+	getAll         = "SELECT r.id, r.service_id, r.date, r.comment, r.approved FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 ORDER BY r.date"
+	getAllApproved = "SELECT r.id, r.service_id, r.date, r.comment, r.approved FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND s.id = $2 AND c.approved = TRUE ORDER BY r.date"
 
-	update     = "UPDATE reservations r <set> FROM services s WHERE s.id = r.service_id AND s.company_id = $1 AND s.id = $2 AND r.id = $3"
-	setDate    = "date = ?"
-	setComment = "comment = ?"
+	update      = "UPDATE reservations r <set> FROM services s WHERE s.id = r.service_id AND s.company_id = $1 AND s.id = $2 AND r.id = $3"
+	setDate     = "date = ?"
+	setComment  = "comment = ?"
+	setApproved = "approved = ?"
 
 	deleteq         = "DELETE FROM reservations r USING services s WHERE s.id = r.service_id AND s.company_id = $1 AND s.id = $2 AND r.id = $3"
 	exists          = "SELECT EXISTS (SELECT 1 FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 AND r.date = $3)"
@@ -51,7 +51,7 @@ func (p *PgRepo) Insert(ctx context.Context, rs *models.Reservation) (string, er
 
 func scanReservation(row pgsql.Row) (*models.Reservation, error) {
 	r := &models.Reservation{}
-	err := row.Scan(&r.ID, &r.ServiceID, &r.Date, &r.Comment)
+	err := row.Scan(&r.ID, &r.ServiceID, &r.Date, &r.Comment, &r.Approved)
 	if err != nil {
 		return nil, pgsql.ParseReadErr(err)
 	}
@@ -103,6 +103,9 @@ func (p *PgRepo) Update(ctx context.Context, companyID, serviceID, reservationID
 	}
 	if ru.Comment != nil {
 		builder.Add(setComment, *ru.Comment)
+	}
+	if ru.Approved != nil {
+		builder.Add(setApproved, *ru.Approved)
 	}
 
 	res, err := p.db.ExecContext(ctx, builder.GetQuery(), builder.GetParams(companyID, serviceID, reservationID)...)

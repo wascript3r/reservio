@@ -9,13 +9,15 @@ type Reservation struct {
 	ServiceID string
 	Date      time.Time
 	Comment   *string
+	Approved  bool
 }
 
 type ReservationUpdate struct {
-	Date    *time.Time
-	Comment **string
+	Date     *time.Time
+	Comment  **string
+	Approved *bool
 }
 
 func (r *ReservationUpdate) IsEmpty() bool {
-	return r.Date == nil && r.Comment == nil
+	return r.Date == nil && r.Comment == nil && r.Approved == nil
 }

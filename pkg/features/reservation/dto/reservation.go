@@ -38,6 +38,7 @@ type Reservation struct {
 	ServiceID string  `json:"serviceID"`
 	Date      string  `json:"date"`
 	Comment   *string `json:"comment"`
+	Approved  bool    `json:"approved"`
 }
 
 type GetRes Reservation
@@ -58,6 +59,7 @@ type UpdateReq struct {
 	Comment *struct {
 		Value *string `json:"value" validate:"omitempty,r_comment"`
 	} `json:"comment" validate:"omitempty,dive"`
+	Approved *bool `json:"approved" validate:"omitempty"`
 }
 
 func (u *UpdateReq) Escape() {

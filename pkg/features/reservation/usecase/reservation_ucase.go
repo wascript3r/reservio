@@ -130,6 +130,7 @@ func (u *Usecase) Get(ctx context.Context, req *dto.GetReq, onlyApprovedCompany 
 		ServiceID: rs.ServiceID,
 		Date:      rs.Date.UTC().Format(dateFormat),
 		Comment:   rs.Comment,
+		Approved:  rs.Approved,
 	}, nil
 }
 
@@ -169,6 +170,7 @@ func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCo
 			ServiceID: rs.ServiceID,
 			Date:      rs.Date.UTC().Format(dateFormat),
 			Comment:   rs.Comment,
+			Approved:  rs.Approved,
 		}
 	}
 
@@ -233,7 +235,8 @@ func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
 
 	req.Escape()
 	ru := &models.ReservationUpdate{
-		Date: date,
+		Date:     date,
+		Approved: req.Approved,
 	}
 	if req.Comment != nil {
 		ru.Comment = &req.Comment.Value
