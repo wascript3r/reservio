@@ -43,18 +43,6 @@ CREATE TABLE services
     created_at       timestamp WITH TIME ZONE DEFAULT NOW()             NOT NULL
 );
 
-CREATE TABLE reservations
-(
-    id         uuid                     DEFAULT gen_random_uuid() NOT NULL
-        PRIMARY KEY,
-    service_id uuid                                               NOT NULL
-        REFERENCES services,
-    date       timestamp WITH TIME ZONE                           NOT NULL,
-    comment    varchar(200),
-    approved   boolean                  DEFAULT FALSE             NOT NULL,
-    created_at timestamp WITH TIME ZONE DEFAULT NOW()             NOT NULL
-);
-
 CREATE TABLE clients
 (
     id         uuid                                   NOT NULL
@@ -64,6 +52,20 @@ CREATE TABLE clients
     last_name  varchar(50)                            NOT NULL,
     phone      varchar(20)                            NOT NULL,
     created_at timestamp WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE reservations
+(
+    id         uuid                     DEFAULT gen_random_uuid() NOT NULL
+        PRIMARY KEY,
+    service_id uuid                                               NOT NULL
+        REFERENCES services,
+    client_id  uuid                                               NOT NULL
+        REFERENCES clients,
+    date       timestamp WITH TIME ZONE                           NOT NULL,
+    comment    varchar(200),
+    approved   boolean                  DEFAULT FALSE             NOT NULL,
+    created_at timestamp WITH TIME ZONE DEFAULT NOW()             NOT NULL
 );
 
 
