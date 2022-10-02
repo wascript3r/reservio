@@ -43,6 +43,17 @@ CREATE TABLE services
     created_at       timestamp WITH TIME ZONE DEFAULT NOW()             NOT NULL
 );
 
+CREATE TABLE reservations
+(
+    id         uuid                     DEFAULT gen_random_uuid() NOT NULL
+        PRIMARY KEY,
+    service_id uuid                                               NOT NULL
+        REFERENCES services,
+    date       timestamp WITH TIME ZONE                           NOT NULL,
+    comment    varchar(200),
+    created_at timestamp WITH TIME ZONE DEFAULT NOW()             NOT NULL
+);
+
 
 -- migrate:down
 
