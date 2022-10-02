@@ -5,11 +5,14 @@ import (
 	"time"
 
 	"github.com/wascript3r/reservio/pkg/features/client"
+	cldto "github.com/wascript3r/reservio/pkg/features/client/dto"
 	"github.com/wascript3r/reservio/pkg/features/company"
+	cdto "github.com/wascript3r/reservio/pkg/features/company/dto"
 	"github.com/wascript3r/reservio/pkg/features/reservation"
 	"github.com/wascript3r/reservio/pkg/features/reservation/dto"
 	"github.com/wascript3r/reservio/pkg/features/reservation/models"
 	"github.com/wascript3r/reservio/pkg/features/service"
+	sdto "github.com/wascript3r/reservio/pkg/features/service/dto"
 	"github.com/wascript3r/reservio/pkg/repository"
 )
 
@@ -19,16 +22,18 @@ type Usecase struct {
 	reservationRepo reservation.Repository
 	serviceRepo     service.Repository
 	companyRepo     company.Repository
+	clientRepo      client.Repository
 	ctxTimeout      time.Duration
 
 	validator reservation.Validator
 }
 
-func New(rr reservation.Repository, sr service.Repository, cr company.Repository, t time.Duration, v reservation.Validator) *Usecase {
+func New(rr reservation.Repository, sr service.Repository, cr company.Repository, clr client.Repository, t time.Duration, v reservation.Validator) *Usecase {
 	return &Usecase{
 		reservationRepo: rr,
 		serviceRepo:     sr,
 		companyRepo:     cr,
+		clientRepo:      clr,
 		ctxTimeout:      t,
 
 		validator: v,
@@ -130,9 +135,16 @@ func (u *Usecase) Get(ctx context.Context, req *dto.GetReq, onlyApprovedCompany 
 	return &dto.GetRes{
 		ID:        rs.ID,
 		ServiceID: rs.ServiceID,
-		Date:      rs.Date.UTC().Format(dateFormat),
-		Comment:   rs.Comment,
-		Approved:  rs.Approved,
+		Client: &cldto.Client{
+			ID:        rs.Client.ID,
+			FirstName: rs.Client.FirstName,
+			LastName:  rs.Client.LastName,
+			Phone:     rs.Client.Phone,
+			Email:     rs.Client.Email,
+		},
+		Date:     rs.Date.UTC().Format(dateFormat),
+		Comment:  rs.Comment,
+		Approved: rs.Approved,
 	}, nil
 }
 
@@ -170,13 +182,78 @@ func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCo
 		res[i] = &dto.Reservation{
 			ID:        rs.ID,
 			ServiceID: rs.ServiceID,
-			Date:      rs.Date.UTC().Format(dateFormat),
-			Comment:   rs.Comment,
-			Approved:  rs.Approved,
+			Client: &cldto.Client{
+				ID:        rs.Client.ID,
+				FirstName: rs.Client.FirstName,
+				LastName:  rs.Client.LastName,
+				Phone:     rs.Client.Phone,
+				Email:     rs.Client.Email,
+			},
+			Date:     rs.Date.UTC().Format(dateFormat),
+			Comment:  rs.Comment,
+			Approved: rs.Approved,
 		}
 	}
 
 	return &dto.GetAllRes{
+		Reservations: res,
+	}, nil
+}
+
+func (u *Usecase) GetAllByClient(ctx context.Context, req *dto.GetAllByClientReq) (*dto.GetAllByClientRes, error) {
+	if err := u.validator.RawRequest(req); err != nil {
+		return nil, reservation.InvalidInputError.SetData(err.GetData())
+	}
+
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	_, err := u.clientRepo.Get(c, req.ClientID)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return nil, client.NotFoundError
+		}
+		return nil, err
+	}
+
+	rss, err := u.reservationRepo.GetAllByClient(c, req.ClientID)
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]*dto.ClientReservation, len(rss))
+	for i, rs := range rss {
+		ws := make(sdto.WorkSchedule)
+		for k, v := range rs.Service.WorkSchedule {
+			ws[k] = (*sdto.WorkHours)(v)
+		}
+
+		res[i] = &dto.ClientReservation{
+			ID: rs.ID,
+			Service: &sdto.FullService{
+				ID: rs.Service.ID,
+				Company: &cdto.Company{
+					ID:          rs.Service.Company.ID,
+					Email:       rs.Service.Company.Email,
+					Name:        rs.Service.Company.Name,
+					Address:     rs.Service.Company.Address,
+					Description: rs.Service.Company.Description,
+					Approved:    rs.Service.Company.Approved,
+				},
+				Title:           rs.Service.Title,
+				Description:     rs.Service.Description,
+				SpecialistName:  rs.Service.SpecialistName,
+				SpecialistPhone: rs.Service.SpecialistPhone,
+				VisitDuration:   rs.Service.VisitDuration,
+				WorkSchedule:    ws,
+			},
+			Date:     rs.Date.UTC().Format(dateFormat),
+			Comment:  rs.Comment,
+			Approved: rs.Approved,
+		}
+	}
+
+	return &dto.GetAllByClientRes{
 		Reservations: res,
 	}, nil
 }

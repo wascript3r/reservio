@@ -8,6 +8,7 @@ import (
 	"github.com/wascript3r/reservio/pkg/features/client/dto"
 	"github.com/wascript3r/reservio/pkg/features/client/models"
 	"github.com/wascript3r/reservio/pkg/features/user"
+	umodels "github.com/wascript3r/reservio/pkg/features/user/models"
 	"github.com/wascript3r/reservio/pkg/repository"
 )
 
@@ -42,7 +43,7 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 	var clientID string
 	err := u.tx.WithinTx(c, func(c context.Context) error {
 		var err error
-		clientID, err = u.userUcase.Create(c, &req.CreateReq, false)
+		clientID, err = u.userUcase.Create(c, &req.CreateReq, umodels.ClientRole, false)
 		if err != nil {
 			return err
 		}

@@ -11,9 +11,9 @@ import (
 
 type CreateReq struct {
 	sdto.ServiceReq
-	cdto.ClientReq
-	Date    string  `json:"date" validate:"required,r_date"`
-	Comment *string `json:"comment" validate:"omitempty,r_comment"`
+	ClientID string  `json:"clientID" validate:"required,uuid"`
+	Date     string  `json:"date" validate:"required,r_date"`
+	Comment  *string `json:"comment" validate:"omitempty,r_comment"`
 }
 
 func (c *CreateReq) Escape() {
@@ -36,11 +36,12 @@ type ReservationReq struct {
 type GetReq ReservationReq
 
 type Reservation struct {
-	ID        string  `json:"id"`
-	ServiceID string  `json:"serviceID"`
-	Date      string  `json:"date"`
-	Comment   *string `json:"comment"`
-	Approved  bool    `json:"approved"`
+	ID        string       `json:"id"`
+	ServiceID string       `json:"serviceID"`
+	Client    *cdto.Client `json:"client"`
+	Date      string       `json:"date"`
+	Comment   *string      `json:"comment"`
+	Approved  bool         `json:"approved"`
 }
 
 type GetRes Reservation
@@ -51,6 +52,22 @@ type GetAllReq sdto.ServiceReq
 
 type GetAllRes struct {
 	Reservations []*Reservation `json:"reservations"`
+}
+
+// GetAllByClient
+
+type ClientReservation struct {
+	ID       string            `json:"id"`
+	Service  *sdto.FullService `json:"service"`
+	Date     string            `json:"date"`
+	Comment  *string           `json:"comment"`
+	Approved bool              `json:"approved"`
+}
+
+type GetAllByClientReq cdto.ClientReq
+
+type GetAllByClientRes struct {
+	Reservations []*ClientReservation `json:"reservations"`
 }
 
 // Update

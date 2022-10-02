@@ -61,6 +61,17 @@ type Service struct {
 	WorkSchedule    WorkSchedule `json:"workSchedule"`
 }
 
+type FullService struct {
+	ID              string        `json:"id"`
+	Company         *cdto.Company `json:"company"`
+	Title           string        `json:"title"`
+	Description     string        `json:"description"`
+	SpecialistName  *string       `json:"specialistName"`
+	SpecialistPhone *string       `json:"specialistPhone"`
+	VisitDuration   int           `json:"visitDuration"`
+	WorkSchedule    WorkSchedule  `json:"workSchedule"`
+}
+
 type GetRes Service
 
 // GetAll

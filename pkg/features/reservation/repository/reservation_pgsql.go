@@ -2,19 +2,25 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
+	clmodels "github.com/wascript3r/reservio/pkg/features/client/models"
+	cmodels "github.com/wascript3r/reservio/pkg/features/company/models"
 	"github.com/wascript3r/reservio/pkg/features/reservation/models"
+	smodels "github.com/wascript3r/reservio/pkg/features/service/models"
 	"github.com/wascript3r/reservio/pkg/repository"
 	"github.com/wascript3r/reservio/pkg/repository/pgsql"
 )
 
 const (
 	insert         = "INSERT INTO reservations (service_id, client_id, date, comment) VALUES ($1, $2, $3, $4) RETURNING id"
-	get            = "SELECT r.id, r.service_id, r.date, r.comment, r.approved FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3"
-	getApproved    = "SELECT r.id, r.service_id, r.date, r.comment, r.approved FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3 AND c.approved = TRUE"
-	getAll         = "SELECT r.id, r.service_id, r.date, r.comment, r.approved FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 ORDER BY r.date"
-	getAllApproved = "SELECT r.id, r.service_id, r.date, r.comment, r.approved FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND s.id = $2 AND c.approved = TRUE ORDER BY r.date"
+	get            = "SELECT r.id, r.service_id, r.date, r.comment, r.approved, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3"
+	getApproved    = "SELECT r.id, r.service_id, r.date, r.comment, r.approved, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3 AND c.approved = TRUE"
+	getAll         = "SELECT r.id, r.service_id, r.date, r.comment, r.approved, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 ORDER BY r.date"
+	getAllApproved = "SELECT r.id, r.service_id, r.date, r.comment, r.approved, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 AND c.approved = TRUE ORDER BY r.date"
+
+	getAllByClient = "SELECT r.id, r.date, r.comment, r.approved, s.id, s.title, s.description, s.specialist_name, s.specialist_phone, s.visit_duration, s.work_schedule, c.id, c.name, c.address, c.description, c.approved, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id INNER JOIN users u ON u.id = c.id WHERE r.client_id = $1 ORDER BY r.date"
 
 	update      = "UPDATE reservations r <set> FROM services s WHERE s.id = r.service_id AND s.company_id = $1 AND s.id = $2 AND r.id = $3"
 	setDate     = "date = ?"
@@ -50,16 +56,29 @@ func (p *PgRepo) Insert(ctx context.Context, rs *models.Reservation) (string, er
 	return id, pgsql.ParseWriteErr(err)
 }
 
-func scanReservation(row pgsql.Row) (*models.Reservation, error) {
-	r := &models.Reservation{}
-	err := row.Scan(&r.ID, &r.ServiceID, &r.Date, &r.Comment, &r.Approved)
+func scanReservation(row pgsql.Row) (*models.FullReservation, error) {
+	r := &models.FullReservation{
+		Client: &clmodels.ClientInfo{},
+	}
+	err := row.Scan(
+		&r.ID,
+		&r.ServiceID,
+		&r.Date,
+		&r.Comment,
+		&r.Approved,
+		&r.Client.ID,
+		&r.Client.FirstName,
+		&r.Client.LastName,
+		&r.Client.Phone,
+		&r.Client.Email,
+	)
 	if err != nil {
 		return nil, pgsql.ParseReadErr(err)
 	}
 	return r, nil
 }
 
-func (p *PgRepo) Get(ctx context.Context, companyID, serviceID, reservationID string, onlyApprovedCompany bool) (*models.Reservation, error) {
+func (p *PgRepo) Get(ctx context.Context, companyID, serviceID, reservationID string, onlyApprovedCompany bool) (*models.FullReservation, error) {
 	q := get
 	if onlyApprovedCompany {
 		q = getApproved
@@ -69,7 +88,7 @@ func (p *PgRepo) Get(ctx context.Context, companyID, serviceID, reservationID st
 	return scanReservation(row)
 }
 
-func (p *PgRepo) GetAll(ctx context.Context, companyID, serviceID string, onlyApprovedCompany bool) ([]*models.Reservation, error) {
+func (p *PgRepo) GetAll(ctx context.Context, companyID, serviceID string, onlyApprovedCompany bool) ([]*models.FullReservation, error) {
 	q := getAll
 	if onlyApprovedCompany {
 		q = getAllApproved
@@ -81,9 +100,56 @@ func (p *PgRepo) GetAll(ctx context.Context, companyID, serviceID string, onlyAp
 	}
 	defer rows.Close()
 
-	var reservations []*models.Reservation
+	var reservations []*models.FullReservation
 	for rows.Next() {
 		r, err := scanReservation(rows)
+		if err != nil {
+			return nil, err
+		}
+		reservations = append(reservations, r)
+	}
+
+	return reservations, nil
+}
+
+func (p *PgRepo) GetAllByClient(ctx context.Context, clientID string) ([]*models.ClientReservation, error) {
+	rows, err := p.db.QueryContext(ctx, getAllByClient, clientID)
+	if err != nil {
+		return nil, pgsql.ParseReadErr(err)
+	}
+	defer rows.Close()
+
+	var reservations []*models.ClientReservation
+	for rows.Next() {
+		var bs []byte
+		r := &models.ClientReservation{
+			Service: &smodels.FullService{
+				Company: &cmodels.CompanyInfo{},
+			},
+		}
+		err := rows.Scan(
+			&r.ID,
+			&r.Date,
+			&r.Comment,
+			&r.Approved,
+			&r.Service.ID,
+			&r.Service.Title,
+			&r.Service.Description,
+			&r.Service.SpecialistName,
+			&r.Service.SpecialistPhone,
+			&r.Service.VisitDuration,
+			&bs,
+			&r.Service.Company.ID,
+			&r.Service.Company.Name,
+			&r.Service.Company.Address,
+			&r.Service.Company.Description,
+			&r.Service.Company.Approved,
+			&r.Service.Company.Email,
+		)
+		if err != nil {
+			return nil, pgsql.ParseReadErr(err)
+		}
+		err = json.Unmarshal(bs, &r.Service.WorkSchedule)
 		if err != nil {
 			return nil, err
 		}

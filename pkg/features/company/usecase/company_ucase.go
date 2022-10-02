@@ -5,13 +5,13 @@ import (
 	"html"
 	"time"
 
-	"github.com/wascript3r/reservio/pkg/features/reservation"
-
 	"github.com/wascript3r/reservio/pkg/features/company"
 	"github.com/wascript3r/reservio/pkg/features/company/dto"
 	"github.com/wascript3r/reservio/pkg/features/company/models"
+	"github.com/wascript3r/reservio/pkg/features/reservation"
 	"github.com/wascript3r/reservio/pkg/features/service"
 	"github.com/wascript3r/reservio/pkg/features/user"
+	umodels "github.com/wascript3r/reservio/pkg/features/user/models"
 	"github.com/wascript3r/reservio/pkg/repository"
 )
 
@@ -52,7 +52,7 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 	var companyID string
 	err := u.tx.WithinTx(c, func(c context.Context) error {
 		var err error
-		companyID, err = u.userUcase.Create(c, &req.CreateReq, false)
+		companyID, err = u.userUcase.Create(c, &req.CreateReq, umodels.CompanyRole, false)
 		if err != nil {
 			return err
 		}

@@ -27,7 +27,7 @@ func New(ur user.Repository, t time.Duration, ph user.PwHasher, v user.Validator
 	}
 }
 
-func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq, validateReq bool) (string, error) {
+func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq, role models.Role, validateReq bool) (string, error) {
 	if validateReq {
 		if err := u.validator.RawRequest(req); err != nil {
 			return "", user.InvalidInputError
@@ -53,7 +53,7 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq, validateReq bo
 	us := &models.User{
 		Email:    req.Email,
 		Password: hash,
-		Role:     models.ClientRole,
+		Role:     role,
 	}
 
 	return u.userRepo.Insert(c, us)

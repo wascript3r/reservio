@@ -44,6 +44,7 @@ func (r *ReservationReg) Usecase() *usecase.Usecase {
 			r.Repository(),
 			r.serviceReg.Repository(),
 			r.companyReg.Repository(),
+			r.clientReg.Repository(),
 			r.cfg.Database.Postgres.QueryTimeout.Duration,
 
 			r.Validator(),

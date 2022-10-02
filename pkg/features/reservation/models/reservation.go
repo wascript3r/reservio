@@ -2,6 +2,9 @@ package models
 
 import (
 	"time"
+
+	cmodels "github.com/wascript3r/reservio/pkg/features/client/models"
+	smodels "github.com/wascript3r/reservio/pkg/features/service/models"
 )
 
 type Reservation struct {
@@ -11,6 +14,23 @@ type Reservation struct {
 	Date      time.Time
 	Comment   *string
 	Approved  bool
+}
+
+type FullReservation struct {
+	ID        string
+	ServiceID string
+	Client    *cmodels.ClientInfo
+	Date      time.Time
+	Comment   *string
+	Approved  bool
+}
+
+type ClientReservation struct {
+	ID       string
+	Service  *smodels.FullService
+	Date     time.Time
+	Comment  *string
+	Approved bool
 }
 
 type ReservationUpdate struct {

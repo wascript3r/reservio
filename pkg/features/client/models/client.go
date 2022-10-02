@@ -6,3 +6,8 @@ type Client struct {
 	LastName  string
 	Phone     string
 }
+
+type ClientInfo struct {
+	Client
+	Email string
+}

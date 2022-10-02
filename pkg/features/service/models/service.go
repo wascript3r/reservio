@@ -2,6 +2,8 @@ package models
 
 import (
 	"errors"
+
+	cmodels "github.com/wascript3r/reservio/pkg/features/company/models"
 )
 
 var ErrInvalidWeekday = errors.New("invalid weekday")
@@ -54,6 +56,17 @@ type WorkSchedule map[Weekday]*WorkHours
 type Service struct {
 	ID              string
 	CompanyID       string
+	Title           string
+	Description     string
+	SpecialistName  *string
+	SpecialistPhone *string
+	VisitDuration   int
+	WorkSchedule    WorkSchedule
+}
+
+type FullService struct {
+	ID              string
+	Company         *cmodels.CompanyInfo
 	Title           string
 	Description     string
 	SpecialistName  *string
