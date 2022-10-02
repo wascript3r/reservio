@@ -193,11 +193,9 @@ func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
 	}
 
 	su := &models.ServiceUpdate{
-		Title:           req.Title,
-		Description:     req.Description,
-		SpecialistName:  nil,
-		SpecialistPhone: nil,
-		WorkSchedule:    ws,
+		Title:        req.Title,
+		Description:  req.Description,
+		WorkSchedule: ws,
 	}
 	if req.SpecialistName != nil {
 		su.SpecialistName = &req.SpecialistName.Value

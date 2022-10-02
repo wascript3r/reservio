@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/wascript3r/reservio/pkg/features/company"
@@ -47,7 +46,6 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 	if err != nil {
 		return nil, reservation.InvalidInputError
 	}
-	fmt.Println(date.Location(), date)
 
 	_, err = u.companyRepo.Get(c, req.CompanyID, false)
 	if err != nil {
@@ -69,7 +67,6 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 		return nil, err
 	}
 
-	req.Escape()
 	exists, err := u.reservationRepo.Exists(c, req.CompanyID, req.ServiceID, date)
 	if err != nil {
 		return nil, err
@@ -77,6 +74,7 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 		return nil, reservation.AlreadyExistsError
 	}
 
+	req.Escape()
 	rs := &models.Reservation{
 		ServiceID: req.ServiceID,
 		Date:      date,
@@ -177,4 +175,76 @@ func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCo
 	return &dto.GetAllRes{
 		Reservations: res,
 	}, nil
+}
+
+func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
+	if err := u.validator.RawRequest(req); err != nil {
+		return reservation.InvalidInputError.SetData(err.GetData())
+	}
+
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	var date *time.Time
+	if req.Date != nil {
+		d, err := time.Parse(dateFormat, *req.Date)
+		if err != nil {
+			return reservation.InvalidInputError
+		}
+		date = &d
+	}
+
+	_, err := u.companyRepo.Get(c, req.CompanyID, false)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return company.NotFoundError
+		}
+		return err
+	}
+
+	ss, err := u.serviceRepo.Get(c, req.CompanyID, req.ServiceID, false)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return service.NotFoundError
+		}
+		return err
+	}
+
+	rs, err := u.reservationRepo.Get(c, req.CompanyID, req.ServiceID, req.ReservationID, false)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return reservation.NotFoundError
+		}
+		return err
+	}
+
+	if date != nil && !date.Equal(rs.Date) {
+		if err := u.validator.ReservationDate(ss, *date); err != nil {
+			return err
+		}
+
+		exists, err := u.reservationRepo.Exists(c, req.CompanyID, req.ServiceID, *date)
+		if err != nil {
+			return err
+		} else if exists {
+			return reservation.AlreadyExistsError
+		}
+	}
+
+	req.Escape()
+	ru := &models.ReservationUpdate{
+		Date: date,
+	}
+	if req.Comment != nil {
+		ru.Comment = &req.Comment.Value
+	}
+
+	err = u.reservationRepo.Update(c, req.CompanyID, req.ServiceID, req.ReservationID, ru)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return reservation.NotFoundError
+		}
+	}
+
+	return nil
 }

@@ -14,8 +14,8 @@ const (
 	insert         = "INSERT INTO reservations (service_id, date, comment) VALUES ($1, $2, $3) RETURNING id"
 	get            = "SELECT r.id, r.service_id, r.date, r.comment FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3"
 	getApproved    = "SELECT r.id, r.service_id, r.date, r.comment FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3 AND c.approved = TRUE"
-	getAll         = "SELECT r.id, r.service_id, r.date, r.comment FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 ORDER BY r.created_at DESC"
-	getAllApproved = "SELECT r.id, r.service_id, r.date, r.comment FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND s.id = $2 AND c.approved = TRUE ORDER BY r.created_at DESC"
+	getAll         = "SELECT r.id, r.service_id, r.date, r.comment FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 ORDER BY r.date"
+	getAllApproved = "SELECT r.id, r.service_id, r.date, r.comment FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id WHERE s.company_id = $1 AND s.id = $2 AND c.approved = TRUE ORDER BY r.date"
 
 	update     = "UPDATE reservations r <set> FROM services s WHERE s.id = r.service_id AND s.company_id = $1 AND s.id = $2 AND r.id = $3"
 	setDate    = "date = ?"
