@@ -1,14 +1,16 @@
 package jwt
 
 import (
+	"context"
 	"errors"
 	"time"
 
-	"github.com/wascript3r/reservio/pkg/features/token"
-
 	"github.com/dgrijalva/jwt-go/v4"
+	"github.com/wascript3r/reservio/pkg/features/token"
 	"github.com/wascript3r/reservio/pkg/features/user/models"
 )
+
+type ctxKey struct{}
 
 var (
 	signingMethod = jwt.SigningMethodHS256
@@ -49,14 +51,14 @@ func (u *Usecase) Generate(us *models.User) (string, error) {
 		},
 		UserClaims: token.UserClaims{
 			UserID: us.ID,
-			Role:   us.Role.String(),
+			Role:   us.Role,
 		},
 	})
 	return t.SignedString(u.privateKey)
 }
 
-func (u *Usecase) Parse(token string) (*token.UserClaims, error) {
-	t, err := jwt.ParseWithClaims(token, &AuthClaims{}, func(t *jwt.Token) (interface{}, error) {
+func (u *Usecase) Parse(tkn string) (*token.UserClaims, error) {
+	t, err := jwt.ParseWithClaims(tkn, &AuthClaims{}, func(t *jwt.Token) (interface{}, error) {
 		_, ok := t.Method.(*jwt.SigningMethodHMAC)
 		if !ok || t.Method.Alg() != signingMethod.Alg() {
 			return nil, ErrInvalidTokenAlg
@@ -68,7 +70,7 @@ func (u *Usecase) Parse(token string) (*token.UserClaims, error) {
 	}
 
 	if !t.Valid {
-		return nil, ErrInvalidToken
+		return nil, token.InvalidOrExpiredTokenError
 	}
 
 	claims, ok := t.Claims.(*AuthClaims)
@@ -77,4 +79,16 @@ func (u *Usecase) Parse(token string) (*token.UserClaims, error) {
 	}
 
 	return &claims.UserClaims, nil
+}
+
+func (u *Usecase) StoreCtx(ctx context.Context, claims *token.UserClaims) context.Context {
+	return context.WithValue(ctx, ctxKey{}, claims)
+}
+
+func (u *Usecase) LoadCtx(ctx context.Context) (*token.UserClaims, error) {
+	claims, ok := ctx.Value(ctxKey{}).(*token.UserClaims)
+	if !ok {
+		return nil, token.ErrCannotLoadToken
+	}
+	return claims, nil
 }

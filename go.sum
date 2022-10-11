@@ -37,8 +37,8 @@ github.com/wascript3r/gocipher v0.0.0-20201105141458-6510a149f009 h1:3XgM3mmCGVv
 github.com/wascript3r/gocipher v0.0.0-20201105141458-6510a149f009/go.mod h1:WwV/zbfmTgVBS8lPTTWjFP1vhRk2gfHNtNyXxPWJ9zg=
 github.com/wascript3r/gostr v0.0.0-20200222144921-e78b2166c216 h1:nb1gO8jQZKhKmc2Ei8kCnzrBWXG1RzyuC6VVvlsZ9mk=
 github.com/wascript3r/gostr v0.0.0-20200222144921-e78b2166c216/go.mod h1:LwB7eG/QzNAPv5T2jes7jMZZKPfmCwhttCzN1i/B5mE=
-github.com/wascript3r/httputil v0.0.0-20221002174009-8dfde02fc000 h1:bWzSJbJIkhu6rbWtefuZbWV129PhnqX4br0z2pVnMWI=
-github.com/wascript3r/httputil v0.0.0-20221002174009-8dfde02fc000/go.mod h1:VfnYVTb54oKr/Af3A6xs9Y9H3EGj6ltQiywS6QMSZvI=
+github.com/wascript3r/httputil v0.0.0-20221011141123-1639a66d0d26 h1:wQSKik3a3WQqBj/6RHeDCBCO3hbG2Zw5MfMib+Ppyfg=
+github.com/wascript3r/httputil v0.0.0-20221011141123-1639a66d0d26/go.mod h1:VfnYVTb54oKr/Af3A6xs9Y9H3EGj6ltQiywS6QMSZvI=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
 golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3 h1:0es+/5331RGQPcXlMfP+WrnIIS6dNnNRe0WB02W0F4M=

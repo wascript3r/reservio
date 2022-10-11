@@ -8,7 +8,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/lib/pq v1.10.7
 	github.com/wascript3r/gocipher v0.0.0-20201105141458-6510a149f009
-	github.com/wascript3r/httputil v0.0.0-20221002174009-8dfde02fc000
+	github.com/wascript3r/httputil v0.0.0-20221011141123-1639a66d0d26
 )
 
 require (

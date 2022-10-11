@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/wascript3r/reservio/pkg/errcode"
 	"github.com/wascript3r/reservio/pkg/features/company"
 	"github.com/wascript3r/reservio/pkg/features/company/dto"
+	mid "github.com/wascript3r/reservio/pkg/features/token/delivery/http"
 )
 
 const InitRoute = "/api/v1/companies"
@@ -18,7 +20,7 @@ type HTTPHandler struct {
 	companyUcase company.Usecase
 }
 
-func NewHTTPHandler(r *httprouter.Router, mp *httpjson.CodeMapper, cu company.Usecase) {
+func NewHTTPHandler(ctx context.Context, r *httprouter.Router, company mid.Company, mp *httpjson.CodeMapper, cu company.Usecase) {
 	handler := &HTTPHandler{
 		mapper:       mp,
 		companyUcase: cu,
@@ -28,7 +30,7 @@ func NewHTTPHandler(r *httprouter.Router, mp *httpjson.CodeMapper, cu company.Us
 	r.POST(InitRoute, handler.Create)
 	r.GET(InitRoute+"/:companyID", handler.Get)
 	r.GET(InitRoute, handler.GetAll)
-	r.PATCH(InitRoute+"/:companyID", handler.Update)
+	r.PATCH(InitRoute+"/:companyID", company.Wrap(ctx, handler.Update))
 	r.DELETE(InitRoute+"/:companyID", handler.Delete)
 }
 
@@ -80,7 +82,7 @@ func (h *HTTPHandler) GetAll(w http.ResponseWriter, r *http.Request, _ httproute
 	httpjson.ServeJSON(w, res)
 }
 
-func (h *HTTPHandler) Update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (h *HTTPHandler) Update(ctx context.Context, w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	req := &dto.UpdateReq{}
 
 	err := json.NewDecoder(r.Body).Decode(req)
