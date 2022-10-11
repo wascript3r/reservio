@@ -7,8 +7,6 @@ import (
 )
 
 var (
-	ErrEmailExists = errors.New("email already exists")
-
 	// Error codes
 
 	InvalidInputError = errcode.InvalidInputError
@@ -17,5 +15,10 @@ var (
 	EmailAlreadyExistsError = errcode.New(
 		"email_already_exists",
 		errors.New("email already exists"),
+	)
+
+	InvalidCredentialsError = errcode.New(
+		"invalid_credentials",
+		errors.New("invalid credentials"),
 	)
 )

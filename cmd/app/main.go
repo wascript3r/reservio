@@ -68,6 +68,7 @@ func main() {
 	serviceReg := registry.NewService(globalReg)
 	reservationReg := registry.NewReservation(globalReg)
 	clientReg := registry.NewClient(globalReg)
+	tokenReg := registry.NewToken(globalReg)
 
 	globalReg.
 		SetUserReg(userReg).
@@ -75,6 +76,7 @@ func main() {
 		SetServiceReg(serviceReg).
 		SetReservationReg(reservationReg).
 		SetClientReg(clientReg).
+		SetTokenReg(tokenReg).
 		SetLoggerReg(loggerReg)
 
 	// Graceful shutdown
@@ -91,6 +93,7 @@ func main() {
 		httpRouter.Handler(http.MethodGet, "/debug/pprof/*item", http.DefaultServeMux)
 	}
 
+	userReg.ServeHTTP(httpRouter)
 	companyReg.ServeHTTP(httpRouter)
 	serviceReg.ServeHTTP(httpRouter)
 	reservationReg.ServeHTTP(httpRouter)

@@ -1,6 +1,8 @@
 package registry
 
 import (
+	"github.com/julienschmidt/httprouter"
+	httpHnd "github.com/wascript3r/reservio/pkg/features/user/delivery/http"
 	"github.com/wascript3r/reservio/pkg/features/user/pwhasher"
 	"github.com/wascript3r/reservio/pkg/features/user/repository"
 	"github.com/wascript3r/reservio/pkg/features/user/usecase"
@@ -54,9 +56,14 @@ func (r *UserReg) Usecase() *usecase.Usecase {
 			r.cfg.Database.Postgres.QueryTimeout.Duration,
 
 			r.PwHasher(),
+			r.tokenReg.Usecase(),
 			r.Validator(),
 		)
 	}
 
 	return r.usecase
+}
+
+func (r *UserReg) ServeHTTP(router *httprouter.Router) {
+	httpHnd.NewHTTPHandler(router, r.mapper, r.Usecase())
 }

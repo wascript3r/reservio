@@ -15,6 +15,7 @@ type GlobalReg struct {
 	serviceReg     *ServiceReg
 	reservationReg *ReservationReg
 	clientReg      *ClientReg
+	tokenReg       *TokenReg
 	loggerReg      *LoggerReg
 }
 
@@ -48,6 +49,11 @@ func (r *GlobalReg) SetReservationReg(reservationReg *ReservationReg) *GlobalReg
 
 func (r *GlobalReg) SetClientReg(clientReg *ClientReg) *GlobalReg {
 	r.clientReg = clientReg
+	return r
+}
+
+func (r *GlobalReg) SetTokenReg(tokenReg *TokenReg) *GlobalReg {
+	r.tokenReg = tokenReg
 	return r
 }
 
