@@ -10,6 +10,7 @@ import (
 	"github.com/wascript3r/reservio/pkg/errcode"
 	"github.com/wascript3r/reservio/pkg/features/company"
 	"github.com/wascript3r/reservio/pkg/features/company/dto"
+	"github.com/wascript3r/reservio/pkg/features/token"
 	mid "github.com/wascript3r/reservio/pkg/features/token/delivery/http"
 )
 
@@ -18,12 +19,14 @@ const InitRoute = "/api/v1/companies"
 type HTTPHandler struct {
 	mapper       *httpjson.CodeMapper
 	companyUcase company.Usecase
+	tokenUcase   token.Usecase
 }
 
-func NewHTTPHandler(ctx context.Context, r *httprouter.Router, company mid.Company, mp *httpjson.CodeMapper, cu company.Usecase) {
+func NewHTTPHandler(ctx context.Context, r *httprouter.Router, company mid.Company, admin mid.Admin, mp *httpjson.CodeMapper, cu company.Usecase, tu token.Usecase) {
 	handler := &HTTPHandler{
 		mapper:       mp,
 		companyUcase: cu,
+		tokenUcase:   tu,
 	}
 	handler.initErrs()
 
@@ -31,7 +34,7 @@ func NewHTTPHandler(ctx context.Context, r *httprouter.Router, company mid.Compa
 	r.GET(InitRoute+"/:companyID", handler.Get)
 	r.GET(InitRoute, handler.GetAll)
 	r.PATCH(InitRoute+"/:companyID", company.Wrap(ctx, handler.Update))
-	r.DELETE(InitRoute+"/:companyID", handler.Delete)
+	r.DELETE(InitRoute+"/:companyID", admin.Wrap(ctx, handler.Delete))
 }
 
 func (h *HTTPHandler) initErrs() {
@@ -92,6 +95,15 @@ func (h *HTTPHandler) Update(ctx context.Context, w http.ResponseWriter, r *http
 	}
 	req.CompanyID = p.ByName("companyID")
 
+	claims, err := h.tokenUcase.LoadCtx(ctx)
+	if err != nil {
+		httpjson.InternalError(w, nil)
+		return
+	} else if claims.UserID != req.CompanyID {
+		httpjson.Forbidden(w, nil)
+		return
+	}
+
 	err = h.companyUcase.Update(r.Context(), req)
 	if err != nil {
 		code := errcode.UnwrapErr(err, company.UnknownError)
@@ -102,7 +114,7 @@ func (h *HTTPHandler) Update(ctx context.Context, w http.ResponseWriter, r *http
 	httpjson.Status(w, http.StatusNoContent)
 }
 
-func (h *HTTPHandler) Delete(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (h *HTTPHandler) Delete(_ context.Context, w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	req := &dto.DeleteReq{CompanyID: p.ByName("companyID")}
 	err := h.companyUcase.Delete(r.Context(), req)
 	if err != nil {

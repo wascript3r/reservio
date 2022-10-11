@@ -63,8 +63,10 @@ func (r *CompanyReg) ServeHTTP(router *httprouter.Router) {
 		context.Background(),
 		router,
 		r.tokenReg.CompanyMid(),
+		r.tokenReg.AdminMid(),
 
 		r.mapper,
 		r.Usecase(),
+		r.tokenReg.Usecase(),
 	)
 }
