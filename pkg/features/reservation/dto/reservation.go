@@ -11,7 +11,7 @@ import (
 
 type CreateReq struct {
 	sdto.ServiceReq
-	ClientID string  `json:"clientID" validate:"required,uuid"`
+	ClientID string  `json:"-" validate:"required,uuid"`
 	Date     string  `json:"date" validate:"required,r_date"`
 	Comment  *string `json:"comment" validate:"omitempty,r_comment"`
 }
@@ -38,7 +38,10 @@ type ReservationReq struct {
 	ReservationID string `json:"-" validate:"required,uuid"`
 }
 
-type GetReq ReservationReq
+type GetReq struct {
+	ReservationReq
+	ClientID *string `json:"-" validate:"omitempty,uuid"`
+}
 
 type Reservation struct {
 	ID        string       `json:"id"`
@@ -49,6 +52,12 @@ type Reservation struct {
 	Approved  bool         `json:"approved"`
 }
 
+type ReservationMeta struct {
+	ID        string `json:"id"`
+	ServiceID string `json:"serviceID"`
+	Date      string `json:"date"`
+}
+
 type GetRes Reservation
 
 // GetAll
@@ -57,6 +66,14 @@ type GetAllReq sdto.ServiceReq
 
 type GetAllRes struct {
 	Reservations []*Reservation `json:"reservations"`
+}
+
+// GetAllMeta
+
+type GetAllMetaReq sdto.ServiceReq
+
+type GetAllMetaRes struct {
+	Reservations []*ReservationMeta `json:"reservations"`
 }
 
 // GetAllByClient
@@ -79,8 +96,9 @@ type GetAllByClientRes struct {
 
 type UpdateReq struct {
 	ReservationReq
-	Date    *string `json:"date" validate:"omitempty,r_date"`
-	Comment *struct {
+	ClientID string  `json:"-" validate:"required,uuid"`
+	Date     *string `json:"date" validate:"omitempty,r_date"`
+	Comment  *struct {
 		Value *string `json:"value" validate:"omitempty,r_comment"`
 	} `json:"comment" validate:"omitempty,dive"`
 	Approved *bool `json:"approved" validate:"omitempty"`
@@ -94,4 +112,7 @@ func (u *UpdateReq) Escape() {
 
 // Delete
 
-type DeleteReq ReservationReq
+type DeleteReq struct {
+	ReservationReq
+	ClientID string `json:"-" validate:"required,uuid"`
+}

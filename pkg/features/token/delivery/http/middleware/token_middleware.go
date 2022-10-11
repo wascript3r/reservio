@@ -60,7 +60,35 @@ func (h *HTTPMiddleware) Authenticated(next httputil.HandleCtx) httputil.HandleC
 	}
 }
 
-func (h *HTTPMiddleware) HasRole(role umodels.Role) func(next httputil.HandleCtx) httputil.HandleCtx {
+func (h *HTTPMiddleware) ParseUser(next httputil.HandleCtx) httputil.HandleCtx {
+	return func(ctx context.Context, w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		t, err := h.ExtractToken(r)
+		if err != nil {
+			next(ctx, w, r, p)
+			return
+		}
+
+		claims, err := h.tokenUcase.Parse(t)
+		if err != nil {
+			next(ctx, w, r, p)
+			return
+		}
+		ctx = h.tokenUcase.StoreCtx(ctx, claims)
+
+		next(ctx, w, r, p)
+	}
+}
+
+func roleExists(roles []umodels.Role, role umodels.Role) bool {
+	for _, r := range roles {
+		if r == role {
+			return true
+		}
+	}
+	return false
+}
+
+func (h *HTTPMiddleware) IsOneOf(role ...umodels.Role) func(next httputil.HandleCtx) httputil.HandleCtx {
 	return func(next httputil.HandleCtx) httputil.HandleCtx {
 		return h.Authenticated(
 			func(ctx context.Context, w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -70,7 +98,7 @@ func (h *HTTPMiddleware) HasRole(role umodels.Role) func(next httputil.HandleCtx
 					return
 				}
 
-				if claims.Role != role {
+				if !roleExists(role, claims.Role) {
 					httpjson.Forbidden(w, nil)
 					return
 				}

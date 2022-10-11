@@ -14,10 +14,12 @@ type TokenReg struct {
 	usecase *jwt.Usecase
 	mid     *mid.HTTPMiddleware
 
-	authMid    *http.Auth
-	adminMid   *http.Admin
-	companyMid *http.Company
-	clientMid  *http.Client
+	authMid            *http.Auth
+	parseMid           *http.Parse
+	adminMid           *http.Admin
+	companyMid         *http.Company
+	clientMid          *http.Client
+	companyOrClientMid *http.CompanyOrClient
 }
 
 func NewToken(gr *GlobalReg) *TokenReg {
@@ -55,10 +57,19 @@ func (r *TokenReg) AuthMid() http.Auth {
 	return *r.authMid
 }
 
+func (r *TokenReg) ParseMid() http.Parse {
+	if r.parseMid == nil {
+		r.parseMid = &http.Parse{StackCtx: stack.NewCtx()}
+		r.parseMid.Use(r.HTTPMid().ParseUser)
+	}
+
+	return *r.parseMid
+}
+
 func (r *TokenReg) AdminMid() http.Admin {
 	if r.adminMid == nil {
 		r.adminMid = &http.Admin{StackCtx: stack.NewCtx()}
-		r.adminMid.Use(r.HTTPMid().HasRole(umodels.AdminRole))
+		r.adminMid.Use(r.HTTPMid().IsOneOf(umodels.AdminRole))
 	}
 
 	return *r.adminMid
@@ -67,7 +78,7 @@ func (r *TokenReg) AdminMid() http.Admin {
 func (r *TokenReg) CompanyMid() http.Company {
 	if r.companyMid == nil {
 		r.companyMid = &http.Company{StackCtx: stack.NewCtx()}
-		r.companyMid.Use(r.HTTPMid().HasRole(umodels.CompanyRole))
+		r.companyMid.Use(r.HTTPMid().IsOneOf(umodels.CompanyRole))
 	}
 
 	return *r.companyMid
@@ -76,8 +87,17 @@ func (r *TokenReg) CompanyMid() http.Company {
 func (r *TokenReg) ClientMid() http.Client {
 	if r.clientMid == nil {
 		r.clientMid = &http.Client{StackCtx: stack.NewCtx()}
-		r.clientMid.Use(r.HTTPMid().HasRole(umodels.ClientRole))
+		r.clientMid.Use(r.HTTPMid().IsOneOf(umodels.ClientRole))
 	}
 
 	return *r.clientMid
+}
+
+func (r *TokenReg) CompanyOrClientMid() http.CompanyOrClient {
+	if r.companyOrClientMid == nil {
+		r.companyOrClientMid = &http.CompanyOrClient{StackCtx: stack.NewCtx()}
+		r.companyOrClientMid.Use(r.HTTPMid().IsOneOf(umodels.CompanyRole, umodels.ClientRole))
+	}
+
+	return *r.companyOrClientMid
 }

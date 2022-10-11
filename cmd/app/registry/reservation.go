@@ -1,6 +1,8 @@
 package registry
 
 import (
+	"context"
+
 	"github.com/julienschmidt/httprouter"
 	httpHnd "github.com/wascript3r/reservio/pkg/features/reservation/delivery/http"
 	"github.com/wascript3r/reservio/pkg/features/reservation/repository"
@@ -55,5 +57,15 @@ func (r *ReservationReg) Usecase() *usecase.Usecase {
 }
 
 func (r *ReservationReg) ServeHTTP(router *httprouter.Router) {
-	httpHnd.NewHTTPHandler(router, r.mapper, r.Usecase())
+	httpHnd.NewHTTPHandler(
+		context.Background(),
+		router,
+		r.tokenReg.ClientMid(),
+		r.tokenReg.CompanyOrClientMid(),
+		r.tokenReg.ParseMid(),
+
+		r.mapper,
+		r.Usecase(),
+		r.tokenReg.Usecase(),
+	)
 }

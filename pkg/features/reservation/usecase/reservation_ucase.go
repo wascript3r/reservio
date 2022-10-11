@@ -129,7 +129,7 @@ func (u *Usecase) Get(ctx context.Context, req *dto.GetReq, onlyApprovedCompany 
 		return nil, err
 	}
 
-	rs, err := u.reservationRepo.Get(c, req.CompanyID, req.ServiceID, req.ReservationID, onlyApprovedCompany)
+	rs, err := u.reservationRepo.Get(c, req.CompanyID, req.ServiceID, req.ReservationID, req.ClientID, onlyApprovedCompany)
 	if err != nil {
 		if err == repository.ErrNoItems {
 			return nil, reservation.NotFoundError
@@ -153,7 +153,7 @@ func (u *Usecase) Get(ctx context.Context, req *dto.GetReq, onlyApprovedCompany 
 	}, nil
 }
 
-func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCompany bool) (*dto.GetAllRes, error) {
+func (u *Usecase) getAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCompany bool) ([]*models.FullReservation, error) {
 	if err := u.validator.RawRequest(req); err != nil {
 		return nil, reservation.InvalidInputError.SetData(err.GetData())
 	}
@@ -177,7 +177,11 @@ func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCo
 		return nil, err
 	}
 
-	rss, err := u.reservationRepo.GetAll(c, req.CompanyID, req.ServiceID, onlyApprovedCompany)
+	return u.reservationRepo.GetAll(c, req.CompanyID, req.ServiceID, onlyApprovedCompany)
+}
+
+func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCompany bool) (*dto.GetAllRes, error) {
+	rss, err := u.getAll(ctx, req, onlyApprovedCompany)
 	if err != nil {
 		return nil, err
 	}
@@ -201,6 +205,26 @@ func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCo
 	}
 
 	return &dto.GetAllRes{
+		Reservations: res,
+	}, nil
+}
+
+func (u *Usecase) GetAllMeta(ctx context.Context, req *dto.GetAllMetaReq, onlyApprovedCompany bool) (*dto.GetAllMetaRes, error) {
+	rss, err := u.getAll(ctx, (*dto.GetAllReq)(req), onlyApprovedCompany)
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]*dto.ReservationMeta, len(rss))
+	for i, rs := range rss {
+		res[i] = &dto.ReservationMeta{
+			ID:        rs.ID,
+			ServiceID: rs.ServiceID,
+			Date:      rs.Date.UTC().Format(dateFormat),
+		}
+	}
+
+	return &dto.GetAllMetaRes{
 		Reservations: res,
 	}, nil
 }
@@ -296,7 +320,7 @@ func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
 		return err
 	}
 
-	rs, err := u.reservationRepo.Get(c, req.CompanyID, req.ServiceID, req.ReservationID, false)
+	rs, err := u.reservationRepo.Get(c, req.CompanyID, req.ServiceID, req.ReservationID, &req.ClientID, false)
 	if err != nil {
 		if err == repository.ErrNoItems {
 			return reservation.NotFoundError
@@ -326,7 +350,7 @@ func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
 		ru.Comment = &req.Comment.Value
 	}
 
-	err = u.reservationRepo.Update(c, req.CompanyID, req.ServiceID, req.ReservationID, ru)
+	err = u.reservationRepo.Update(c, req.CompanyID, req.ServiceID, req.ReservationID, req.ClientID, ru)
 	if err != nil {
 		if err == repository.ErrNoItems {
 			return reservation.NotFoundError
@@ -362,7 +386,7 @@ func (u *Usecase) Delete(ctx context.Context, req *dto.DeleteReq) error {
 		return err
 	}
 
-	err = u.reservationRepo.Delete(c, req.CompanyID, req.ServiceID, req.ReservationID)
+	err = u.reservationRepo.Delete(c, req.CompanyID, req.ServiceID, req.ReservationID, req.ClientID)
 	if err != nil {
 		if err == repository.ErrNoItems {
 			return reservation.NotFoundError
