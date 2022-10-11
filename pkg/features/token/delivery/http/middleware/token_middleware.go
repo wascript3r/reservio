@@ -70,7 +70,7 @@ func (h *HTTPMiddleware) ParseUser(next httputil.HandleCtx) httputil.HandleCtx {
 
 		claims, err := h.tokenUcase.Parse(t)
 		if err != nil {
-			next(ctx, w, r, p)
+			httpjson.UnauthorizedCustom(w, token.InvalidOrExpiredTokenError, nil)
 			return
 		}
 		ctx = h.tokenUcase.StoreCtx(ctx, claims)
