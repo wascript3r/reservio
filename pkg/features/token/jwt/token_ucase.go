@@ -204,6 +204,17 @@ func (u *Usecase) ParseRefresh(tkn string) (*dto.RefreshClaims, error) {
 	return refresh.RefreshClaims, nil
 }
 
+func (u *Usecase) RevokeRefresh(ctx context.Context, id string) error {
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	err := u.tokenRepo.Delete(c, id)
+	if err != nil && err != repository.ErrNoItems {
+		return err
+	}
+	return nil
+}
+
 func (u *Usecase) StoreCtx(ctx context.Context, claims *dto.AccessClaims) context.Context {
 	return context.WithValue(ctx, ctxKey{}, claims)
 }

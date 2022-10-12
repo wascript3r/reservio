@@ -11,4 +11,5 @@ import (
 type Usecase interface {
 	Create(ctx context.Context, req *dto.CreateReq, role models.Role, validateReq bool) (id string, err error)
 	Authenticate(ctx context.Context, req *dto.AuthenticateReq) (*tdto.TokenPair, error)
+	Logout(ctx context.Context) error
 }

@@ -12,6 +12,7 @@ type Usecase interface {
 	RenewAccess(ctx context.Context, req *dto.RenewAccessReq) (*dto.RenewAccessRes, error)
 	ParseAccess(tkn string) (*dto.AccessClaims, error)
 	ParseRefresh(tkn string) (*dto.RefreshClaims, error)
+	RevokeRefresh(ctx context.Context, id string) error
 	StoreCtx(ctx context.Context, claims *dto.AccessClaims) context.Context
 	LoadCtx(ctx context.Context) (*dto.AccessClaims, error)
 }

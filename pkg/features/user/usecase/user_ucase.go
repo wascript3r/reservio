@@ -87,3 +87,12 @@ func (u *Usecase) Authenticate(ctx context.Context, req *dto.AuthenticateReq) (*
 
 	return u.tokenUcase.IssuePair(ctx, us)
 }
+
+func (u *Usecase) Logout(ctx context.Context) error {
+	claims, err := u.tokenUcase.LoadCtx(ctx)
+	if err != nil {
+		return err
+	}
+
+	return u.tokenUcase.RevokeRefresh(ctx, claims.RefreshTokenID)
+}

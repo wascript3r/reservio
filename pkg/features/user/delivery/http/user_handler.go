@@ -1,12 +1,14 @@
 package http
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
 	httpjson "github.com/wascript3r/httputil/json"
 	"github.com/wascript3r/reservio/pkg/errcode"
+	mid "github.com/wascript3r/reservio/pkg/features/token/delivery/http"
 	"github.com/wascript3r/reservio/pkg/features/user"
 	"github.com/wascript3r/reservio/pkg/features/user/dto"
 )
@@ -18,7 +20,7 @@ type HTTPHandler struct {
 	userUcase user.Usecase
 }
 
-func NewHTTPHandler(r *httprouter.Router, cm *httpjson.CodeMapper, uu user.Usecase) {
+func NewHTTPHandler(ctx context.Context, r *httprouter.Router, auth mid.Auth, cm *httpjson.CodeMapper, uu user.Usecase) {
 	handler := &HTTPHandler{
 		mapper:    cm,
 		userUcase: uu,
@@ -26,6 +28,7 @@ func NewHTTPHandler(r *httprouter.Router, cm *httpjson.CodeMapper, uu user.Useca
 	handler.initErrs()
 
 	r.POST(InitRoute+"/authenticate", handler.Authenticate)
+	r.POST(InitRoute+"/logout", auth.Wrap(ctx, handler.Logout))
 }
 
 func (h *HTTPHandler) initErrs() {
@@ -52,4 +55,15 @@ func (h *HTTPHandler) Authenticate(w http.ResponseWriter, r *http.Request, _ htt
 	}
 
 	httpjson.ServeJSON(w, res)
+}
+
+func (h *HTTPHandler) Logout(ctx context.Context, w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+	err := h.userUcase.Logout(ctx)
+	if err != nil {
+		code := errcode.UnwrapErr(err, user.UnknownError)
+		h.mapper.ServeErr(w, code, nil)
+		return
+	}
+
+	httpjson.Status(w, http.StatusNoContent)
 }
