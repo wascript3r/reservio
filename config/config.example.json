@@ -1,0 +1,24 @@
+{
+	"log": {
+		"showTimestamp": true
+	},
+	"database": {
+		"postgres": {
+			"dsn": "postgres://postgres:secret@db/reservio?sslmode=disable",
+			"queryTimeout": "10s"
+		}
+	},
+	"auth": {
+		"passwordCost": 10,
+		"jwt": {
+			"secretKey": "secret",
+			"accessExpiration": "5m",
+			"refreshExpiration": "2h",
+			"issuer": "reservio"
+		}
+	},
+	"http": {
+		"port": "80",
+		"enablePprof": false
+	}
+}
