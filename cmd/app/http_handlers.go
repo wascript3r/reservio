@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	httpjson "github.com/wascript3r/httputil/json"
@@ -20,7 +21,9 @@ var (
 	)
 
 	NotFoundHnd = http.HandlerFunc(
-		func(w http.ResponseWriter, _ *http.Request) {
+		func(w http.ResponseWriter, r *http.Request) {
+			// Print request path
+			fmt.Println(r.URL.Path)
 			httpjson.NotFound(w, nil)
 		},
 	)
