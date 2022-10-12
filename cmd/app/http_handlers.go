@@ -20,7 +20,7 @@ var (
 	)
 
 	NotFoundHnd = http.HandlerFunc(
-		func(w http.ResponseWriter, _ *http.Request) {
+		func(w http.ResponseWriter, r *http.Request) {
 			httpjson.NotFound(w, nil)
 		},
 	)
