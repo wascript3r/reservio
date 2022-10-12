@@ -19,16 +19,4 @@
 
 .idea/
 
-*.env
-!*.example.env
-
-config*.json
-!config*.example.json
-
-#vendor/github.com/wascript3r/*
-
-*.tar.gz
-
-# Helm
-.helm/files/*
-!.helm/files/.gitkeep
+vendor/github.com/wascript3r/*
