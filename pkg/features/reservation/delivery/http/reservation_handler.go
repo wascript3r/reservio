@@ -5,19 +5,17 @@ import (
 	"encoding/json"
 	"net/http"
 
-	umodels "github.com/wascript3r/reservio/pkg/features/user/models"
-
-	"github.com/wascript3r/reservio/pkg/features/token"
-
 	"github.com/julienschmidt/httprouter"
 	httpjson "github.com/wascript3r/httputil/json"
 	"github.com/wascript3r/reservio/pkg/errcode"
 	"github.com/wascript3r/reservio/pkg/features/reservation"
 	"github.com/wascript3r/reservio/pkg/features/reservation/dto"
+	"github.com/wascript3r/reservio/pkg/features/token"
 	mid "github.com/wascript3r/reservio/pkg/features/token/delivery/http"
+	umodels "github.com/wascript3r/reservio/pkg/features/user/models"
 )
 
-const InitRoute = "/api/v1/companies/:companyID/services/:serviceID/reservations"
+const InitRoute = "/v1/companies/:companyID/services/:serviceID/reservations"
 
 type HTTPHandler struct {
 	mapper           *httpjson.CodeMapper

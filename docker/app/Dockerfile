@@ -1,7 +1,7 @@
 # build stage
 FROM golang:alpine AS build-env
 WORKDIR /build
-ADD . ./
+COPY . ./
 RUN go build -mod vendor -o app ./cmd/app
 
 # final stage

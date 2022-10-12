@@ -11,7 +11,7 @@ import (
 	"github.com/wascript3r/reservio/pkg/features/token/dto"
 )
 
-const InitRoute = "/api/v1/tokens"
+const InitRoute = "/v1/tokens"
 
 type HTTPHandler struct {
 	mapper     *httpjson.CodeMapper

@@ -24,6 +24,12 @@ tasks:
     cmds:
       - docker compose up -d
 
+  compose-build:
+    desc: Builds docker compose
+    dir: "{{ .COMPOSE_DIR }}"
+    cmds:
+      - docker compose build
+
   db-migrate:
     desc: Migrates DB schema
     cmds:

@@ -14,7 +14,7 @@ import (
 	mid "github.com/wascript3r/reservio/pkg/features/token/delivery/http"
 )
 
-const InitRoute = "/api/v1/companies/:companyID/services"
+const InitRoute = "/v1/companies/:companyID/services"
 
 type HTTPHandler struct {
 	mapper       *httpjson.CodeMapper
