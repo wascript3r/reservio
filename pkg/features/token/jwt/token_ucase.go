@@ -41,15 +41,17 @@ type refreshClaims struct {
 
 type Usecase struct {
 	*Options
+	tx         repository.Transactor
 	tokenRepo  token.Repository
 	ctxTimeout time.Duration
 
 	validator token.Validator
 }
 
-func New(o *Options, tr token.Repository, t time.Duration, v token.Validator) *Usecase {
+func New(o *Options, tx repository.Transactor, tr token.Repository, t time.Duration, v token.Validator) *Usecase {
 	return &Usecase{
 		Options:    o,
+		tx:         tx,
 		tokenRepo:  tr,
 		ctxTimeout: t,
 
@@ -92,34 +94,36 @@ func (u *Usecase) generateRefresh(id string) (string, error) {
 }
 
 func (u *Usecase) IssuePair(ctx context.Context, us *umodels.User) (*dto.TokenPair, error) {
-	access, err := u.generateAccess(&dto.AccessClaims{
-		UserID: us.ID,
-		Role:   us.Role,
-	})
-	if err != nil {
-		return nil, err
-	}
-
 	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
 	defer cancel()
 
-	rID, err := u.tokenRepo.Insert(c, &models.RefreshToken{
-		UserID:    us.ID,
-		ExpiresAt: time.Now().Add(u.RefreshExpiration),
+	pair := &dto.TokenPair{}
+	err := u.tx.WithinTx(c, func(c context.Context) error {
+		rID, err := u.tokenRepo.Insert(c, &models.RefreshToken{
+			UserID:    us.ID,
+			ExpiresAt: time.Now().Add(u.RefreshExpiration),
+		})
+		if err != nil {
+			return err
+		}
+
+		pair.RefreshToken, err = u.generateRefresh(rID)
+		if err != nil {
+			return err
+		}
+
+		pair.AccessToken, err = u.generateAccess(&dto.AccessClaims{
+			UserID:         us.ID,
+			Role:           us.Role,
+			RefreshTokenID: rID,
+		})
+		return err
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	refresh, err := u.generateRefresh(rID)
-	if err != nil {
-		return nil, err
-	}
-
-	return &dto.TokenPair{
-		AccessToken:  access,
-		RefreshToken: refresh,
-	}, nil
+	return pair, nil
 }
 
 func (u *Usecase) RenewAccess(ctx context.Context, req *dto.RenewAccessReq) (*dto.RenewAccessRes, error) {
@@ -144,8 +148,9 @@ func (u *Usecase) RenewAccess(ctx context.Context, req *dto.RenewAccessReq) (*dt
 	}
 
 	access, err := u.generateAccess(&dto.AccessClaims{
-		UserID: cls.UserID,
-		Role:   cls.Role,
+		UserID:         cls.UserID,
+		Role:           cls.Role,
+		RefreshTokenID: refresh.RefreshTokenID,
 	})
 	if err != nil {
 		return nil, err

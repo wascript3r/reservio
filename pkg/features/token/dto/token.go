@@ -5,12 +5,13 @@ import (
 )
 
 type AccessClaims struct {
-	UserID string       `json:"userID"`
-	Role   umodels.Role `json:"role"`
+	UserID         string       `json:"userID"`
+	Role           umodels.Role `json:"role"`
+	RefreshTokenID string       `json:"rtID"`
 }
 
 type RefreshClaims struct {
-	RefreshTokenID string `json:"refreshTokenID"`
+	RefreshTokenID string `json:"rtID"`
 }
 
 type TokenPair struct {

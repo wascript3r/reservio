@@ -60,6 +60,7 @@ func (r *TokenReg) Usecase() *jwt.Usecase {
 				Issuer:            r.cfg.Auth.JWT.Issuer,
 			},
 
+			r.db,
 			r.Repository(),
 			r.cfg.Database.Postgres.QueryTimeout.Duration,
 			r.Validator(),
