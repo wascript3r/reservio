@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	_ "net/http/pprof"
 	"os"
@@ -87,6 +88,7 @@ func main() {
 	httpRouter := httprouter.New()
 	httpRouter.MethodNotAllowed = MethodNotAllowedHnd
 	httpRouter.NotFound = NotFoundHnd
+	log.Println(1233)
 
 	if Cfg.HTTP.EnablePprof {
 		// pprof
