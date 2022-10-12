@@ -68,6 +68,15 @@ CREATE TABLE reservations
     created_at timestamp WITH TIME ZONE DEFAULT NOW()             NOT NULL
 );
 
+CREATE TABLE refresh_tokens
+(
+    id         uuid DEFAULT gen_random_uuid() NOT NULL
+        PRIMARY KEY,
+    user_id    uuid                           NOT NULL
+        REFERENCES users,
+    expires_at timestamp WITH TIME ZONE       NOT NULL
+);
+
 
 -- migrate:down
 
