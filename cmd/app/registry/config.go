@@ -56,9 +56,10 @@ type Config struct {
 	Auth struct {
 		PasswordCost int `json:"passwordCost"`
 		JWT          struct {
-			SecretKey  string   `json:"secretKey"`
-			Expiration Duration `json:"expiration"`
-			Issuer     string   `json:"issuer"`
+			SecretKey         string   `json:"secretKey"`
+			AccessExpiration  Duration `json:"accessExpiration"`
+			RefreshExpiration Duration `json:"refreshExpiration"`
+			Issuer            string   `json:"issuer"`
 		} `json:"jwt"`
 	} `json:"auth"`
 

@@ -3,17 +3,15 @@ package token
 import (
 	"context"
 
+	"github.com/wascript3r/reservio/pkg/features/token/dto"
 	umodels "github.com/wascript3r/reservio/pkg/features/user/models"
 )
 
-type UserClaims struct {
-	UserID string       `json:"userID"`
-	Role   umodels.Role `json:"role"`
-}
-
 type Usecase interface {
-	Generate(us *umodels.User) (token string, err error)
-	Parse(token string) (*UserClaims, error)
-	StoreCtx(ctx context.Context, claims *UserClaims) context.Context
-	LoadCtx(ctx context.Context) (*UserClaims, error)
+	IssuePair(ctx context.Context, us *umodels.User) (*dto.TokenPair, error)
+	RenewAccess(ctx context.Context, req *dto.RenewAccessReq) (*dto.RenewAccessRes, error)
+	ParseAccess(tkn string) (*dto.AccessClaims, error)
+	ParseRefresh(tkn string) (*dto.RefreshClaims, error)
+	StoreCtx(ctx context.Context, claims *dto.AccessClaims) context.Context
+	LoadCtx(ctx context.Context) (*dto.AccessClaims, error)
 }

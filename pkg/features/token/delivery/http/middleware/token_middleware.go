@@ -49,7 +49,7 @@ func (h *HTTPMiddleware) Authenticated(next httputil.HandleCtx) httputil.HandleC
 			return
 		}
 
-		claims, err := h.tokenUcase.Parse(t)
+		claims, err := h.tokenUcase.ParseAccess(t)
 		if err != nil {
 			httpjson.UnauthorizedCustom(w, token.InvalidOrExpiredTokenError, nil)
 			return
@@ -68,7 +68,7 @@ func (h *HTTPMiddleware) ParseUser(next httputil.HandleCtx) httputil.HandleCtx {
 			return
 		}
 
-		claims, err := h.tokenUcase.Parse(t)
+		claims, err := h.tokenUcase.ParseAccess(t)
 		if err != nil {
 			httpjson.UnauthorizedCustom(w, token.InvalidOrExpiredTokenError, nil)
 			return

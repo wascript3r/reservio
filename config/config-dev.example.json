@@ -12,7 +12,8 @@
 		"passwordCost": 10,
 		"jwt": {
 			"secretKey": "secret",
-			"expiration": "5m",
+			"accessExpiration": "5m",
+			"refreshExpiration": "2h",
 			"issuer": "reservio"
 		}
 	},

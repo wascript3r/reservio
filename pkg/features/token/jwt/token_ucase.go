@@ -5,9 +5,13 @@ import (
 	"errors"
 	"time"
 
+	"github.com/wascript3r/reservio/pkg/repository"
+
 	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/wascript3r/reservio/pkg/features/token"
-	"github.com/wascript3r/reservio/pkg/features/user/models"
+	"github.com/wascript3r/reservio/pkg/features/token/dto"
+	"github.com/wascript3r/reservio/pkg/features/token/models"
+	umodels "github.com/wascript3r/reservio/pkg/features/user/models"
 )
 
 type ctxKey struct{}
@@ -15,78 +19,192 @@ type ctxKey struct{}
 var (
 	signingMethod = jwt.SigningMethodHS256
 
-	ErrInvalidTokenAlg    = errors.New("invalid token algorithm")
-	ErrInvalidToken       = errors.New("invalid token")
-	ErrInvalidTokenClaims = errors.New("invalid token claims")
+	ErrInvalidTokenAlg = errors.New("invalid token algorithm")
 )
 
-type AuthClaims struct {
+type Options struct {
+	PrivateKey        []byte
+	AccessExpiration  time.Duration
+	RefreshExpiration time.Duration
+	Issuer            string
+}
+
+type accessClaims struct {
 	jwt.StandardClaims
-	token.UserClaims
+	*dto.AccessClaims
+}
+
+type refreshClaims struct {
+	jwt.StandardClaims
+	*dto.RefreshClaims
 }
 
 type Usecase struct {
-	privateKey []byte
-	expiration time.Duration
-	issuer     string
+	*Options
+	tokenRepo  token.Repository
+	ctxTimeout time.Duration
+
+	validator token.Validator
 }
 
-func New(privateKey []byte, expiration time.Duration, issuer string) *Usecase {
+func New(o *Options, tr token.Repository, t time.Duration, v token.Validator) *Usecase {
 	return &Usecase{
-		privateKey: privateKey,
-		expiration: expiration,
-		issuer:     issuer,
+		Options:    o,
+		tokenRepo:  tr,
+		ctxTimeout: t,
+
+		validator: v,
 	}
 }
 
-func (u *Usecase) Generate(us *models.User) (string, error) {
-	t := jwt.NewWithClaims(signingMethod, AuthClaims{
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: jwt.At(time.Now().Add(u.expiration)),
-			// ID:        "",
-			IssuedAt: jwt.Now(),
-			Issuer:   u.issuer,
-			// NotBefore: nil,
-			// Subject:   "",
-		},
-		UserClaims: token.UserClaims{
-			UserID: us.ID,
-			Role:   us.Role,
-		},
-	})
-	return t.SignedString(u.privateKey)
+func (u *Usecase) buildStandardClaims(exp time.Duration) jwt.StandardClaims {
+	return jwt.StandardClaims{
+		ExpiresAt: jwt.At(time.Now().Add(exp)),
+		// ID:        "",
+		IssuedAt: jwt.Now(),
+		Issuer:   u.Issuer,
+		// NotBefore: nil,
+		// Subject:   "",
+	}
 }
 
-func (u *Usecase) Parse(tkn string) (*token.UserClaims, error) {
-	t, err := jwt.ParseWithClaims(tkn, &AuthClaims{}, func(t *jwt.Token) (interface{}, error) {
-		_, ok := t.Method.(*jwt.SigningMethodHMAC)
-		if !ok || t.Method.Alg() != signingMethod.Alg() {
-			return nil, ErrInvalidTokenAlg
-		}
-		return u.privateKey, nil
+func (u *Usecase) generate(claims jwt.Claims) (string, error) {
+	t := jwt.NewWithClaims(signingMethod, claims)
+	return t.SignedString(u.PrivateKey)
+}
+
+func (u *Usecase) generateAccess(claims *dto.AccessClaims) (string, error) {
+	combined := &accessClaims{
+		StandardClaims: u.buildStandardClaims(u.AccessExpiration),
+		AccessClaims:   claims,
+	}
+	return u.generate(combined)
+}
+
+func (u *Usecase) generateRefresh(id string) (string, error) {
+	combined := &refreshClaims{
+		StandardClaims: u.buildStandardClaims(u.RefreshExpiration),
+		RefreshClaims: &dto.RefreshClaims{
+			RefreshTokenID: id,
+		},
+	}
+	return u.generate(combined)
+}
+
+func (u *Usecase) IssuePair(ctx context.Context, us *umodels.User) (*dto.TokenPair, error) {
+	access, err := u.generateAccess(&dto.AccessClaims{
+		UserID: us.ID,
+		Role:   us.Role,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	if !t.Valid {
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	rID, err := u.tokenRepo.Insert(c, &models.RefreshToken{
+		UserID:    us.ID,
+		ExpiresAt: time.Now().Add(u.RefreshExpiration),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	refresh, err := u.generateRefresh(rID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.TokenPair{
+		AccessToken:  access,
+		RefreshToken: refresh,
+	}, nil
+}
+
+func (u *Usecase) RenewAccess(ctx context.Context, req *dto.RenewAccessReq) (*dto.RenewAccessRes, error) {
+	if err := u.validator.RawRequest(req); err != nil {
+		return nil, token.InvalidInputError.SetData(err.GetData())
+	}
+
+	refresh, err := u.ParseRefresh(req.RefreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	cls, err := u.tokenRepo.GetClaims(c, refresh.RefreshTokenID)
+	if err != nil {
+		if err == repository.ErrNoItems {
+			return nil, token.InvalidOrExpiredTokenError
+		}
+		return nil, err
+	}
+
+	access, err := u.generateAccess(&dto.AccessClaims{
+		UserID: cls.UserID,
+		Role:   cls.Role,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.RenewAccessRes{
+		AccessToken: access,
+	}, nil
+}
+
+func (u *Usecase) parse(tkn string, claims jwt.Claims) (jwt.Claims, error) {
+	t, err := jwt.ParseWithClaims(tkn, claims, func(t *jwt.Token) (interface{}, error) {
+		_, ok := t.Method.(*jwt.SigningMethodHMAC)
+		if !ok || t.Method.Alg() != signingMethod.Alg() {
+			return nil, ErrInvalidTokenAlg
+		}
+		return u.PrivateKey, nil
+	})
+	if err != nil || !t.Valid {
 		return nil, token.InvalidOrExpiredTokenError
 	}
 
-	claims, ok := t.Claims.(*AuthClaims)
-	if !ok {
-		return nil, ErrInvalidTokenClaims
-	}
-
-	return &claims.UserClaims, nil
+	return t.Claims, nil
 }
 
-func (u *Usecase) StoreCtx(ctx context.Context, claims *token.UserClaims) context.Context {
+func (u *Usecase) ParseAccess(tkn string) (*dto.AccessClaims, error) {
+	claims, err := u.parse(tkn, &accessClaims{})
+	if err != nil {
+		return nil, err
+	}
+
+	access, ok := claims.(*accessClaims)
+	if !ok || access.AccessClaims == nil {
+		return nil, token.FaultyTokenError
+	}
+
+	return access.AccessClaims, nil
+}
+
+func (u *Usecase) ParseRefresh(tkn string) (*dto.RefreshClaims, error) {
+	claims, err := u.parse(tkn, &refreshClaims{})
+	if err != nil {
+		return nil, err
+	}
+
+	refresh, ok := claims.(*refreshClaims)
+	if !ok || refresh.RefreshClaims == nil {
+		return nil, token.FaultyTokenError
+	}
+
+	return refresh.RefreshClaims, nil
+}
+
+func (u *Usecase) StoreCtx(ctx context.Context, claims *dto.AccessClaims) context.Context {
 	return context.WithValue(ctx, ctxKey{}, claims)
 }
 
-func (u *Usecase) LoadCtx(ctx context.Context) (*token.UserClaims, error) {
-	claims, ok := ctx.Value(ctxKey{}).(*token.UserClaims)
+func (u *Usecase) LoadCtx(ctx context.Context) (*dto.AccessClaims, error) {
+	claims, ok := ctx.Value(ctxKey{}).(*dto.AccessClaims)
 	if !ok {
 		return nil, token.ErrCannotLoadToken
 	}

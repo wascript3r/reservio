@@ -1,18 +1,24 @@
 package registry
 
 import (
+	"github.com/julienschmidt/httprouter"
 	stack "github.com/wascript3r/httputil/middleware"
 	"github.com/wascript3r/reservio/pkg/features/token/delivery/http"
+	httpHnd "github.com/wascript3r/reservio/pkg/features/token/delivery/http"
 	mid "github.com/wascript3r/reservio/pkg/features/token/delivery/http/middleware"
 	"github.com/wascript3r/reservio/pkg/features/token/jwt"
+	"github.com/wascript3r/reservio/pkg/features/token/repository"
+	"github.com/wascript3r/reservio/pkg/features/token/validator"
 	umodels "github.com/wascript3r/reservio/pkg/features/user/models"
 )
 
 type TokenReg struct {
 	*GlobalReg
 
-	usecase *jwt.Usecase
-	mid     *mid.HTTPMiddleware
+	repository *repository.PgRepo
+	validator  *validator.Validator
+	usecase    *jwt.Usecase
+	mid        *mid.HTTPMiddleware
 
 	authMid            *http.Auth
 	parseMid           *http.Parse
@@ -28,12 +34,35 @@ func NewToken(gr *GlobalReg) *TokenReg {
 	}
 }
 
+func (r *TokenReg) Repository() *repository.PgRepo {
+	if r.repository == nil {
+		r.repository = repository.NewPgRepo(r.db)
+	}
+
+	return r.repository
+}
+
+func (r *TokenReg) Validator() *validator.Validator {
+	if r.validator == nil {
+		r.validator = validator.New()
+	}
+
+	return r.validator
+}
+
 func (r *TokenReg) Usecase() *jwt.Usecase {
 	if r.usecase == nil {
 		r.usecase = jwt.New(
-			[]byte(r.cfg.Auth.JWT.SecretKey),
-			r.cfg.Auth.JWT.Expiration.Duration,
-			r.cfg.Auth.JWT.Issuer,
+			&jwt.Options{
+				PrivateKey:        []byte(r.cfg.Auth.JWT.SecretKey),
+				AccessExpiration:  r.cfg.Auth.JWT.AccessExpiration.Duration,
+				RefreshExpiration: r.cfg.Auth.JWT.RefreshExpiration.Duration,
+				Issuer:            r.cfg.Auth.JWT.Issuer,
+			},
+
+			r.Repository(),
+			r.cfg.Database.Postgres.QueryTimeout.Duration,
+			r.Validator(),
 		)
 	}
 
@@ -100,4 +129,13 @@ func (r *TokenReg) CompanyOrClientMid() http.CompanyOrClient {
 	}
 
 	return *r.companyOrClientMid
+}
+
+func (r *TokenReg) ServeHTTP(router *httprouter.Router) {
+	httpHnd.NewHTTPHandler(
+		router,
+
+		r.mapper,
+		r.Usecase(),
+	)
 }

@@ -98,6 +98,7 @@ func main() {
 	serviceReg.ServeHTTP(httpRouter)
 	reservationReg.ServeHTTP(httpRouter)
 	clientReg.ServeHTTP(httpRouter)
+	tokenReg.ServeHTTP(httpRouter)
 
 	httpServer := &http.Server{
 		Addr:    ":" + Cfg.HTTP.Port,

@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	tdto "github.com/wascript3r/reservio/pkg/features/token/dto"
+
 	"github.com/wascript3r/reservio/pkg/features/token"
 	"github.com/wascript3r/reservio/pkg/features/user"
 	"github.com/wascript3r/reservio/pkg/features/user/dto"
@@ -63,7 +65,7 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq, role models.Ro
 	return u.userRepo.Insert(c, us)
 }
 
-func (u *Usecase) Authenticate(ctx context.Context, req *dto.AuthenticateReq) (*dto.AuthenticateRes, error) {
+func (u *Usecase) Authenticate(ctx context.Context, req *dto.AuthenticateReq) (*tdto.TokenPair, error) {
 	if err := u.validator.RawRequest(req); err != nil {
 		return nil, user.InvalidInputError
 	}
@@ -83,12 +85,5 @@ func (u *Usecase) Authenticate(ctx context.Context, req *dto.AuthenticateReq) (*
 		return nil, user.InvalidCredentialsError
 	}
 
-	t, err := u.tokenUcase.Generate(us)
-	if err != nil {
-		return nil, err
-	}
-
-	return &dto.AuthenticateRes{
-		Token: t,
-	}, nil
+	return u.tokenUcase.IssuePair(ctx, us)
 }
