@@ -6,6 +6,7 @@ INSERT INTO public.users (id, email, password, role, created_at) VALUES ('d974f2
 INSERT INTO public.users (id, email, password, role, created_at) VALUES ('88685495-24ba-4adf-806f-fd0fe9aba8f4', 'kirpykla@gmail.com', '$2a$10$sSwmSVQY3cA/xY9Ya8YtPu4Mtrrlj/2UdbGeigkB4OoC3e2ZBGUIW', 'company', '2022-10-02 16:15:06.128298 +00:00');
 INSERT INTO public.users (id, email, password, role, created_at) VALUES ('e91f4c92-1371-48a1-a745-7d66d2178e15', 'plovykla@gmail.com', '$2a$10$k0Nk.2YFNjDW7rnSZg1/MewjZX7JpBWGMmKcQIWK/lH5N5VepDqFO', 'company', '2022-10-02 16:16:28.083293 +00:00');
 INSERT INTO public.users (id, email, password, role, created_at) VALUES ('7b5624c2-7713-4bb3-b8d5-ea29b5792115', 'servisas@gmail.com', '$2a$10$oXp7.EnCKetl/kEQy9TZqO1hyjxFGAZX1Pp5yamZxW.5slj8p5fmG', 'company', '2022-10-02 16:17:30.666699 +00:00');
+INSERT INTO public.users (id, email, password, role, created_at) VALUES ('65d5f815-8b9f-4375-b86b-ed49f6b1ad81', 'admin@gmail.com', '$2a$10$yKsxJSsYUGnqd6rHMsO9P.KnQnbLpYWaZnfZd2I5YSelWeie9Qn9a', 'admin', '2022-10-16 16:17:30.666699 +00:00');
 
 INSERT INTO public.companies (id, name, address, description, approved, created_at) VALUES ('88685495-24ba-4adf-806f-fd0fe9aba8f4', 'Kirpykla', 'Kauno g. 25, Vilnius', 'Vyrų ir moterų kirpykla Vilniuje', true, '2022-10-02 16:15:06.128298 +00:00');
 INSERT INTO public.companies (id, name, address, description, approved, created_at) VALUES ('e91f4c92-1371-48a1-a745-7d66d2178e15', 'Plovykla', 'Vilniaus g. 17, Kaunas', 'Automobilių plovykla Kaune', true, '2022-10-02 16:16:28.083293 +00:00');
