@@ -26,6 +26,7 @@ type TokenReg struct {
 	companyMid         *http.Company
 	clientMid          *http.Client
 	companyOrClientMid *http.CompanyOrClient
+	companyOrAdminMid  *http.CompanyOrAdmin
 }
 
 func NewToken(gr *GlobalReg) *TokenReg {
@@ -130,6 +131,15 @@ func (r *TokenReg) CompanyOrClientMid() http.CompanyOrClient {
 	}
 
 	return *r.companyOrClientMid
+}
+
+func (r *TokenReg) CompanyOrAdminMid() http.CompanyOrAdmin {
+	if r.companyOrAdminMid == nil {
+		r.companyOrAdminMid = &http.CompanyOrAdmin{StackCtx: stack.NewCtx()}
+		r.companyOrAdminMid.Use(r.HTTPMid().IsOneOf(umodels.CompanyRole, umodels.AdminRole))
+	}
+
+	return *r.companyOrAdminMid
 }
 
 func (r *TokenReg) ServeHTTP(router *httprouter.Router) {

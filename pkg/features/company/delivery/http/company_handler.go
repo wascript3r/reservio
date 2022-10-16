@@ -12,6 +12,7 @@ import (
 	"github.com/wascript3r/reservio/pkg/features/company/dto"
 	"github.com/wascript3r/reservio/pkg/features/token"
 	mid "github.com/wascript3r/reservio/pkg/features/token/delivery/http"
+	"github.com/wascript3r/reservio/pkg/features/user/models"
 )
 
 const InitRoute = "/v1/companies"
@@ -22,7 +23,7 @@ type HTTPHandler struct {
 	tokenUcase   token.Usecase
 }
 
-func NewHTTPHandler(ctx context.Context, r *httprouter.Router, company mid.Company, admin mid.Admin, mp *httpjson.CodeMapper, cu company.Usecase, tu token.Usecase) {
+func NewHTTPHandler(ctx context.Context, r *httprouter.Router, admin mid.Admin, parse mid.Parse, companyOrAdmin mid.CompanyOrAdmin, mp *httpjson.CodeMapper, cu company.Usecase, tu token.Usecase) {
 	handler := &HTTPHandler{
 		mapper:       mp,
 		companyUcase: cu,
@@ -32,8 +33,8 @@ func NewHTTPHandler(ctx context.Context, r *httprouter.Router, company mid.Compa
 
 	r.POST(InitRoute, handler.Create)
 	r.GET(InitRoute+"/:companyID", handler.Get)
-	r.GET(InitRoute, handler.GetAll)
-	r.PATCH(InitRoute+"/:companyID", company.Wrap(ctx, handler.Update))
+	r.GET(InitRoute, parse.Wrap(ctx, handler.GetAll))
+	r.PATCH(InitRoute+"/:companyID", companyOrAdmin.Wrap(ctx, handler.Update))
 	r.DELETE(InitRoute+"/:companyID", admin.Wrap(ctx, handler.Delete))
 }
 
@@ -74,8 +75,14 @@ func (h *HTTPHandler) Get(w http.ResponseWriter, r *http.Request, p httprouter.P
 	httpjson.ServeJSON(w, res)
 }
 
-func (h *HTTPHandler) GetAll(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	res, err := h.companyUcase.GetAll(r.Context(), false)
+func (h *HTTPHandler) GetAll(ctx context.Context, w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	claims, err := h.tokenUcase.LoadCtx(ctx)
+	onlyApproved := true
+	if err == nil && claims.Role == models.AdminRole {
+		onlyApproved = false
+	}
+
+	res, err := h.companyUcase.GetAll(r.Context(), onlyApproved)
 	if err != nil {
 		code := errcode.UnwrapErr(err, company.UnknownError)
 		h.mapper.ServeErr(w, code, nil)
@@ -99,7 +106,10 @@ func (h *HTTPHandler) Update(ctx context.Context, w http.ResponseWriter, r *http
 	if err != nil {
 		httpjson.InternalError(w, nil)
 		return
-	} else if claims.UserID != req.CompanyID {
+	} else if claims.Role == models.CompanyRole && (claims.UserID != req.CompanyID || req.AdminUpdate != nil) {
+		httpjson.Forbidden(w, nil)
+		return
+	} else if claims.Role == models.AdminRole && req.CompanyUpdate != nil {
 		httpjson.Forbidden(w, nil)
 		return
 	}

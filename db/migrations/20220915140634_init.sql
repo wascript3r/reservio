@@ -64,7 +64,6 @@ CREATE TABLE reservations
         REFERENCES clients,
     date       timestamp WITH TIME ZONE                           NOT NULL,
     comment    varchar(200),
-    approved   boolean                  DEFAULT FALSE             NOT NULL,
     created_at timestamp WITH TIME ZONE DEFAULT NOW()             NOT NULL
 );
 

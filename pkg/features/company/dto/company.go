@@ -55,21 +55,31 @@ type GetAllRes struct {
 
 type UpdateReq struct {
 	GetReq
+	*AdminUpdate
+	*CompanyUpdate
+}
+
+type AdminUpdate struct {
+	Approved *bool `json:"approved" validate:"omitempty"`
+}
+
+type CompanyUpdate struct {
 	Name        *string `json:"name" validate:"omitempty,c_name"`
 	Address     *string `json:"address" validate:"omitempty,c_address"`
 	Description *string `json:"description" validate:"omitempty,c_description"`
-	Approved    *bool   `json:"approved" validate:"omitempty"`
 }
 
 func (u *UpdateReq) Escape() {
-	if u.Name != nil {
-		*u.Name = html.EscapeString(*u.Name)
-	}
-	if u.Address != nil {
-		*u.Address = html.EscapeString(*u.Address)
-	}
-	if u.Description != nil {
-		*u.Description = html.EscapeString(*u.Description)
+	if u.CompanyUpdate != nil {
+		if u.CompanyUpdate.Name != nil {
+			*u.CompanyUpdate.Name = html.EscapeString(*u.CompanyUpdate.Name)
+		}
+		if u.CompanyUpdate.Address != nil {
+			*u.CompanyUpdate.Address = html.EscapeString(*u.CompanyUpdate.Address)
+		}
+		if u.CompanyUpdate.Description != nil {
+			*u.CompanyUpdate.Description = html.EscapeString(*u.CompanyUpdate.Description)
+		}
 	}
 }
 

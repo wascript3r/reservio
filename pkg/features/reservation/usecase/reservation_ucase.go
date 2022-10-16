@@ -53,12 +53,14 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 		return nil, reservation.InvalidInputError
 	}
 
-	_, err = u.companyRepo.Get(c, req.CompanyID, false)
+	comp, err := u.companyRepo.Get(c, req.CompanyID, false)
 	if err != nil {
 		if err == repository.ErrNoItems {
 			return nil, company.NotFoundError
 		}
 		return nil, err
+	} else if !comp.Approved {
+		return nil, company.NotApprovedError
 	}
 
 	ss, err := u.serviceRepo.Get(c, req.CompanyID, req.ServiceID, false)
@@ -101,7 +103,6 @@ func (u *Usecase) Create(ctx context.Context, req *dto.CreateReq) (*dto.CreateRe
 		ClientID:  req.ClientID,
 		Date:      date.UTC().Format(dateFormat),
 		Comment:   req.Comment,
-		Approved:  false,
 	}, nil
 }
 
@@ -147,9 +148,8 @@ func (u *Usecase) Get(ctx context.Context, req *dto.GetReq, onlyApprovedCompany 
 			Phone:     rs.Client.Phone,
 			Email:     rs.Client.Email,
 		},
-		Date:     rs.Date.UTC().Format(dateFormat),
-		Comment:  rs.Comment,
-		Approved: rs.Approved,
+		Date:    rs.Date.UTC().Format(dateFormat),
+		Comment: rs.Comment,
 	}, nil
 }
 
@@ -198,9 +198,8 @@ func (u *Usecase) GetAll(ctx context.Context, req *dto.GetAllReq, onlyApprovedCo
 				Phone:     rs.Client.Phone,
 				Email:     rs.Client.Email,
 			},
-			Date:     rs.Date.UTC().Format(dateFormat),
-			Comment:  rs.Comment,
-			Approved: rs.Approved,
+			Date:    rs.Date.UTC().Format(dateFormat),
+			Comment: rs.Comment,
 		}
 	}
 
@@ -276,9 +275,8 @@ func (u *Usecase) GetAllByClient(ctx context.Context, req *dto.GetAllByClientReq
 				VisitDuration:   rs.Service.VisitDuration,
 				WorkSchedule:    ws,
 			},
-			Date:     rs.Date.UTC().Format(dateFormat),
-			Comment:  rs.Comment,
-			Approved: rs.Approved,
+			Date:    rs.Date.UTC().Format(dateFormat),
+			Comment: rs.Comment,
 		}
 	}
 
@@ -343,8 +341,7 @@ func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
 
 	req.Escape()
 	ru := &models.ReservationUpdate{
-		Date:     date,
-		Approved: req.Approved,
+		Date: date,
 	}
 	if req.Comment != nil {
 		ru.Comment = &req.Comment.Value

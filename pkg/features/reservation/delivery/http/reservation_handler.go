@@ -113,12 +113,7 @@ func (h *HTTPHandler) GetAll(ctx context.Context, w http.ResponseWriter, r *http
 	req.ServiceID = p.ByName("serviceID")
 
 	claims, err := h.tokenUcase.LoadCtx(ctx)
-	if err == nil && claims.Role == umodels.CompanyRole {
-		if claims.UserID != req.CompanyID {
-			httpjson.Forbidden(w, nil)
-			return
-		}
-
+	if err == nil && claims.Role == umodels.CompanyRole && claims.UserID == req.CompanyID {
 		res, err := h.reservationUcase.GetAll(r.Context(), req, false)
 		if err != nil {
 			code := errcode.UnwrapErr(err, reservation.UnknownError)
