@@ -23,7 +23,7 @@ type HTTPHandler struct {
 	tokenUcase   token.Usecase
 }
 
-func NewHTTPHandler(ctx context.Context, r *httprouter.Router, company mid.Company, admin mid.Admin, parse mid.Parse, mp *httpjson.CodeMapper, cu company.Usecase, tu token.Usecase) {
+func NewHTTPHandler(ctx context.Context, r *httprouter.Router, admin mid.Admin, parse mid.Parse, companyOrAdmin mid.CompanyOrAdmin, mp *httpjson.CodeMapper, cu company.Usecase, tu token.Usecase) {
 	handler := &HTTPHandler{
 		mapper:       mp,
 		companyUcase: cu,
@@ -34,7 +34,7 @@ func NewHTTPHandler(ctx context.Context, r *httprouter.Router, company mid.Compa
 	r.POST(InitRoute, handler.Create)
 	r.GET(InitRoute+"/:companyID", handler.Get)
 	r.GET(InitRoute, parse.Wrap(ctx, handler.GetAll))
-	r.PATCH(InitRoute+"/:companyID", company.Wrap(ctx, handler.Update))
+	r.PATCH(InitRoute+"/:companyID", companyOrAdmin.Wrap(ctx, handler.Update))
 	r.DELETE(InitRoute+"/:companyID", admin.Wrap(ctx, handler.Delete))
 }
 
@@ -106,7 +106,10 @@ func (h *HTTPHandler) Update(ctx context.Context, w http.ResponseWriter, r *http
 	if err != nil {
 		httpjson.InternalError(w, nil)
 		return
-	} else if claims.UserID != req.CompanyID {
+	} else if claims.Role == models.CompanyRole && (claims.UserID != req.CompanyID || req.AdminUpdate != nil) {
+		httpjson.Forbidden(w, nil)
+		return
+	} else if claims.Role == models.AdminRole && req.CompanyUpdate != nil {
 		httpjson.Forbidden(w, nil)
 		return
 	}

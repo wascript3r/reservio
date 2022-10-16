@@ -19,4 +19,5 @@ type (
 	Company         struct{ *middleware.StackCtx }
 	Client          struct{ *middleware.StackCtx }
 	CompanyOrClient struct{ *middleware.StackCtx }
+	CompanyOrAdmin  struct{ *middleware.StackCtx }
 )

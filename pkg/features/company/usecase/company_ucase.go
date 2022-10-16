@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"html"
 	"time"
 
 	"github.com/wascript3r/reservio/pkg/features/company"
@@ -141,22 +140,18 @@ func (u *Usecase) Update(ctx context.Context, req *dto.UpdateReq) error {
 	c, cancel := context.WithTimeout(ctx, u.ctxTimeout)
 	defer cancel()
 
-	if req.Name != nil {
-		*req.Name = html.EscapeString(*req.Name)
+	req.Escape()
+	cu := &models.CompanyUpdate{}
+	if req.CompanyUpdate != nil {
+		cu.Name = req.CompanyUpdate.Name
+		cu.Address = req.CompanyUpdate.Address
+		cu.Description = req.CompanyUpdate.Description
 	}
-	if req.Address != nil {
-		*req.Address = html.EscapeString(*req.Address)
-	}
-	if req.Description != nil {
-		*req.Description = html.EscapeString(*req.Description)
+	if req.AdminUpdate != nil {
+		cu.Approved = req.AdminUpdate.Approved
 	}
 
-	err := u.companyRepo.Update(c, req.CompanyID, &models.CompanyUpdate{
-		Name:        req.Name,
-		Address:     req.Address,
-		Description: req.Description,
-		Approved:    req.Approved,
-	})
+	err := u.companyRepo.Update(c, req.CompanyID, cu)
 	if err != nil {
 		if err == repository.ErrNoItems {
 			return company.NotFoundError
