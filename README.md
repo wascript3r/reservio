@@ -27,10 +27,8 @@ Registruotas sistemos naudotojas (įmonė) galės:
 6. Ištrinti teikiamą paslaugą
 7. Peržiūrėti savo įmonės teikiamų paslaugų sąrašą
 8. Peržiūrėti informaciją apie konkrečią rezervaciją
-9. Patvirtinti konkrečią rezervaciją
-10. Atšaukti (ištrinti) konkrečią rezervaciją
-11. Peržiūrėti konkrečios paslaugos rezervacijų sąrašą
-12. Atnaujinti įmonės informaciją
+9. Peržiūrėti konkrečios paslaugos rezervacijų sąrašą
+10. Atnaujinti įmonės informaciją
 
 Registruotas sistemos naudotojas (klientas) galės:
 1. Prisijungti
@@ -48,8 +46,11 @@ Registruotas sistemos naudotojas (administratorius) galės:
 1. Prisijungti
 2. Atsijungti
 3. Peržiūrėti įmonių sąrašą
-4. Patvirtinti įmonės registraciją
-5. Pašalinti įmonę
+4. Peržiūrėti informaciją apie konkrečią įmonę
+5. Peržiūrėti konkrečios įmonės teikiamas paslaugas
+6. Peržiūrėti konkrečios įmonės ir konkrečios paslaugos sukurtas rezervacijas (laisvus vizitų laikus)
+7. Patvirtinti įmonės registraciją
+8. Pašalinti įmonę
 
 ### 2. Sistemos architektūra
 
@@ -64,4 +65,5 @@ Sistemą sudarys dvi dalys:
 2.1 pav. pavaizduota sistemos diegimo diagrama. Sistemos talpinimui bus panaudotas Amazon Web Services serveris, kuriame sistemos naudotojų užklausas HTTP protokolu apdoros Traefik atvirkštinis tarpinis serveris (angl. reverse proxy) – jis HTTP užklausas persiųs arba į aplikacijų programavimo sąsają (serverio dalį), arba į WEB aplikaciją (kliento dalį), tuomet sulauks atsakymo ir jį persiųs atgal sistemos naudotojui. Sistemos realizacijai prireiks duomenų bazės valdymo serverio, o komunikaciją su juo atliks aplikacijų programavimo sąsaja TCP/IP protokolu.
 
 ![](.README_images/deployment.png)
+
 **pav. 2.1 Sistemos diegimo diagrama**
