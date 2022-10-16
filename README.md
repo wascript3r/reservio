@@ -27,10 +27,8 @@ Registruotas sistemos naudotojas (įmonė) galės:
 6. Ištrinti teikiamą paslaugą
 7. Peržiūrėti savo įmonės teikiamų paslaugų sąrašą
 8. Peržiūrėti informaciją apie konkrečią rezervaciją
-9. Patvirtinti konkrečią rezervaciją
-10. Atšaukti (ištrinti) konkrečią rezervaciją
-11. Peržiūrėti konkrečios paslaugos rezervacijų sąrašą
-12. Atnaujinti įmonės informaciją
+9. Peržiūrėti konkrečios paslaugos rezervacijų sąrašą
+10. Atnaujinti įmonės informaciją
 
 Registruotas sistemos naudotojas (klientas) galės:
 1. Prisijungti
@@ -48,8 +46,11 @@ Registruotas sistemos naudotojas (administratorius) galės:
 1. Prisijungti
 2. Atsijungti
 3. Peržiūrėti įmonių sąrašą
-4. Patvirtinti įmonės registraciją
-5. Pašalinti įmonę
+4. Peržiūrėti informaciją apie konkrečią įmonę
+5. Peržiūrėti konkrečios įmonės teikiamas paslaugas
+6. Peržiūrėti konkrečios įmonės ir konkrečios paslaugos sukurtas rezervacijas (laisvus vizitų laikus)
+7. Patvirtinti įmonės registraciją
+8. Pašalinti įmonę
 
 ### 2. Sistemos architektūra
 
