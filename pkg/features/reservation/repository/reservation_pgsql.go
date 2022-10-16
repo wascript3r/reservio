@@ -16,23 +16,22 @@ import (
 const (
 	insert = "INSERT INTO reservations (service_id, client_id, date, comment) VALUES ($1, $2, $3, $4) RETURNING id"
 
-	get         = "SELECT r.id, r.service_id, r.date, r.comment, r.approved, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3"
-	getByClient = "SELECT r.id, r.service_id, r.date, r.comment, r.approved, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3 AND r.client_id = $4"
+	get         = "SELECT r.id, r.service_id, r.date, r.comment, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3"
+	getByClient = "SELECT r.id, r.service_id, r.date, r.comment, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3 AND r.client_id = $4"
 
-	getApproved         = "SELECT r.id, r.service_id, r.date, r.comment, r.approved, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3 AND c.approved = TRUE"
-	getApprovedByClient = "SELECT r.id, r.service_id, r.date, r.comment, r.approved, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3 AND c.approved = TRUE AND r.client_id = $4"
+	getApproved         = "SELECT r.id, r.service_id, r.date, r.comment, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3 AND c.approved = TRUE"
+	getApprovedByClient = "SELECT r.id, r.service_id, r.date, r.comment, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 AND r.id = $3 AND c.approved = TRUE AND r.client_id = $4"
 
-	getAll                  = "SELECT r.id, r.service_id, r.date, r.comment, r.approved, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 ORDER BY r.date"
-	getAllApproved          = "SELECT r.id, r.service_id, r.date, r.comment, r.approved, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 AND c.approved = TRUE ORDER BY r.date"
-	getAllByCompany         = "SELECT r.id, r.service_id, r.date, r.comment, r.approved, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 ORDER BY r.date"
-	getAllByCompanyApproved = "SELECT r.id, r.service_id, r.date, r.comment, r.approved, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND c.approved = TRUE ORDER BY r.date"
+	getAll                  = "SELECT r.id, r.service_id, r.date, r.comment, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 ORDER BY r.date"
+	getAllApproved          = "SELECT r.id, r.service_id, r.date, r.comment, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND s.id = $2 AND c.approved = TRUE ORDER BY r.date"
+	getAllByCompany         = "SELECT r.id, r.service_id, r.date, r.comment, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 ORDER BY r.date"
+	getAllByCompanyApproved = "SELECT r.id, r.service_id, r.date, r.comment, cl.id, cl.first_name, cl.last_name, cl.phone, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id INNER JOIN clients cl ON cl.id = r.client_id INNER JOIN users u ON u.id = cl.id WHERE s.company_id = $1 AND c.approved = TRUE ORDER BY r.date"
 
-	getAllByClient = "SELECT r.id, r.date, r.comment, r.approved, s.id, s.title, s.description, s.specialist_name, s.specialist_phone, s.visit_duration, s.work_schedule, c.id, c.name, c.address, c.description, c.approved, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id INNER JOIN users u ON u.id = c.id WHERE r.client_id = $1 ORDER BY r.date"
+	getAllByClient = "SELECT r.id, r.date, r.comment, s.id, s.title, s.description, s.specialist_name, s.specialist_phone, s.visit_duration, s.work_schedule, c.id, c.name, c.address, c.description, c.approved, u.email FROM reservations r INNER JOIN services s ON s.id = r.service_id INNER JOIN companies c ON c.id = s.company_id INNER JOIN users u ON u.id = c.id WHERE r.client_id = $1 ORDER BY r.date"
 
-	update      = "UPDATE reservations r <set> FROM services s WHERE s.id = r.service_id AND s.company_id = $1 AND s.id = $2 AND r.id = $3 AND r.client_id = $4"
-	setDate     = "date = ?"
-	setComment  = "comment = ?"
-	setApproved = "approved = ?"
+	update     = "UPDATE reservations r <set> FROM services s WHERE s.id = r.service_id AND s.company_id = $1 AND s.id = $2 AND r.id = $3 AND r.client_id = $4"
+	setDate    = "date = ?"
+	setComment = "comment = ?"
 
 	deleteq         = "DELETE FROM reservations r USING services s WHERE s.id = r.service_id AND s.company_id = $1 AND s.id = $2 AND r.id = $3 AND r.client_id = $4"
 	exists          = "SELECT EXISTS (SELECT 1 FROM reservations r INNER JOIN services s ON s.id = r.service_id WHERE s.company_id = $1 AND s.id = $2 AND r.date = $3)"
@@ -72,7 +71,6 @@ func scanReservation(row pgsql.Row) (*models.FullReservation, error) {
 		&r.ServiceID,
 		&r.Date,
 		&r.Comment,
-		&r.Approved,
 		&r.Client.ID,
 		&r.Client.FirstName,
 		&r.Client.LastName,
@@ -176,7 +174,6 @@ func (p *PgRepo) GetAllByClient(ctx context.Context, clientID string) ([]*models
 			&r.ID,
 			&r.Date,
 			&r.Comment,
-			&r.Approved,
 			&r.Service.ID,
 			&r.Service.Title,
 			&r.Service.Description,
@@ -215,9 +212,6 @@ func (p *PgRepo) Update(ctx context.Context, companyID, serviceID, reservationID
 	}
 	if ru.Comment != nil {
 		builder.Add(setComment, *ru.Comment)
-	}
-	if ru.Approved != nil {
-		builder.Add(setApproved, *ru.Approved)
 	}
 
 	res, err := p.db.ExecContext(ctx, builder.GetQuery(), builder.GetParams(companyID, serviceID, reservationID, clientID)...)

@@ -13,7 +13,6 @@ type Reservation struct {
 	ClientID  string
 	Date      time.Time
 	Comment   *string
-	Approved  bool
 }
 
 type FullReservation struct {
@@ -22,23 +21,20 @@ type FullReservation struct {
 	Client    *cmodels.ClientInfo
 	Date      time.Time
 	Comment   *string
-	Approved  bool
 }
 
 type ClientReservation struct {
-	ID       string
-	Service  *smodels.FullService
-	Date     time.Time
-	Comment  *string
-	Approved bool
+	ID      string
+	Service *smodels.FullService
+	Date    time.Time
+	Comment *string
 }
 
 type ReservationUpdate struct {
-	Date     *time.Time
-	Comment  **string
-	Approved *bool
+	Date    *time.Time
+	Comment **string
 }
 
 func (r *ReservationUpdate) IsEmpty() bool {
-	return r.Date == nil && r.Comment == nil && r.Approved == nil
+	return r.Date == nil && r.Comment == nil
 }

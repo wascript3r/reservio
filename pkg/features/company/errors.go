@@ -21,4 +21,9 @@ var (
 		"nothing_to_update",
 		errors.New("nothing to update"),
 	)
+
+	NotApprovedError = errcode.New(
+		"company_not_approved",
+		errors.New("company is not approved yet"),
+	)
 )

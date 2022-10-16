@@ -28,7 +28,6 @@ type CreateRes struct {
 	ClientID  string  `json:"clientID"`
 	Date      string  `json:"date"`
 	Comment   *string `json:"comment"`
-	Approved  bool    `json:"approved"`
 }
 
 // Get
@@ -49,7 +48,6 @@ type Reservation struct {
 	Client    *cdto.Client `json:"client"`
 	Date      string       `json:"date"`
 	Comment   *string      `json:"comment"`
-	Approved  bool         `json:"approved"`
 }
 
 type ReservationMeta struct {
@@ -79,11 +77,10 @@ type GetAllMetaRes struct {
 // GetAllByClient
 
 type ClientReservation struct {
-	ID       string            `json:"id"`
-	Service  *sdto.FullService `json:"service"`
-	Date     string            `json:"date"`
-	Comment  *string           `json:"comment"`
-	Approved bool              `json:"approved"`
+	ID      string            `json:"id"`
+	Service *sdto.FullService `json:"service"`
+	Date    string            `json:"date"`
+	Comment *string           `json:"comment"`
 }
 
 type GetAllByClientReq cdto.ClientReq
@@ -101,7 +98,6 @@ type UpdateReq struct {
 	Comment  *struct {
 		Value *string `json:"value" validate:"omitempty,r_comment"`
 	} `json:"comment" validate:"omitempty,dive"`
-	Approved *bool `json:"approved" validate:"omitempty"`
 }
 
 func (u *UpdateReq) Escape() {
