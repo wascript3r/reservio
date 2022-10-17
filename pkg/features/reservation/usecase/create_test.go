@@ -22,7 +22,7 @@ import (
 	"github.com/wascript3r/reservio/pkg/test"
 )
 
-func (r *ReservationUcaseSuite) TestCreate() {
+func (u *UcaseSuite) TestCreate() {
 	const validDate = "2022-01-01 11:11"
 	comment := func() *string {
 		c := "<h2>Test comment</h2>"
@@ -34,7 +34,7 @@ func (r *ReservationUcaseSuite) TestCreate() {
 			Name: "WrongDate",
 			Prepare: func() {
 				mck.InOrder(
-					r.validator.EXPECT().RawRequest(mck.Any()).Return(nil),
+					u.validator.EXPECT().RawRequest(mck.Any()).Return(nil),
 				)
 			},
 			Req: &rdto.CreateReq{
@@ -47,8 +47,8 @@ func (r *ReservationUcaseSuite) TestCreate() {
 			Name: "CompanyNotFound",
 			Prepare: func() {
 				mck.InOrder(
-					r.validator.EXPECT().RawRequest(mck.Any()).Return(nil),
-					r.companyRepo.EXPECT().Get(mck.Any(), companyID, false).
+					u.validator.EXPECT().RawRequest(mck.Any()).Return(nil),
+					u.companyRepo.EXPECT().Get(mck.Any(), companyID, false).
 						Return(nil, repository.ErrNoItems),
 				)
 			},
@@ -65,8 +65,8 @@ func (r *ReservationUcaseSuite) TestCreate() {
 			Name: "CompanyNotApproved",
 			Prepare: func() {
 				mck.InOrder(
-					r.validator.EXPECT().RawRequest(mck.Any()).Return(nil),
-					r.companyRepo.EXPECT().Get(mck.Any(), companyID, false).Return(
+					u.validator.EXPECT().RawRequest(mck.Any()).Return(nil),
+					u.companyRepo.EXPECT().Get(mck.Any(), companyID, false).Return(
 						&cmodels.CompanyInfo{
 							Approved: false,
 						},
@@ -87,14 +87,14 @@ func (r *ReservationUcaseSuite) TestCreate() {
 			Name: "ServiceNotFound",
 			Prepare: func() {
 				mck.InOrder(
-					r.validator.EXPECT().RawRequest(mck.Any()).Return(nil),
-					r.companyRepo.EXPECT().Get(mck.Any(), companyID, false).Return(
+					u.validator.EXPECT().RawRequest(mck.Any()).Return(nil),
+					u.companyRepo.EXPECT().Get(mck.Any(), companyID, false).Return(
 						&cmodels.CompanyInfo{
 							Approved: true,
 						},
 						nil,
 					),
-					r.serviceRepo.EXPECT().Get(mck.Any(), companyID, serviceID, false).
+					u.serviceRepo.EXPECT().Get(mck.Any(), companyID, serviceID, false).
 						Return(nil, repository.ErrNoItems),
 				)
 			},
@@ -113,20 +113,20 @@ func (r *ReservationUcaseSuite) TestCreate() {
 			Prepare: func() {
 				ss := &smodels.Service{}
 				parsedDate, err := time.Parse(dateFormat, validDate)
-				require.NoError(r.T(), err)
+				require.NoError(u.T(), err)
 
 				mck.InOrder(
-					r.validator.EXPECT().RawRequest(mck.Any()).Return(nil),
-					r.companyRepo.EXPECT().Get(mck.Any(), companyID, false).Return(
+					u.validator.EXPECT().RawRequest(mck.Any()).Return(nil),
+					u.companyRepo.EXPECT().Get(mck.Any(), companyID, false).Return(
 						&cmodels.CompanyInfo{
 							Approved: true,
 						},
 						nil,
 					),
-					r.serviceRepo.EXPECT().Get(mck.Any(), companyID, serviceID, false).
+					u.serviceRepo.EXPECT().Get(mck.Any(), companyID, serviceID, false).
 						Return(ss, nil),
-					r.validator.EXPECT().ReservationDate(ss, parsedDate).Return(nil),
-					r.reservationRepo.EXPECT().Exists(mck.Any(), companyID, serviceID, parsedDate).
+					u.validator.EXPECT().ReservationDate(ss, parsedDate).Return(nil),
+					u.reservationRepo.EXPECT().Exists(mck.Any(), companyID, serviceID, parsedDate).
 						Return(true, nil),
 				)
 			},
@@ -145,7 +145,7 @@ func (r *ReservationUcaseSuite) TestCreate() {
 			Prepare: func() {
 				ss := &smodels.Service{}
 				parsedDate, err := time.Parse(dateFormat, validDate)
-				require.NoError(r.T(), err)
+				require.NoError(u.T(), err)
 
 				rs := &rmodels.Reservation{
 					ServiceID: serviceID,
@@ -156,19 +156,19 @@ func (r *ReservationUcaseSuite) TestCreate() {
 				*rs.Comment = html.EscapeString(*rs.Comment)
 
 				mck.InOrder(
-					r.validator.EXPECT().RawRequest(mck.Any()).Return(nil),
-					r.companyRepo.EXPECT().Get(mck.Any(), companyID, false).Return(
+					u.validator.EXPECT().RawRequest(mck.Any()).Return(nil),
+					u.companyRepo.EXPECT().Get(mck.Any(), companyID, false).Return(
 						&cmodels.CompanyInfo{
 							Approved: true,
 						},
 						nil,
 					),
-					r.serviceRepo.EXPECT().Get(mck.Any(), companyID, serviceID, false).
+					u.serviceRepo.EXPECT().Get(mck.Any(), companyID, serviceID, false).
 						Return(ss, nil),
-					r.validator.EXPECT().ReservationDate(ss, parsedDate).Return(nil),
-					r.reservationRepo.EXPECT().Exists(mck.Any(), companyID, serviceID, parsedDate).
+					u.validator.EXPECT().ReservationDate(ss, parsedDate).Return(nil),
+					u.reservationRepo.EXPECT().Exists(mck.Any(), companyID, serviceID, parsedDate).
 						Return(false, nil),
-					r.reservationRepo.EXPECT().Insert(mck.Any(), mck.Eq(rs)).
+					u.reservationRepo.EXPECT().Insert(mck.Any(), mck.Eq(rs)).
 						Return("", repository.ErrConflictWithRelatedItems),
 				)
 			},
@@ -189,7 +189,7 @@ func (r *ReservationUcaseSuite) TestCreate() {
 			Prepare: func() {
 				ss := &smodels.Service{}
 				parsedDate, err := time.Parse(dateFormat, validDate)
-				require.NoError(r.T(), err)
+				require.NoError(u.T(), err)
 
 				rs := &rmodels.Reservation{
 					ServiceID: serviceID,
@@ -200,19 +200,19 @@ func (r *ReservationUcaseSuite) TestCreate() {
 				*rs.Comment = html.EscapeString(*rs.Comment)
 
 				mck.InOrder(
-					r.validator.EXPECT().RawRequest(mck.Any()).Return(nil),
-					r.companyRepo.EXPECT().Get(mck.Any(), companyID, false).Return(
+					u.validator.EXPECT().RawRequest(mck.Any()).Return(nil),
+					u.companyRepo.EXPECT().Get(mck.Any(), companyID, false).Return(
 						&cmodels.CompanyInfo{
 							Approved: true,
 						},
 						nil,
 					),
-					r.serviceRepo.EXPECT().Get(mck.Any(), companyID, serviceID, false).
+					u.serviceRepo.EXPECT().Get(mck.Any(), companyID, serviceID, false).
 						Return(ss, nil),
-					r.validator.EXPECT().ReservationDate(ss, parsedDate).Return(nil),
-					r.reservationRepo.EXPECT().Exists(mck.Any(), companyID, serviceID, parsedDate).
+					u.validator.EXPECT().ReservationDate(ss, parsedDate).Return(nil),
+					u.reservationRepo.EXPECT().Exists(mck.Any(), companyID, serviceID, parsedDate).
 						Return(false, nil),
-					r.reservationRepo.EXPECT().Insert(mck.Any(), mck.Eq(rs)).
+					u.reservationRepo.EXPECT().Insert(mck.Any(), mck.Eq(rs)).
 						Return(reservationID, nil),
 				)
 			},
@@ -235,13 +235,13 @@ func (r *ReservationUcaseSuite) TestCreate() {
 					Comment:   comment(),
 				}
 				*exp.Comment = html.EscapeString(*exp.Comment)
-				require.Equal(r.T(), exp, res)
+				require.Equal(u.T(), exp, res)
 			},
 		},
 	}
 
-	cases.Test(r, func(c *test.Case[*rdto.CreateReq, *rdto.CreateRes]) {
-		res, err := r.usecase.Create(r.ctx, c.Req)
-		c.Validate(r, res, err)
+	cases.Test(u, func(c *test.Case[*rdto.CreateReq, *rdto.CreateRes]) {
+		res, err := u.usecase.Create(u.ctx, c.Req)
+		c.Validate(u, res, err)
 	})
 }

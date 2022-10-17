@@ -10,11 +10,11 @@ import (
 	"runtime"
 	"syscall"
 
-	httpjson "github.com/wascript3r/httputil/json"
-
-	"github.com/julienschmidt/httprouter"
 	_ "github.com/lib/pq"
 
+	"github.com/julienschmidt/httprouter"
+	httpjson "github.com/wascript3r/httputil/json"
+	"github.com/wascript3r/reservio/cmd/app/config"
 	"github.com/wascript3r/reservio/cmd/app/registry"
 )
 
@@ -24,14 +24,14 @@ const (
 )
 
 var (
-	Cfg *registry.Config
+	Cfg *config.Config
 )
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	var err error
-	Cfg, err = registry.LoadConfig()
+	Cfg, err = config.LoadConfig()
 	if err != nil {
 		fatalError(err)
 	}

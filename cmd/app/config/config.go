@@ -1,4 +1,4 @@
-package registry
+package config
 
 import (
 	"encoding/json"
@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/wascript3r/reservio"
 )
 
 const (
@@ -50,6 +52,9 @@ type Config struct {
 		Postgres struct {
 			DSN          string   `json:"dsn"`
 			QueryTimeout Duration `json:"queryTimeout"`
+			Integration  struct {
+				DSN string `json:"dsn"`
+			} `json:"integration"`
 		} `json:"postgres"`
 	} `json:"database"`
 
@@ -97,16 +102,10 @@ func parseConfig(path string) (*Config, error) {
 }
 
 func LoadConfig() (*Config, error) {
-	// Get working directory
-	workDir, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
 	path, err := getConfigPath()
 	if err != nil {
 		return nil, err
 	}
 
-	return parseConfig(filepath.Join(workDir, path))
+	return parseConfig(filepath.Join(reservio.Root, path))
 }

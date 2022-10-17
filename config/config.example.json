@@ -5,7 +5,10 @@
 	"database": {
 		"postgres": {
 			"dsn": "postgres://postgres:secret@db/reservio?sslmode=disable",
-			"queryTimeout": "10s"
+			"queryTimeout": "10s",
+			"integration": {
+				"dsn": "postgres://postgres:secret@db/reservio-test?sslmode=disable"
+			}
 		}
 	},
 	"auth": {

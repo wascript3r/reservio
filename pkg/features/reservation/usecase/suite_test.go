@@ -20,7 +20,7 @@ const (
 	reservationID = "136c80c7-7d4c-4edf-a7ea-e06ffc25505e"
 )
 
-type ReservationUcaseSuite struct {
+type UcaseSuite struct {
 	suite.Suite
 
 	reservationRepo *rmocks.MockRepository
@@ -34,23 +34,23 @@ type ReservationUcaseSuite struct {
 	usecase *Usecase
 }
 
-func (r *ReservationUcaseSuite) SetupSuite() {
-	r.ctxTimeout = 10 * time.Second
+func (u *UcaseSuite) SetupSuite() {
+	u.ctxTimeout = 10 * time.Second
 }
 
-func (r *ReservationUcaseSuite) SetupTest() {
-	ctrl := gomock.NewController(r.T())
+func (u *UcaseSuite) SetupTest() {
+	ctrl := gomock.NewController(u.T())
 
-	r.reservationRepo = rmocks.NewMockRepository(ctrl)
-	r.serviceRepo = smocks.NewMockRepository(ctrl)
-	r.companyRepo = cmocks.NewMockRepository(ctrl)
-	r.clientRepo = clmocks.NewMockRepository(ctrl)
-	r.validator = rmocks.NewMockValidator(ctrl)
+	u.reservationRepo = rmocks.NewMockRepository(ctrl)
+	u.serviceRepo = smocks.NewMockRepository(ctrl)
+	u.companyRepo = cmocks.NewMockRepository(ctrl)
+	u.clientRepo = clmocks.NewMockRepository(ctrl)
+	u.validator = rmocks.NewMockValidator(ctrl)
 
-	r.ctx = context.Background()
-	r.usecase = New(r.reservationRepo, r.serviceRepo, r.companyRepo, r.clientRepo, r.ctxTimeout, r.validator)
+	u.ctx = context.Background()
+	u.usecase = New(u.reservationRepo, u.serviceRepo, u.companyRepo, u.clientRepo, u.ctxTimeout, u.validator)
 }
 
 func TestReservationUcase(t *testing.T) {
-	suite.Run(t, &ReservationUcaseSuite{})
+	suite.Run(t, &UcaseSuite{})
 }
