@@ -46,7 +46,7 @@ type ReservationRepoSuite struct {
 
 func (r *ReservationRepoSuite) SetupSuite() {
 	db, mock, err := sqlmock.New()
-	r.Nil(err)
+	r.NoError(err)
 	r.db = db
 	r.mock = mock
 	r.repo = NewPgRepo(db)
@@ -55,18 +55,20 @@ func (r *ReservationRepoSuite) SetupSuite() {
 func (r *ReservationRepoSuite) TestGetAllApproved() {
 	rs := newReservation()
 
+	// language=ignorelang
+	q := "SELECT (.+) FROM reservations (.+) WHERE (.*)approved = TRUE"
+	rows := sqlmock.NewRows([]string{
+		"id", "service_id", "date", "comment", "client_id", "first_name", "last_name", "phone", "email",
+	}).AddRow(rs.ID, rs.ServiceID, rs.Date, rs.Comment, rs.Client.ID, rs.Client.FirstName, rs.Client.LastName, rs.Client.Phone, rs.Client.Email)
+
 	r.mock.
-		ExpectQuery("SELECT (.+) FROM reservations (.+) WHERE (.*)approved = TRUE").
+		ExpectQuery(q).
 		WithArgs(companyID, serviceID).
-		WillReturnRows(
-			sqlmock.NewRows([]string{
-				"id", "service_id", "date", "comment", "client_id", "first_name", "last_name", "phone", "email",
-			}).AddRow(rs.ID, rs.ServiceID, rs.Date, rs.Comment, rs.Client.ID, rs.Client.FirstName, rs.Client.LastName, rs.Client.Phone, rs.Client.Email),
-		).
+		WillReturnRows(rows).
 		RowsWillBeClosed()
 
 	rss, err := r.repo.GetAll(context.Background(), companyID, serviceID, true)
-	r.Nil(err)
+	r.NoError(err)
 	r.Len(rss, 1)
 	r.Equal(rs, rss[0])
 }
