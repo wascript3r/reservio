@@ -40,10 +40,10 @@ const (
 )
 
 type PgRepo struct {
-	db *pgsql.Database
+	db pgsql.IDatabase
 }
 
-func NewPgRepo(db *pgsql.Database) *PgRepo {
+func NewPgRepo(db pgsql.IDatabase) *PgRepo {
 	return &PgRepo{db}
 }
 
