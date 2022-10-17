@@ -9,6 +9,7 @@ import (
 	"github.com/wascript3r/reservio/pkg/features/company/models"
 	"github.com/wascript3r/reservio/pkg/features/reservation"
 	"github.com/wascript3r/reservio/pkg/features/service"
+	"github.com/wascript3r/reservio/pkg/features/token"
 	"github.com/wascript3r/reservio/pkg/features/user"
 	umodels "github.com/wascript3r/reservio/pkg/features/user/models"
 	"github.com/wascript3r/reservio/pkg/repository"
@@ -20,19 +21,21 @@ type Usecase struct {
 	serviceRepo     service.Repository
 	reservationRepo reservation.Repository
 	userRepo        user.Repository
+	tokenRepo       token.Repository
 	ctxTimeout      time.Duration
 
 	validator company.Validator
 	userUcase user.Usecase
 }
 
-func New(tx repository.Transactor, cr company.Repository, sr service.Repository, rs reservation.Repository, ur user.Repository, t time.Duration, v company.Validator, uu user.Usecase) *Usecase {
+func New(tx repository.Transactor, cr company.Repository, sr service.Repository, rs reservation.Repository, ur user.Repository, tr token.Repository, t time.Duration, v company.Validator, uu user.Usecase) *Usecase {
 	return &Usecase{
 		tx:              tx,
 		companyRepo:     cr,
 		serviceRepo:     sr,
 		reservationRepo: rs,
 		userRepo:        ur,
+		tokenRepo:       tr,
 		ctxTimeout:      t,
 
 		validator: v,
@@ -184,6 +187,11 @@ func (u *Usecase) Delete(ctx context.Context, req *dto.DeleteReq) error {
 		}
 
 		err = u.companyRepo.Delete(c, req.CompanyID)
+		if err != nil {
+			return err
+		}
+
+		err = u.tokenRepo.DeleteByUserID(c, req.CompanyID)
 		if err != nil {
 			return err
 		}

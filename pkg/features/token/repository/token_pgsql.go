@@ -10,9 +10,10 @@ import (
 )
 
 const (
-	insert    = "INSERT INTO refresh_tokens (user_id, expires_at) VALUES ($1, $2) RETURNING id"
-	getClaims = "SELECT rt.user_id, u.role FROM refresh_tokens rt JOIN users u ON u.id = rt.user_id WHERE rt.id = $1 AND rt.expires_at > $2"
-	deleteq   = "DELETE FROM refresh_tokens WHERE id = $1"
+	insert         = "INSERT INTO refresh_tokens (user_id, expires_at) VALUES ($1, $2) RETURNING id"
+	getClaims      = "SELECT rt.user_id, u.role FROM refresh_tokens rt JOIN users u ON u.id = rt.user_id WHERE rt.id = $1 AND rt.expires_at > $2"
+	deleteq        = "DELETE FROM refresh_tokens WHERE id = $1"
+	deleteByUserID = "DELETE FROM refresh_tokens WHERE user_id = $1"
 )
 
 type PgRepo struct {
@@ -52,4 +53,9 @@ func (p *PgRepo) Delete(ctx context.Context, refreshTokenID string) error {
 	}
 
 	return nil
+}
+
+func (p *PgRepo) DeleteByUserID(ctx context.Context, userID string) error {
+	_, err := p.db.ExecContext(ctx, deleteByUserID, userID)
+	return pgsql.ParseWriteErr(err)
 }
