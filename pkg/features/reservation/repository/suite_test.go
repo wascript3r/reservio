@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	cmodels "github.com/wascript3r/reservio/pkg/features/client/models"
 	rmodels "github.com/wascript3r/reservio/pkg/features/reservation/models"
@@ -46,7 +47,8 @@ type ReservationRepoSuite struct {
 
 func (r *ReservationRepoSuite) SetupSuite() {
 	db, mock, err := sqlmock.New()
-	r.NoError(err)
+	require.NoError(r.T(), err)
+
 	r.db = db
 	r.mock = mock
 	r.repo = NewPgRepo(db)
@@ -68,11 +70,12 @@ func (r *ReservationRepoSuite) TestGetAllApproved() {
 		RowsWillBeClosed()
 
 	rss, err := r.repo.GetAll(context.Background(), companyID, serviceID, true)
-	r.NoError(err)
-	r.Len(rss, 1)
-	r.Equal(rs, rss[0])
+
+	require.NoError(r.T(), err)
+	require.Len(r.T(), rss, 1)
+	require.Equal(r.T(), rs, rss[0])
 }
 
-func TestGameUsecaseSuite(t *testing.T) {
+func TestReservationRepo(t *testing.T) {
 	suite.Run(t, &ReservationRepoSuite{})
 }
