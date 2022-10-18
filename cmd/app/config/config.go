@@ -71,6 +71,9 @@ type Config struct {
 	HTTP struct {
 		Port        string `json:"port"`
 		EnablePprof bool   `json:"enablePprof"`
+		CORS        *struct {
+			AllowOrigin string `json:"allowOrigin"`
+		} `json:"cors"`
 	} `json:"http"`
 }
 

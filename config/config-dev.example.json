@@ -22,6 +22,9 @@
 	},
 	"http": {
 		"port": "80",
-		"enablePprof": true
+		"enablePprof": true,
+		"cors": {
+			"allowOrigin": "*"
+		}
 	}
 }

@@ -16,6 +16,7 @@ import (
 	httpjson "github.com/wascript3r/httputil/json"
 	"github.com/wascript3r/reservio/cmd/app/config"
 	"github.com/wascript3r/reservio/cmd/app/registry"
+	corsMid "github.com/wascript3r/reservio/pkg/cors/delivery/http/middleware"
 )
 
 const (
@@ -103,6 +104,13 @@ func main() {
 	httpServer := &http.Server{
 		Addr:    ":" + Cfg.HTTP.Port,
 		Handler: httpRouter,
+	}
+	if Cfg.HTTP.CORS != nil {
+		httpServer.Handler = corsMid.NewHTTPMiddleware(
+			Cfg.HTTP.CORS.AllowOrigin,
+		).EnableCors(httpRouter)
+	} else {
+		httpServer.Handler = httpRouter
 	}
 
 	// Graceful shutdown
