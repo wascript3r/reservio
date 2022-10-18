@@ -44,7 +44,7 @@ type UcaseIntegrationSuite struct {
 }
 
 func (u *UcaseIntegrationSuite) SetupSuite() {
-	cfg, err := config.LoadConfig()
+	cfg, err := config.LoadConfig(true)
 	require.NoError(u.T(), err)
 
 	u.cfg = cfg

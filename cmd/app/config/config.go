@@ -104,11 +104,21 @@ func parseConfig(path string) (*Config, error) {
 	return cfg, nil
 }
 
-func LoadConfig() (*Config, error) {
+func LoadConfig(tests bool) (*Config, error) {
+	// Get working directory
+	workDir, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+
+	if tests {
+		workDir = reservio.Root
+	}
+
 	path, err := getConfigPath()
 	if err != nil {
 		return nil, err
 	}
 
-	return parseConfig(filepath.Join(reservio.Root, path))
+	return parseConfig(filepath.Join(workDir, path))
 }

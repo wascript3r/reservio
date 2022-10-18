@@ -32,7 +32,7 @@ func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	var err error
-	Cfg, err = config.LoadConfig()
+	Cfg, err = config.LoadConfig(false)
 	if err != nil {
 		fatalError(err)
 	}
