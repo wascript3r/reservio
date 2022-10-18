@@ -35,7 +35,7 @@ const CompanyList = () => {
 								</div>
 
 								<Link href={`/companies/${company.id}`}>
-									<button type="button" className="w-100 btn btn-lg btn-light mt-3">View services
+									<button type="button" className="w-100 btn btn-lg btn-outline-primary mt-3">View services
 									</button>
 								</Link>
 							</div>
