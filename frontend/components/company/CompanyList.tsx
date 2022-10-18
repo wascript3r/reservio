@@ -1,5 +1,7 @@
 import {useQuery} from "react-query";
 import axios from "axios";
+import Spinner from "../utils/Spinner";
+import Err from "../utils/Err";
 
 const CompanyList = () => {
 	const {data, error, isLoading} = useQuery<any, Error>("companies", () => {
@@ -7,16 +9,15 @@ const CompanyList = () => {
 	})
 
 	if (isLoading) {
-		return <div>Loading...</div>;
+		return <Spinner/>
 	}
 
 	if (error) {
-		return <div>{error.message}</div>;
+		return <Err msg={error.message}/>
 	}
 
 	return (
 		<>
-			{/*Company heading*/}
 			<h2 className="text-center my-5">Registered companies</h2>
 			<div className="row row-cols-1 row-cols-md-2 mb-3 text-center">
 				{data?.data.companies.map((company: any) => (
