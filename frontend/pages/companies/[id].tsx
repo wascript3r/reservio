@@ -6,6 +6,10 @@ const Home: NextPage = () => {
 	const router = useRouter()
 	const {id} = router.query
 
+	if (!id) {
+		return <></>
+	}
+
 	return (
 		<CompanyInfo id={id as string}/>
 	)
