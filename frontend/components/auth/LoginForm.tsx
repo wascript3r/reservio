@@ -5,6 +5,7 @@ import {useContext} from "react";
 import {Auth, AuthContext} from "../utils/Auth";
 import {useRouter} from "next/router";
 import BtnSpinner from "../utils/BtnSpinner";
+import {toast} from "react-toastify";
 
 const LoginForm = () => {
 	const auth = useContext(AuthContext) as Auth
@@ -17,6 +18,7 @@ const LoginForm = () => {
 			.then(data => {
 				auth.setToken(data.accessToken)
 				auth.setRefreshToken(data.refreshToken)
+				toast.success('You have logged in successfully')
 				router.push('/')
 			})
 	})

@@ -9,8 +9,17 @@ import axios from "axios";
 import {QueryClient, QueryClientProvider} from 'react-query'
 import React, {useEffect, useState} from "react";
 import {Auth, AuthContext} from "../components/utils/Auth";
+import {toast, ToastContainer} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 axios.defaults.baseURL = "https://reservio.hs.vc/api/v1";
+axios.interceptors.response.use(
+	res => res,
+	err => {
+		toast.error(err.response.data.error.message)
+	}
+)
+
 const queryClient = new QueryClient()
 
 function MyApp({Component, pageProps}: AppProps) {
@@ -21,15 +30,18 @@ function MyApp({Component, pageProps}: AppProps) {
 	}, [])
 
 	return (
-		<QueryClientProvider client={queryClient}>
-			<AuthContext.Provider value={auth}>
-				<Container className={`py-3 ${styles.container}`}>
-					<Header/>
-					<Component {...pageProps} />
-					<Footer/>
-				</Container>
-			</AuthContext.Provider>
-		</QueryClientProvider>
+		<>
+			<ToastContainer/>
+			<QueryClientProvider client={queryClient}>
+				<AuthContext.Provider value={auth}>
+					<Container className={`py-3 ${styles.container}`}>
+						<Header/>
+						<Component {...pageProps} />
+						<Footer/>
+					</Container>
+				</AuthContext.Provider>
+			</QueryClientProvider>
+		</>
 	)
 }
 
