@@ -1,32 +1,11 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendarCheck} from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import {AuthContext} from "../utils/Auth";
+import {useContext} from "react";
 
 const Header = () => {
-	const links = [
-		{
-			href: "/",
-			text: "Home",
-		},
-		{
-			href: "/login",
-			text: "Login",
-		},
-		{
-			href: "/registration",
-			text: "Registration",
-		}
-	];
-
-	const linkElements = links.map((link, index) => {
-		const margin = (index === links.length - 1) ? "" : "me-3 "
-		const className = `${margin}py-2 text-dark text-decoration-none link-primary`
-		return (
-			<Link href={link.href} key={index}>
-				<a className={className}>{link.text}</a>
-			</Link>
-		)
-	})
+	const auth = useContext(AuthContext)
 
 	return (
 		<header>
@@ -38,7 +17,24 @@ const Header = () => {
 					</a>
 				</Link>
 				<nav className="d-inline-flex mt-2 mt-md-0 ms-md-auto">
-					{linkElements}
+					<Link href="/">
+						<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Home</a>
+					</Link>
+					{auth && !auth.isAuth() && (
+						<>
+							<Link href="/login">
+								<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Login</a>
+							</Link>
+							<Link href="/registration">
+								<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Registration</a>
+							</Link>
+						</>
+					)}
+					{auth && auth.isAuth() && (
+						<Link href="/logout">
+							<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Logout</a>
+						</Link>
+					)}
 				</nav>
 			</div>
 		</header>
