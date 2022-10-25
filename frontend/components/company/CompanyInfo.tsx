@@ -1,7 +1,8 @@
 import {useQuery} from "react-query";
 import axios from "axios";
 import Spinner from "../utils/Spinner";
-import Err from "../utils/Err";
+import {Err} from "../utils/Err";
+import {useRouter} from "next/router";
 
 const weekdays = new Map<string, number>([
 	["Monday", 1],
@@ -24,8 +25,17 @@ const sortWorkSchedule = (workSchedule: Map<string, object>) => {
 }
 
 const CompanyInfo = ({id}: { id: string }) => {
+	const router = useRouter()
+
 	const {data: company, error: cerror, isLoading: isCompanyLoading} = useQuery<any, Error>(["company", id], () => {
-		return axios.get(`/companies/${id}`).then(res => res.data)
+		return axios.get(`/companies/${id}`)
+			.then(res => res.data)
+			.catch(err => {
+				if (err.response.status === 400 || err.response.status === 404) {
+					router.push("/404")
+				}
+				return Promise.reject(err)
+			})
 	})
 	const {data: services, error: serror, isLoading: isServicesLoading} = useQuery<any, Error>(["services", id], () => {
 		return axios.get(`/companies/${id}/services`).then(res => res.data)

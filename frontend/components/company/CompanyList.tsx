@@ -1,7 +1,7 @@
 import {useQuery} from "react-query";
 import axios from "axios";
 import Spinner from "../utils/Spinner";
-import Err from "../utils/Err";
+import { Err } from "../utils/Err";
 import Link from "next/link";
 
 const CompanyList = () => {
