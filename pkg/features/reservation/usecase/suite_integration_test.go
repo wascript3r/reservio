@@ -6,21 +6,19 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wascript3r/reservio/pkg/features/reservation"
-
-	"github.com/wascript3r/reservio/pkg/features/company/dto"
-	sdto "github.com/wascript3r/reservio/pkg/features/service/dto"
-
 	"github.com/DATA-DOG/go-txdb"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"github.com/wascript3r/reservio/cmd/app/config"
 	clrepo "github.com/wascript3r/reservio/pkg/features/client/repository"
+	"github.com/wascript3r/reservio/pkg/features/company/dto"
 	crepo "github.com/wascript3r/reservio/pkg/features/company/repository"
+	"github.com/wascript3r/reservio/pkg/features/reservation"
 	rdto "github.com/wascript3r/reservio/pkg/features/reservation/dto"
 	rrepo "github.com/wascript3r/reservio/pkg/features/reservation/repository"
 	"github.com/wascript3r/reservio/pkg/features/reservation/validator"
+	sdto "github.com/wascript3r/reservio/pkg/features/service/dto"
 	srepo "github.com/wascript3r/reservio/pkg/features/service/repository"
 	"github.com/wascript3r/reservio/pkg/repository/pgsql"
 )
