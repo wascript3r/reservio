@@ -85,7 +85,7 @@ const CompanyInfo = ({id}: { id: string }) => {
 				<div className="col">
 					<h2 className="text-center mt-3 mb-5">Services</h2>
 					<div className="row row-cols-1 row-cols-md-2 mb-3 text-center">
-						{services?.data.services.map((service: any, index: number) => (
+						{services?.data.services.length > 0 && services?.data.services.map((service: any, index: number) => (
 							<div className="col" key={index}>
 								<div className="card mb-4 rounded-3 shadow-sm">
 									<div className="card-header py-3">
@@ -142,6 +142,11 @@ const CompanyInfo = ({id}: { id: string }) => {
 								</div>
 							</div>
 						))}
+						{services?.data.services.length === 0 &&
+                            <div className="w-100 text-muted text-center">
+                                Company doesn't have any services yet
+                            </div>
+						}
 					</div>
 				</div>
 			</div>
