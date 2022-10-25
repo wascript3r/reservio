@@ -1,8 +1,8 @@
 import type {NextPage} from 'next'
-import LoginForm from "../components/auth/LoginForm";
 import {useContext} from "react";
-import {Auth, AuthContext} from "../components/utils/Auth";
+import {Auth, AuthContext} from "../../components/utils/Auth";
 import {useRouter} from "next/router";
+import ClientRegForm from "../../components/auth/ClientRegForm";
 
 const Home: NextPage = () => {
 	const auth = useContext(AuthContext) as Auth
@@ -14,7 +14,7 @@ const Home: NextPage = () => {
 	}
 
 	return (
-		<LoginForm/>
+		<ClientRegForm/>
 	)
 }
 

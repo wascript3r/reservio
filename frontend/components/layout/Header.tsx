@@ -25,7 +25,7 @@ const Header = () => {
 							<Link href="/login">
 								<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Login</a>
 							</Link>
-							<Link href="/registration">
+							<Link href="/registration/client">
 								<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Registration</a>
 							</Link>
 						</>
