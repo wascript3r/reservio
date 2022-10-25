@@ -46,7 +46,7 @@ function MyApp({Component, pageProps}: AppProps) {
 
 				console.log('Refreshing token')
 				return axios.post('/tokens', {refreshToken}).then(res => {
-					console.log('Token refreshed', res.data)
+					console.log('Token refreshed')
 					auth.setToken(res.data.data.accessToken)
 					return Promise.reject(err)
 				})
