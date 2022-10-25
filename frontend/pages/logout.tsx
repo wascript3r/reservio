@@ -13,14 +13,11 @@ const Home: NextPage = () => {
 			return
 		}
 
-		if (auth.getToken() === null) {
-			toast.success('You have successfully logged out')
-			router.push('/')
-			return
-		}
-
 		auth.logout()
-	}, [auth])
+		toast.success('You have successfully logged out')
+		router.push('/')
+
+	}, [auth, router])
 
 	return <></>
 }

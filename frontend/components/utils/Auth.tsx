@@ -19,7 +19,7 @@ class Auth {
 		this.userID = null
 		this.role = null
 
-		const token = localStorage.getItem('token')
+		const token = localStorage.getItem('accessToken')
 		const refreshToken = localStorage.getItem('refreshToken')
 
 		if (token && refreshToken) {
@@ -53,7 +53,7 @@ class Auth {
 	public setToken(token: string): void {
 		this.token = token
 		this.parseToken()
-		localStorage.setItem('token', token)
+		localStorage.setItem('accessToken', token)
 		axios.defaults.headers.common.Authorization = `Bearer ${token}`
 	}
 
@@ -62,7 +62,7 @@ class Auth {
 		this.refreshToken = null
 		this.userID = null
 		this.role = null
-		localStorage.removeItem('token')
+		localStorage.removeItem('accessToken')
 		localStorage.removeItem('refreshToken')
 		delete axios.defaults.headers.common.Authorization
 	}
