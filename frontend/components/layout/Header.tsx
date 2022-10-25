@@ -20,7 +20,7 @@ const Header = () => {
 					<Link href="/">
 						<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Home</a>
 					</Link>
-					{auth && !auth.isAuth() && (
+					{auth && !auth.loggedIn() && (
 						<>
 							<Link href="/login">
 								<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Login</a>
@@ -30,7 +30,7 @@ const Header = () => {
 							</Link>
 						</>
 					)}
-					{auth && auth.isAuth() && (
+					{auth && auth.loggedIn() && (
 						<Link href="/logout">
 							<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Logout</a>
 						</Link>

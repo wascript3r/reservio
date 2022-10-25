@@ -73,10 +73,10 @@ class Auth {
 	}
 
 	public hasAccess(role: Role) {
-		return this.role === role
+		return this.loggedIn() && this.role === role
 	}
 
-	public isAuth(): boolean {
+	public loggedIn(): boolean {
 		return !!this.token
 	}
 

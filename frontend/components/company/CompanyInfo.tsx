@@ -3,6 +3,8 @@ import axios from "axios";
 import Spinner from "../utils/Spinner";
 import {Err} from "../utils/Err";
 import {useRouter} from "next/router";
+import {useContext} from "react";
+import {Auth, AuthContext, Role} from "../utils/Auth";
 
 const weekdays = new Map<string, number>([
 	["Monday", 1],
@@ -26,6 +28,7 @@ const sortWorkSchedule = (workSchedule: Map<string, object>) => {
 
 const CompanyInfo = ({id}: { id: string }) => {
 	const router = useRouter()
+	const auth = useContext(AuthContext) as Auth
 
 	const {data: company, error: cerror, isLoading: isCompanyLoading} = useQuery<any, Error>(["company", id], () => {
 		return axios.get(`/companies/${id}`)
@@ -130,9 +133,11 @@ const CompanyInfo = ({id}: { id: string }) => {
 											</table>
 										</div>
 
-										<button type="button"
-												className="w-100 btn btn-lg btn-outline-secondary mt-3">Reserve time
-										</button>
+										{auth.hasAccess(Role.CLIENT) &&
+                                            <button type="button"
+                                                    className="w-100 btn btn-lg btn-outline-secondary mt-3">Reserve time
+                                            </button>
+										}
 									</div>
 								</div>
 							</div>

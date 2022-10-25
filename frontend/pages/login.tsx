@@ -10,7 +10,7 @@ const Home: NextPage = () => {
 
 	if (!auth) {
 		return <></>
-	} else if (auth.isAuth()) {
+	} else if (auth.loggedIn()) {
 		router.push('/')
 		return <></>
 	}
