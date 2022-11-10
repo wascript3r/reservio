@@ -4,14 +4,24 @@ import {Button, Modal} from "react-bootstrap";
 import '@mobiscroll/react/dist/css/mobiscroll.min.css'
 import {Datepicker, setOptions} from '@mobiscroll/react';
 import moment from "moment";
-import {useQuery} from "react-query";
+import {useMutation, useQuery} from "react-query";
 import axios from "axios";
-import {Err} from "../utils/Err";
+import {Err, toastErr} from "../utils/Err";
+import {FieldValues, useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
+import {toast} from "react-toastify";
+import * as yup from "yup";
+import BtnSpinner from "../utils/BtnSpinner";
 
 setOptions({
 	theme: 'ios',
 	themeVariant: 'light'
 });
+
+const schema = yup.object().shape({
+	date: yup.string().required(),
+	comment: yup.string().notRequired().min(5).nullable().transform(value => value === '' ? null : value),
+}).required();
 
 const weekdays = new Map<string, number>([
 	["Monday", 1],
@@ -57,13 +67,16 @@ const ServiceInfo = ({service}: { service: any }) => {
 	const auth = useContext(AuthContext) as Auth
 	const [show, setShow] = useState(false)
 
-	const handleClose = () => setShow(false)
+	const handleClose = () => {
+		setShow(false)
+		reset()
+	}
 	const handleShow = () => setShow(true)
 
 	const [minTime, setMinTime] = useState<string>('')
 	const [maxTime, setMaxTime] = useState<string>('')
 
-	const {data: invalid, error} = useQuery<any, Error>(['services', service.id, 'reservations'], () => {
+	const {data: invalid, error: qerror} = useQuery<any, Error>(['services', service.id, 'reservations'], () => {
 		return axios.get(`/companies/${service.companyID}/services/${service.id}/reservations`)
 			.then(res =>
 				res.data.data.reservations.map((r: any) => {
@@ -80,7 +93,8 @@ const ServiceInfo = ({service}: { service: any }) => {
 		const schedule = service.workSchedule[weekday]
 		if (schedule) {
 			setMinTime(schedule.from)
-			setMaxTime(schedule.to)
+			const to = moment(schedule.to, 'HH:mm').subtract(service.visitDuration, 'minutes')
+			setMaxTime(to.format('HH:mm'))
 		}
 	}
 
@@ -95,8 +109,21 @@ const ServiceInfo = ({service}: { service: any }) => {
 			.join(',')
 	}, [service.workSchedule])
 
-	if (error) {
-		return <Err msg={error.message}/>
+	const {register, handleSubmit, formState: {errors}, setValue, reset} = useForm({
+		resolver: yupResolver(schema),
+		reValidateMode: 'onBlur'
+	})
+	const {mutate, isLoading} = useMutation((data: FieldValues) => {
+		return axios.post(`/companies/${service.companyID}/services/${service.id}/reservations`, data)
+			.then(() => {
+				toast.success('You have successfully made a reservation')
+				handleClose()
+			}).catch(err => toastErr(err))
+	})
+	const onSubmit = (data: FieldValues) => mutate(data)
+
+	if (qerror) {
+		return <Err msg={qerror.message}/>
 	}
 
 	return (
@@ -163,37 +190,53 @@ const ServiceInfo = ({service}: { service: any }) => {
 				<Modal.Header closeButton>
 					<Modal.Title>Time reservation</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>
-					<div className="mbsc-form-group">
-						<div className="mbsc-form-group-title">Select visit time</div>
-						<Datepicker
-							controls={['calendar', 'timegrid']}
-							min={moment().format('YYYY-MM-DD')}
-							minTime={minTime}
-							maxTime={maxTime}
-							stepMinute={service.visitDuration}
-							onCellClick={handleDateChange}
-							invalid={[
-								...invalid,
-								{
-									recurring: {
-										weekDays: invalidWeekdays,
-										repeat: 'weekly',
-									},
-								}
-							]}
-							cssClass="booking-datetime"
-						/>
-					</div>
-				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="secondary" onClick={handleClose}>
-						Close
-					</Button>
-					{/*<Button variant="danger" onClick={() => deleteq()} disabled={isDeleting}>*/}
-					{/*	{isDeleting ? <BtnSpinner/> : 'Delete'}*/}
-					{/*</Button>*/}
-				</Modal.Footer>
+				<form onSubmit={handleSubmit(onSubmit)}>
+					<Modal.Body>
+						<div className={`form-control ${errors.date ? 'is-invalid' : ''}`}>
+							<div className="mbsc-form-group">
+								<div className="mbsc-form-group-title">Select visit time</div>
+								<Datepicker
+									controls={['calendar', 'timegrid']}
+									min={moment().format('YYYY-MM-DD')}
+									minTime={minTime}
+									maxTime={maxTime}
+									stepMinute={service.visitDuration}
+									onCellClick={handleDateChange}
+									invalid={[
+										...invalid,
+										{
+											recurring: {
+												weekDays: invalidWeekdays,
+												repeat: 'weekly',
+											},
+										}
+									]}
+									onTempChange={(event: any) => {
+										setValue('date', moment(event.value).format('YYYY-MM-DD HH:mm'))
+									}}
+									cssClass="booking-datetime"
+								/>
+							</div>
+						</div>
+						{errors.date &&
+                            <div className="invalid-feedback text-center">{errors.date.message as string}</div>}
+						<div className="mt-3">
+							<label htmlFor="comment" className="form-label">Comment</label>
+							<input {...register('comment')} type="text"
+								   className={`form-control ${errors.comment ? 'is-invalid' : ''}`}/>
+							{errors.comment &&
+                                <div className="invalid-feedback text-center">{errors.comment.message as string}</div>}
+						</div>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button variant="secondary" onClick={handleClose}>
+							Close
+						</Button>
+						<button type="submit" className="btn btn-primary" disabled={isLoading}>
+							{isLoading ? <BtnSpinner/> : 'Reserve'}
+						</button>
+					</Modal.Footer>
+				</form>
 			</Modal>
 		</>
 	)
