@@ -2,15 +2,13 @@ import {useQuery} from "react-query";
 import axios from "axios";
 import Spinner from "../utils/Spinner";
 import {Err} from "../utils/Err";
-import {useRouter} from "next/router";
+import {NextRouter, useRouter} from "next/router";
 import ServiceInfo from "../service/ServiceInfo";
 
-const CompanyInfo = ({id}: { id: string }) => {
-	const router = useRouter()
-
-	const {data: company, error: cerror, isLoading: isCompanyLoading} = useQuery<any, Error>(["company", id], () => {
+export function useCompanyInfo(router: NextRouter, id: string) {
+	return useQuery<any, Error>(["company", id], () => {
 		return axios.get(`/companies/${id}`)
-			.then(res => res.data)
+			.then(res => res.data.data)
 			.catch(err => {
 				if (err.response.status === 400 || err.response.status === 404) {
 					router.push("/404")
@@ -18,6 +16,12 @@ const CompanyInfo = ({id}: { id: string }) => {
 				return Promise.reject(err)
 			})
 	})
+}
+
+const CompanyInfo = ({id}: { id: string }) => {
+	const router = useRouter()
+
+	const {data: company, error: cerror, isLoading: isCompanyLoading} = useCompanyInfo(router, id)
 	const {data: services, error: serror, isLoading: isServicesLoading} = useQuery<any, Error>(["services", id], () => {
 		return axios.get(`/companies/${id}/services`).then(res => res.data)
 	})
@@ -39,20 +43,20 @@ const CompanyInfo = ({id}: { id: string }) => {
 				<div className="col">
 					<div className="card mb-4 rounded-3 shadow-sm border-primary">
 						<div className="card-header py-3 text-white bg-primary border-primary">
-							<h4 className="my-0 fw-normal">{company?.data.name}</h4>
+							<h4 className="my-0 fw-normal">{company?.name}</h4>
 						</div>
 						<div className="card-body">
-							<div className="card-title h5">{company?.data.description}</div>
+							<div className="card-title h5">{company?.description}</div>
 							<div className="row table">
 								<table className="col-12 offset-sm-2 col-sm-8 offset-lg-3 col-lg-6">
 									<tbody>
 									<tr className="row row-cols-2">
 										<td className="col card-text text-muted fw-bold text-start">Location</td>
-										<td className="col text-end">{company?.data.address}</td>
+										<td className="col text-end">{company?.address}</td>
 									</tr>
 									<tr className="row row-cols-2">
 										<td className="col card-text text-muted fw-bold text-start">Contact email</td>
-										<td className="col text-end">{company?.data.email}</td>
+										<td className="col text-end">{company?.email}</td>
 									</tr>
 									</tbody>
 								</table>

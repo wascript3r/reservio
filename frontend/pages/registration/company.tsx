@@ -14,7 +14,7 @@ const Home: NextPage = () => {
 	}
 
 	return (
-		<CompanyRegForm/>
+		<CompanyRegForm company={null}/>
 	)
 }
 

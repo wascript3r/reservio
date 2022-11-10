@@ -1,11 +1,11 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendarCheck} from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import {AuthContext} from "../utils/Auth";
+import {Auth, AuthContext, Role} from "../utils/Auth";
 import {useContext} from "react";
 
 const Header = () => {
-	const auth = useContext(AuthContext)
+	const auth = useContext(AuthContext) as Auth
 
 	return (
 		<header>
@@ -20,7 +20,7 @@ const Header = () => {
 					<Link href="/">
 						<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Home</a>
 					</Link>
-					{auth && !auth.loggedIn() && (
+					{!auth.loggedIn() && (
 						<>
 							<Link href="/login">
 								<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Login</a>
@@ -30,7 +30,12 @@ const Header = () => {
 							</Link>
 						</>
 					)}
-					{auth && auth.loggedIn() && (
+					{auth.hasAccess(Role.COMPANY) && (
+						<Link href="/companies/edit">
+							<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Edit info</a>
+						</Link>
+					)}
+					{auth.loggedIn() && (
 						<Link href="/logout">
 							<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Logout</a>
 						</Link>
