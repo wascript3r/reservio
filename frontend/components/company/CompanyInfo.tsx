@@ -3,32 +3,10 @@ import axios from "axios";
 import Spinner from "../utils/Spinner";
 import {Err} from "../utils/Err";
 import {useRouter} from "next/router";
-import {useContext} from "react";
-import {Auth, AuthContext, Role} from "../utils/Auth";
-
-const weekdays = new Map<string, number>([
-	["Monday", 1],
-	["Tuesday", 2],
-	["Wednesday", 3],
-	["Thursday", 4],
-	["Friday", 5],
-	["Saturday", 6],
-	["Sunday", 7],
-])
-
-const sortWorkSchedule = (workSchedule: Map<string, object>) => {
-	const arr = Object.entries(workSchedule).map(([day, time]) => {
-		return {
-			...time,
-			day: day[0].toUpperCase() + day.substring(1),
-		}
-	})
-	return arr.sort((a, b) => (weekdays.get(a.day) || 0) - (weekdays.get(b.day) || 0))
-}
+import ServiceInfo from "../service/ServiceInfo";
 
 const CompanyInfo = ({id}: { id: string }) => {
 	const router = useRouter()
-	const auth = useContext(AuthContext) as Auth
 
 	const {data: company, error: cerror, isLoading: isCompanyLoading} = useQuery<any, Error>(["company", id], () => {
 		return axios.get(`/companies/${id}`)
@@ -86,61 +64,7 @@ const CompanyInfo = ({id}: { id: string }) => {
 					<h2 className="text-center mt-3 mb-5">Services</h2>
 					<div className="row row-cols-1 row-cols-md-2 mb-3 text-center">
 						{services?.data.services.length > 0 && services?.data.services.map((service: any, index: number) => (
-							<div className="col" key={index}>
-								<div className="card mb-4 rounded-3 shadow-sm">
-									<div className="card-header py-3">
-										<h4 className="my-0 fw-normal">{service.title}</h4>
-									</div>
-									<div className="card-body">
-										<div className="card-title h5">{service.description}</div>
-										<div className="row table">
-											<table className="col-12 offset-sm-2 col-sm-8 offset-lg-2 col-lg-8">
-												<tbody>
-												<tr className="row row-cols-2">
-													<td className="col card-text text-muted fw-bold text-start">Specialist
-														name
-													</td>
-													<td className="col text-end">{service.specialistName}</td>
-												</tr>
-												<tr className="row row-cols-2">
-													<td className="col card-text text-muted fw-bold text-start">Specialist
-														phone
-													</td>
-													<td className="col text-end text-primary align-middle">{service.specialistPhone}</td>
-												</tr>
-												<tr className="row row-cols-2">
-													<td className="col card-text text-muted fw-bold text-start">Visit
-														duration
-													</td>
-													<td className="col text-end">{service.visitDuration} <span
-														className="fst-italic">minutes</span></td>
-												</tr>
-												</tbody>
-											</table>
-										</div>
-
-										<div className="card-title h5 mt-5">Work schedule</div>
-										<div className="row table">
-											<table className="col-12 offset-sm-2 col-sm-8 offset-lg-2 col-lg-8">
-												<tbody>
-												{sortWorkSchedule(service.workSchedule).map((day: any, index: number) => (
-													<tr className="row row-cols-2" key={index}>
-														<td className="col card-text text-muted fw-bold text-start">{day.day}</td>
-														<td className="col text-end">{day.from}-{day.to}</td>
-													</tr>
-												))}
-												</tbody>
-											</table>
-										</div>
-
-										{auth.hasAccess(Role.CLIENT) &&
-                                            <button type="button"
-                                                    className="w-100 btn btn-lg btn-outline-secondary mt-3">Reserve time
-                                            </button>
-										}
-									</div>
-								</div>
-							</div>
+							<ServiceInfo service={service} key={index}/>
 						))}
 						{services?.data.services.length === 0 &&
                             <div className="w-100 text-muted text-center">
