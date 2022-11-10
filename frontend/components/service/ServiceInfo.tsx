@@ -4,6 +4,9 @@ import {Button, Modal} from "react-bootstrap";
 import '@mobiscroll/react/dist/css/mobiscroll.min.css'
 import {Datepicker, setOptions} from '@mobiscroll/react';
 import moment from "moment";
+import {useQuery} from "react-query";
+import axios from "axios";
+import {Err} from "../utils/Err";
 
 setOptions({
 	theme: 'ios',
@@ -30,14 +33,14 @@ const numToWeekday = new Map<number, string>([
 	[6, "saturday"],
 ])
 
-const weekdayShort = new Map<string, string>([
-	['sunday', 'SU'],
-	['monday', 'MO'],
-	['tuesday', 'TU'],
-	['wednesday', 'WE'],
-	['thursday', 'TH'],
-	['friday', 'FR'],
-	['saturday', 'SA'],
+const weekdayLong = new Map<string, string>([
+	['SU', 'sunday'],
+	['MO', 'monday'],
+	['TU', 'tuesday'],
+	['WE', 'wednesday'],
+	['TH', 'thursday'],
+	['FR', 'friday'],
+	['SA', 'saturday'],
 ])
 
 const sortWorkSchedule = (workSchedule: Map<string, object>) => {
@@ -59,7 +62,18 @@ const ServiceInfo = ({service}: { service: any }) => {
 
 	const [minTime, setMinTime] = useState<string>('')
 	const [maxTime, setMaxTime] = useState<string>('')
-	const [invalid, setInvalid] = useState<any[]>([])
+
+	const {data: invalid, error} = useQuery<any, Error>(['services', service.id, 'reservations'], () => {
+		return axios.get(`/companies/${service.companyID}/services/${service.id}/reservations`)
+			.then(res =>
+				res.data.data.reservations.map((r: any) => {
+					return {
+						start: r.date,
+						end: r.date,
+					}
+				})
+			)
+	}, {enabled: show, initialData: []})
 
 	const handleDateChange = (event: any) => {
 		const weekday = numToWeekday.get(event.date.getDay()) as string
@@ -70,12 +84,20 @@ const ServiceInfo = ({service}: { service: any }) => {
 		}
 	}
 
-	const validWeekdays = useMemo(() => {
-		const validDays = Object.keys(service.workSchedule).map(day => {
-			return weekdayShort.get(day)
-		})
-		return validDays.join(',')
+	const invalidWeekdays = useMemo(() => {
+		return Array.from(weekdayLong.keys())
+			.map(day => {
+				const long = weekdayLong.get(day)
+				if (!long) return ''
+				return service.workSchedule[long] ? '' : day
+			})
+			.filter(day => day !== '')
+			.join(',')
 	}, [service.workSchedule])
+
+	if (error) {
+		return <Err msg={error.message}/>
+	}
 
 	return (
 		<>
@@ -151,15 +173,15 @@ const ServiceInfo = ({service}: { service: any }) => {
 							maxTime={maxTime}
 							stepMinute={service.visitDuration}
 							onCellClick={handleDateChange}
-							valid={[
+							invalid={[
+								...invalid,
 								{
 									recurring: {
-										weekDays: validWeekdays,
+										weekDays: invalidWeekdays,
 										repeat: 'weekly',
-									}
+									},
 								}
 							]}
-							invalid={invalid}
 							cssClass="booking-datetime"
 						/>
 					</div>
