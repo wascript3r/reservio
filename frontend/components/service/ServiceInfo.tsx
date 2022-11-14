@@ -4,7 +4,7 @@ import {Button, Modal} from "react-bootstrap";
 import '@mobiscroll/react/dist/css/mobiscroll.min.css'
 import {Datepicker, setOptions} from '@mobiscroll/react';
 import moment from "moment";
-import {useMutation, useQuery} from "react-query";
+import {useMutation, useQuery, useQueryClient} from "react-query";
 import axios from "axios";
 import {Err, toastErr} from "../utils/Err";
 import {FieldValues, useForm} from "react-hook-form";
@@ -104,6 +104,16 @@ const ServiceInfo = ({service}: { service: any }) => {
 			}).catch(err => toastErr(err))
 	})
 	const onSubmit = (data: FieldValues) => mutate(data)
+
+	const queryClient = useQueryClient()
+	const {mutate: deleteq, isLoading: isDeleting} = useMutation(() => {
+		return axios.delete(`/companies/${service.companyID}/services/${service.id}`)
+			.then(() => {
+				setShow(false)
+				toast.success('Service was successfully deleted')
+				return queryClient.invalidateQueries(['company', service.companyID, 'services'])
+			}).catch(err => toastErr(err))
+	})
 
 	if (qerror) {
 		return <Err msg={qerror.message}/>
@@ -253,9 +263,9 @@ const ServiceInfo = ({service}: { service: any }) => {
 						<Button variant="secondary" onClick={handleClose}>
 							Close
 						</Button>
-						{/*<Button variant="danger" onClick={() => deleteq()} disabled={isDeleting}>*/}
-						{/*	{isDeleting ? <BtnSpinner/> : 'Delete'}*/}
-						{/*</Button>*/}
+						<Button variant="danger" onClick={() => deleteq()} disabled={isDeleting}>
+							{isDeleting ? <BtnSpinner/> : 'Delete'}
+						</Button>
 					</Modal.Footer>
 				</Modal>
 			)}
