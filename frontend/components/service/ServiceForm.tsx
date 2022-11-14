@@ -41,6 +41,16 @@ function workscheduleToArr(workSchedule: Map<any, any>) {
 		.sort((a, b) => weekdays.indexOf(a.weekday) - weekdays.indexOf(b.weekday));
 }
 
+function formatNullable(val: any) {
+	if (val.specialistName && typeof val.specialistName.value !== 'undefined') {
+		val.specialistName = val.specialistName.value || ''
+	}
+	if (val.specialistPhone && typeof val.specialistPhone.value !== 'undefined') {
+		val.specialistPhone = val.specialistPhone.value || ''
+	}
+	return val
+}
+
 const ServiceForm = ({service}: { service: any }) => {
 	const router = useRouter()
 	const queryClient = useQueryClient()
@@ -75,7 +85,7 @@ const ServiceForm = ({service}: { service: any }) => {
 				return Promise.reject(err)
 			})
 	}, {
-		onSuccess: (_data, variables) => reset({
+		onSuccess: (_data, variables) => reset(formatNullable({
 			title: service?.title,
 			description: service?.description,
 			specialistName: service?.specialistName,
@@ -83,14 +93,30 @@ const ServiceForm = ({service}: { service: any }) => {
 			visitDuration: service?.visitDuration.toString(),
 			workSchedule: workscheduleToArr(service?.workSchedule),
 			...variables,
-		})
+		}))
 	})
 	const onSubmit = (data: FieldValues) => {
 		const dirtyData = extractDirtyFields(data, dirtyFields)
-		dirtyData.workSchedule = dirtyData.workSchedule?.reduce((acc: any, cur: any) => {
-			acc[cur.weekday] = {from: cur.from, to: cur.to}
-			return acc
-		}, {})
+
+		if (typeof dirtyData.specialistName !== 'undefined') {
+			dirtyData.specialistName = {
+				value: dirtyData.specialistName,
+			}
+		}
+
+		if (typeof dirtyData.specialistPhone !== 'undefined') {
+			dirtyData.specialistPhone = {
+				value: dirtyData.specialistPhone,
+			}
+		}
+
+		if (dirtyData.workSchedule) {
+			dirtyData.workSchedule = dirtyData.workSchedule?.reduce((acc: any, cur: any) => {
+				acc[cur.weekday] = {from: cur.from, to: cur.to}
+				return acc
+			}, {})
+		}
+
 		mutate(dirtyData)
 	}
 
