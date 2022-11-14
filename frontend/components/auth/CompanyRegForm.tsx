@@ -10,7 +10,7 @@ import {yupResolver} from "@hookform/resolvers/yup";
 import {extractDirtyFields} from "../utils/form";
 
 const baseSchema = yup.object().shape({
-	name: yup.string().required().min(2),
+	name: yup.string().required().min(3),
 	address: yup.string().required().min(5),
 	description: yup.string().required().min(5),
 }).required();
