@@ -24,15 +24,7 @@ const schema = yup.object().shape({
 	comment: yup.string().notRequired().min(5).nullable().transform(value => value === '' ? null : value),
 }).required();
 
-const weekdays = new Map<string, number>([
-	["Monday", 1],
-	["Tuesday", 2],
-	["Wednesday", 3],
-	["Thursday", 4],
-	["Friday", 5],
-	["Saturday", 6],
-	["Sunday", 7],
-])
+const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 
 const numToWeekday = new Map<number, string>([
 	[0, "sunday"],
@@ -53,16 +45,6 @@ const weekdayLong = new Map<string, string>([
 	['FR', 'friday'],
 	['SA', 'saturday'],
 ])
-
-const sortWorkSchedule = (workSchedule: Map<string, object>) => {
-	const arr = Object.entries(workSchedule).map(([day, time]) => {
-		return {
-			...time,
-			day: day[0].toUpperCase() + day.substring(1),
-		}
-	})
-	return arr.sort((a, b) => (weekdays.get(a.day) || 0) - (weekdays.get(b.day) || 0))
-}
 
 const ServiceInfo = ({service}: { service: any }) => {
 	const auth = useContext(AuthContext) as Auth
@@ -143,13 +125,13 @@ const ServiceInfo = ({service}: { service: any }) => {
 									<td className="col card-text text-muted fw-bold text-start">Specialist
 										name
 									</td>
-									<td className="col text-end">{service.specialistName}</td>
+									<td className="col text-end">{service.specialistName ?? 'not specified'}</td>
 								</tr>
 								<tr className="row row-cols-2">
 									<td className="col card-text text-muted fw-bold text-start">Specialist
 										phone
 									</td>
-									<td className="col text-end text-primary align-middle">{service.specialistPhone}</td>
+									<td className="col text-end text-primary align-middle">{service.specialistPhone ?? 'not specified'}</td>
 								</tr>
 								<tr className="row row-cols-2">
 									<td className="col card-text text-muted fw-bold text-start">Visit
@@ -166,10 +148,10 @@ const ServiceInfo = ({service}: { service: any }) => {
 						<div className="row table">
 							<table className="col-12 offset-sm-2 col-sm-8 offset-lg-2 col-lg-8">
 								<tbody>
-								{sortWorkSchedule(service.workSchedule).map((day: any, index: number) => (
+								{weekdays.map((day: string, index: number) => (
 									<tr className="row row-cols-2" key={index}>
-										<td className="col card-text text-muted fw-bold text-start">{day.day}</td>
-										<td className="col text-end">{day.from}-{day.to}</td>
+										<td className="col card-text text-muted fw-bold text-start">{day.charAt(0).toUpperCase() + day.slice(1)}</td>
+										<td className="col text-end">{service.workSchedule[day] ? service.workSchedule[day].from + '-' + service.workSchedule[day].to : 'Closed'}</td>
 									</tr>
 								))}
 								</tbody>
@@ -184,7 +166,7 @@ const ServiceInfo = ({service}: { service: any }) => {
                             </button>
 						}
 
-						{auth.hasAccess(Role.COMPANY) &&
+						{auth.hasAccess(Role.COMPANY) && auth.getUserID() === service.companyID &&
                             <div className="row">
                                 <div className="col-6">
                                     <Link href={`/services/${service.id}/edit`}>
@@ -242,7 +224,8 @@ const ServiceInfo = ({service}: { service: any }) => {
 							<div className="mt-3">
 								<label htmlFor="comment" className="form-label">Comment</label>
 								<input {...register('comment')} type="text"
-									   className={`form-control ${errors.comment ? 'is-invalid' : ''}`}/>
+									   className={`form-control ${errors.comment ? 'is-invalid' : ''}`}
+									   placeholder="optional"/>
 								{errors.comment &&
                                     <div
                                         className="invalid-feedback text-center">{errors.comment.message as string}</div>}

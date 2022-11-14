@@ -10,6 +10,9 @@ const Err = ({msg}: {msg: string}) => {
 
 const toastErr = (err: any) => {
 	if (err.response.data && err.response.data.error && err.response.data.error.message) {
+		if (err.response.data.error.message.includes('Token invalid')) {
+			return
+		}
 		toast.error(err.response.data.error.message)
 	} else {
 		toast.error(err.message)

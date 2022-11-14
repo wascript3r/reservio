@@ -19,8 +19,21 @@ export function useCompanyInfo(router: NextRouter, id: string) {
 }
 
 export function useServices(id: string) {
-	return useQuery<any, Error>(["services", id], () => {
+	return useQuery<any, Error>(["company", id, 'services'], () => {
 		return axios.get(`/companies/${id}/services`).then(res => res.data)
+	})
+}
+
+export function useServiceInfo(router: NextRouter, companyID: string, id: string) {
+	return useQuery<any, Error>(["service", id], () => {
+		return axios.get(`/companies/${companyID}/services/${id}`)
+			.then(res => res.data.data)
+			.catch(err => {
+				if (err.response.status === 400 || err.response.status === 404) {
+					router.push("/404")
+				}
+				return Promise.reject(err)
+			})
 	})
 }
 
