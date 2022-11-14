@@ -18,13 +18,17 @@ export function useCompanyInfo(router: NextRouter, id: string) {
 	})
 }
 
+export function useServices(id: string) {
+	return useQuery<any, Error>(["services", id], () => {
+		return axios.get(`/companies/${id}/services`).then(res => res.data)
+	})
+}
+
 const CompanyInfo = ({id}: { id: string }) => {
 	const router = useRouter()
 
 	const {data: company, error: cerror, isLoading: isCompanyLoading} = useCompanyInfo(router, id)
-	const {data: services, error: serror, isLoading: isServicesLoading} = useQuery<any, Error>(["services", id], () => {
-		return axios.get(`/companies/${id}/services`).then(res => res.data)
-	})
+	const {data: services, error: serror, isLoading: isServicesLoading} = useServices(id)
 
 	if (isCompanyLoading || isServicesLoading) {
 		return <Spinner/>

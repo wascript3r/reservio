@@ -31,9 +31,14 @@ const Header = () => {
 						</>
 					)}
 					{auth.hasAccess(Role.COMPANY) && (
-						<Link href="/companies/edit">
-							<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Edit info</a>
-						</Link>
+						<>
+							<Link href="/companies/edit">
+								<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Edit info</a>
+							</Link>
+							<Link href="/services">
+								<a className="ms-3 py-2 text-dark text-decoration-none link-primary">My services</a>
+							</Link>
+						</>
 					)}
 					{auth.loggedIn() && (
 						<Link href="/logout">

@@ -12,6 +12,7 @@ import {yupResolver} from "@hookform/resolvers/yup";
 import {toast} from "react-toastify";
 import * as yup from "yup";
 import BtnSpinner from "../utils/BtnSpinner";
+import Link from "next/link";
 
 setOptions({
 	theme: 'ios',
@@ -182,62 +183,99 @@ const ServiceInfo = ({service}: { service: any }) => {
                                 onClick={handleShow}>Reserve time
                             </button>
 						}
+
+						{auth.hasAccess(Role.COMPANY) &&
+                            <div className="row">
+                                <div className="col-6">
+                                    <Link href={`/services/${service.id}/edit`}>
+                                        <button type="button"
+                                                className={`w-100 btn btn-outline-primary mt-3`}>Edit
+                                        </button>
+                                    </Link>
+                                </div>
+                                <div className="col-6">
+                                    <button type="button"
+                                            className="w-100 btn btn-outline-danger mt-3" onClick={handleShow}>Delete
+                                    </button>
+                                </div>
+                            </div>
+						}
 					</div>
 				</div>
 			</div>
 
-			<Modal show={show} onHide={handleClose}>
-				<Modal.Header closeButton>
-					<Modal.Title>Time reservation</Modal.Title>
-				</Modal.Header>
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<Modal.Body>
-						<div className={`form-control ${errors.date ? 'is-invalid' : ''}`}>
-							<div className="mbsc-form-group">
-								<div className="mbsc-form-group-title">Select visit time</div>
-								<Datepicker
-									controls={['calendar', 'timegrid']}
-									min={moment().format('YYYY-MM-DD')}
-									minTime={minTime}
-									maxTime={maxTime}
-									stepMinute={service.visitDuration}
-									onCellClick={handleDateChange}
-									invalid={[
-										...invalid,
-										{
-											recurring: {
-												weekDays: invalidWeekdays,
-												repeat: 'weekly',
-											},
-										}
-									]}
-									onTempChange={(event: any) => {
-										setValue('date', moment(event.value).format('YYYY-MM-DD HH:mm'))
-									}}
-									cssClass="booking-datetime"
-								/>
+			{auth.hasAccess(Role.CLIENT) && (
+				<Modal show={show} onHide={handleClose}>
+					<Modal.Header closeButton>
+						<Modal.Title>Time reservation</Modal.Title>
+					</Modal.Header>
+					<form onSubmit={handleSubmit(onSubmit)}>
+						<Modal.Body>
+							<div className={`form-control ${errors.date ? 'is-invalid' : ''}`}>
+								<div className="mbsc-form-group">
+									<div className="mbsc-form-group-title">Select visit time</div>
+									<Datepicker
+										controls={['calendar', 'timegrid']}
+										min={moment().format('YYYY-MM-DD')}
+										minTime={minTime}
+										maxTime={maxTime}
+										stepMinute={service.visitDuration}
+										onCellClick={handleDateChange}
+										invalid={[
+											...invalid,
+											{
+												recurring: {
+													weekDays: invalidWeekdays,
+													repeat: 'weekly',
+												},
+											}
+										]}
+										onTempChange={(event: any) => {
+											setValue('date', moment(event.value).format('YYYY-MM-DD HH:mm'))
+										}}
+										cssClass="booking-datetime"
+									/>
+								</div>
 							</div>
-						</div>
-						{errors.date &&
-                            <div className="invalid-feedback text-center">{errors.date.message as string}</div>}
-						<div className="mt-3">
-							<label htmlFor="comment" className="form-label">Comment</label>
-							<input {...register('comment')} type="text"
-								   className={`form-control ${errors.comment ? 'is-invalid' : ''}`}/>
-							{errors.comment &&
-                                <div className="invalid-feedback text-center">{errors.comment.message as string}</div>}
-						</div>
-					</Modal.Body>
+							{errors.date &&
+                                <div className="invalid-feedback text-center">{errors.date.message as string}</div>}
+							<div className="mt-3">
+								<label htmlFor="comment" className="form-label">Comment</label>
+								<input {...register('comment')} type="text"
+									   className={`form-control ${errors.comment ? 'is-invalid' : ''}`}/>
+								{errors.comment &&
+                                    <div
+                                        className="invalid-feedback text-center">{errors.comment.message as string}</div>}
+							</div>
+						</Modal.Body>
+						<Modal.Footer>
+							<Button variant="secondary" onClick={handleClose}>
+								Close
+							</Button>
+							<button type="submit" className="btn btn-primary" disabled={isLoading}>
+								{isLoading ? <BtnSpinner/> : 'Reserve'}
+							</button>
+						</Modal.Footer>
+					</form>
+				</Modal>
+			)}
+
+			{auth.hasAccess(Role.COMPANY) && (
+				<Modal show={show} onHide={handleClose}>
+					<Modal.Header closeButton>
+						<Modal.Title>Delete confirmation</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>Are you sure you want to delete this service?</Modal.Body>
 					<Modal.Footer>
 						<Button variant="secondary" onClick={handleClose}>
 							Close
 						</Button>
-						<button type="submit" className="btn btn-primary" disabled={isLoading}>
-							{isLoading ? <BtnSpinner/> : 'Reserve'}
-						</button>
+						{/*<Button variant="danger" onClick={() => deleteq()} disabled={isDeleting}>*/}
+						{/*	{isDeleting ? <BtnSpinner/> : 'Delete'}*/}
+						{/*</Button>*/}
 					</Modal.Footer>
-				</form>
-			</Modal>
+				</Modal>
+			)}
 		</>
 	)
 }
