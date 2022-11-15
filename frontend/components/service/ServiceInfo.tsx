@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {MutateFormModal} from 'components/reservation/MutateFormModal'
+import {MutateFormModal} from 'components/reservation/client/MutateFormModal'
 import Link from 'next/link'
 import {useContext, useState} from 'react'
 import {Button, Modal} from 'react-bootstrap'

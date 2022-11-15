@@ -38,6 +38,9 @@ const Header = () => {
 							<Link href="/services">
 								<a className="ms-3 py-2 text-dark text-decoration-none link-primary">My services</a>
 							</Link>
+							<Link href="/reservations">
+								<a className="ms-3 py-2 text-dark text-decoration-none link-primary">Reservations</a>
+							</Link>
 						</>
 					)}
 					{auth.hasAccess(Role.CLIENT) && (

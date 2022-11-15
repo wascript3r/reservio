@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {DeleteModal} from 'components/reservation/DeleteModal'
+import {DeleteModal} from 'components/reservation/client/DeleteModal'
 import {toastErr} from 'components/utils/Err'
 import {useMutation, useQueryClient} from 'react-query'
 import {toast} from 'react-toastify'

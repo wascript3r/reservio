@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {FormModal} from 'components/reservation/FormModal'
+import {FormModal} from 'components/reservation/client/FormModal'
 import {Err, toastErr} from 'components/utils/Err'
 import {FieldValues} from 'react-hook-form'
 import {useMutation, useQuery, useQueryClient} from 'react-query'

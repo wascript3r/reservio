@@ -1,8 +1,8 @@
 import {faEdit, faEye, faTrash} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {MutateDeleteModal} from 'components/reservation/MutateDeleteModal'
-import {MutateFormModal} from 'components/reservation/MutateFormModal'
-import {ViewModal} from 'components/reservation/ViewModal'
+import {MutateDeleteModal} from 'components/reservation/client/MutateDeleteModal'
+import {MutateFormModal} from 'components/reservation/client/MutateFormModal'
+import {ViewModal} from 'components/reservation/client/ViewModal'
 import moment from 'moment'
 import {useState} from 'react'
 
