@@ -1,19 +1,20 @@
-import "styles/globals.css"
-import "bootstrap/dist/css/bootstrap.min.css"
+import axios from 'axios'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import Footer from 'components/layout/Footer'
+import Header from 'components/layout/Header'
+import {Auth, AuthContext} from 'components/utils/Auth'
 import type {AppProps} from 'next/app'
-import Header from "../components/layout/Header";
-import {Container} from "react-bootstrap";
-import styles from "styles/Home.module.css"
-import Footer from "../components/layout/Footer";
-import axios from "axios";
+import {useRouter} from 'next/router'
+import NextNProgress from 'nextjs-progressbar'
+import React, {useEffect, useState} from 'react'
+import {Container} from 'react-bootstrap'
 import {QueryClient, QueryClientProvider} from 'react-query'
-import React, {useEffect, useState} from "react";
-import {Auth, AuthContext} from "../components/utils/Auth";
-import {toast, ToastContainer} from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import {useRouter} from "next/router";
+import {toast, ToastContainer} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import 'styles/globals.css'
+import styles from 'styles/Home.module.css'
 
-axios.defaults.baseURL = "https://reservio.hs.vc/api/v1";
+axios.defaults.baseURL = 'https://reservio.hs.vc/api/v1'
 
 const queryClient = new QueryClient()
 
@@ -47,7 +48,7 @@ function MyApp({Component, pageProps}: AppProps) {
 				}
 
 				return Promise.reject(err)
-			}
+			},
 		)
 
 		return () => {
@@ -65,6 +66,7 @@ function MyApp({Component, pageProps}: AppProps) {
 			<ToastContainer/>
 			<QueryClientProvider client={queryClient}>
 				<AuthContext.Provider value={auth}>
+					<NextNProgress height={5}/>
 					<Container className={`py-3 ${styles.container}`}>
 						<Header/>
 						<Component {...pageProps} />
