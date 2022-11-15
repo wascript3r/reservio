@@ -1,6 +1,6 @@
 import {Reservation} from './Reservation'
 
-export const List = ({reservations}: { reservations: any[] }) => {
+export const Table = ({reservations}: { reservations: any[] }) => {
 	return (
 		<table className="table">
 			<thead>

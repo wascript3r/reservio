@@ -1,4 +1,4 @@
-import {QueryList} from 'components/reservation/client/QueryList'
+import {QueryTable} from 'components/reservation/client/QueryTable'
 import {Auth, AuthContext, Role} from 'components/utils/Auth'
 import type {NextPage} from 'next'
 import {useRouter} from 'next/router'
@@ -14,7 +14,7 @@ const Home: NextPage = () => {
 	}
 
 	return (
-		<QueryList clientID={auth.getUserID() as string}/>
+		<QueryTable clientID={auth.getUserID() as string}/>
 	)
 }
 
