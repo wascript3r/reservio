@@ -87,11 +87,11 @@ const CompanyInfo = ({id}: { id: string }) => {
 						{services?.data.services.length > 0 && services?.data.services.map((service: any, index: number) => (
 							<ServiceInfo service={service} key={index}/>
 						))}
-						{services?.data.services.length === 0 &&
+						{services?.data.services.length === 0 && (
                             <div className="w-100 text-muted text-center">
-                                Company doesn't have any services yet
+                                Company doesn&apos;t have any services yet
                             </div>
-						}
+						)}
 					</div>
 				</div>
 			</div>

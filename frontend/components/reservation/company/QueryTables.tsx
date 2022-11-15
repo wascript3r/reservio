@@ -14,7 +14,7 @@ export const QueryTables = ({companyID}: { companyID: string }) => {
 		isFetched: isServicesFetched,
 	} = useServices(companyID)
 
-	const results = useQueries(
+	const results = useQueries<any>(
 		services?.data.services.map((service: any) => ({
 			queryKey: ['service', service.id, 'reservations'],
 			queryFn: () => {
@@ -29,7 +29,13 @@ export const QueryTables = ({companyID}: { companyID: string }) => {
 		})) || [],
 	)
 	const isLoading = isServicesLoading || results.some(result => result.isLoading)
-	const error = serror || results.find(result => result.error)?.error
+	const error = useMemo(() => {
+		if (serror) {
+			return serror
+		}
+		const result = results.find(result => result.error) as any
+		return result?.error
+	}, [results, serror])
 
 	const serviceReservations = useMemo<ServiceReservations[]>(() => {
 		if (!results) return []
@@ -41,7 +47,7 @@ export const QueryTables = ({companyID}: { companyID: string }) => {
 				reservations: result.data?.data.data.reservations,
 			}
 		})
-	}, [results])
+	}, [results, services?.data.services])
 
 	if (isLoading) {
 		return <Spinner/>

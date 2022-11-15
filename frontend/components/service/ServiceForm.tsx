@@ -126,7 +126,7 @@ const ServiceForm = ({service}: { service: any }) => {
 		if (!service && fields.length === 0) {
 			append({weekday: '', from: '', to: ''}, {shouldFocus: false})
 		}
-	}, [])
+	}, [append, service, fields.length])
 
 	return (
 		<>
@@ -199,7 +199,7 @@ const ServiceForm = ({service}: { service: any }) => {
 												))}
 											</select>
 											{errors.workSchedule?.[index]?.weekday &&
-												<div className="invalid-feedback">{errors.workSchedule?.[index]?.weekday.message as string}</div>
+												<div className="invalid-feedback">{errors.workSchedule?.[index]?.weekday?.message as string}</div>
 											}
 										</div>
 										<div className="row">
@@ -216,7 +216,7 @@ const ServiceForm = ({service}: { service: any }) => {
 											/>
 											{errors.workSchedule?.[index]?.from &&
                                                 <div
-                                                    className="invalid-feedback">{errors.workSchedule?.[index]?.from.message as string}</div>}
+                                                    className="invalid-feedback">{errors.workSchedule?.[index]?.from?.message as string}</div>}
 										</div>
 										<div className="col-5">
 											<input {...register(`workSchedule.${index}.to`)} type="time"
@@ -224,7 +224,7 @@ const ServiceForm = ({service}: { service: any }) => {
 											/>
 											{errors.workSchedule?.[index]?.to &&
                                                 <div
-                                                    className="invalid-feedback">{errors.workSchedule?.[index]?.to.message as string}</div>}
+                                                    className="invalid-feedback">{errors.workSchedule?.[index]?.to?.message as string}</div>}
 										</div>
 										<div className="col-2">
 											<button type="button" className="btn btn-danger"

@@ -55,7 +55,7 @@ function MyApp({Component, pageProps}: AppProps) {
 			console.log('Removing interceptors')
 			axios.interceptors.response.eject(id)
 		}
-	}, [])
+	}, [router])
 
 	if (!auth) {
 		return <></>

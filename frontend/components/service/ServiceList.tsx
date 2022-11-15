@@ -31,7 +31,7 @@ const ServiceList = ({id}: { id: string }) => {
 				))}
 				{services?.data.services.length === 0 &&
                     <div className="w-100 text-muted text-center">
-                        You don't have any services yet
+                        You don&apos;t have any services yet
                     </div>
 				}
 			</div>

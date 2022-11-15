@@ -110,7 +110,7 @@ export const FormModal = (p: FormModalProps) => {
 		}
 
 		p.onSubmit(dirtyData)
-	}, [p.service, p.onSubmit, dirtyFields])
+	}, [p, dirtyFields])
 
 	return (
 		<Modal show={p.show} onHide={handleClose}>

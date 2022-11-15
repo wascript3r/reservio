@@ -1,11 +1,11 @@
+import {Auth, AuthContext} from 'components/utils/Auth'
 import type {NextPage} from 'next'
-import {useContext, useEffect} from "react";
-import {AuthContext} from "../components/utils/Auth";
-import {useRouter} from "next/router";
-import {toast} from "react-toastify";
+import {useRouter} from 'next/router'
+import {useContext, useEffect} from 'react'
+import {toast} from 'react-toastify'
 
 const Home: NextPage = () => {
-	const auth = useContext(AuthContext)
+	const auth = useContext(AuthContext) as Auth
 	const router = useRouter()
 
 	useEffect(() => {
@@ -17,7 +17,7 @@ const Home: NextPage = () => {
 		toast.success('You have successfully logged out')
 		router.push('/')
 
-	}, [auth, router])
+	}, [])
 
 	return <></>
 }

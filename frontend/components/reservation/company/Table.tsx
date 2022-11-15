@@ -17,9 +17,14 @@ export const Table = ({service, reservations}: { service: string, reservations: 
 			</tr>
 			</thead>
 			<tbody>
-			{reservations.map((reservation, index) => (
+			{reservations.length > 0 && reservations.map((reservation, index) => (
 				<Reservation reservation={reservation} key={index}/>
 			))}
+			{reservations.length === 0 &&
+				<tr>
+					<td colSpan={6} className="text-center text-muted">This service doesn&apos;t have any reservations yet</td>
+				</tr>
+			}
 			</tbody>
 		</table>
 	)
