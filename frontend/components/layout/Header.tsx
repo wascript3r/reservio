@@ -1,8 +1,8 @@
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCalendarCheck} from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
-import {Auth, AuthContext, Role} from "../utils/Auth";
-import {useContext} from "react";
+import {faCalendarCheck} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import Link from 'next/link'
+import {useContext} from 'react'
+import {Auth, AuthContext, Role} from '../utils/Auth'
 
 const Header = () => {
 	const auth = useContext(AuthContext) as Auth
@@ -37,6 +37,13 @@ const Header = () => {
 							</Link>
 							<Link href="/services">
 								<a className="ms-3 py-2 text-dark text-decoration-none link-primary">My services</a>
+							</Link>
+						</>
+					)}
+					{auth.hasAccess(Role.CLIENT) && (
+						<>
+							<Link href="/reservations">
+								<a className="ms-3 py-2 text-dark text-decoration-none link-primary">My reservations</a>
 							</Link>
 						</>
 					)}

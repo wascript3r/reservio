@@ -1,109 +1,22 @@
-import {Auth, AuthContext, Role} from "../utils/Auth";
-import {useContext, useMemo, useState} from "react";
-import {Button, Modal} from "react-bootstrap";
-import '@mobiscroll/react/dist/css/mobiscroll.min.css'
-import {Datepicker, setOptions} from '@mobiscroll/react';
-import moment from "moment";
-import {useMutation, useQuery, useQueryClient} from "react-query";
-import axios from "axios";
-import {Err, toastErr} from "../utils/Err";
-import {FieldValues, useForm} from "react-hook-form";
-import {yupResolver} from "@hookform/resolvers/yup";
-import {toast} from "react-toastify";
-import * as yup from "yup";
-import BtnSpinner from "../utils/BtnSpinner";
-import Link from "next/link";
-
-setOptions({
-	theme: 'ios',
-	themeVariant: 'light'
-});
-
-const schema = yup.object().shape({
-	date: yup.string().required(),
-	comment: yup.string().notRequired().min(5).nullable().transform(value => value === '' ? null : value),
-}).required();
+import axios from 'axios'
+import {MutateFormModal} from 'components/reservation/MutateFormModal'
+import Link from 'next/link'
+import {useContext, useState} from 'react'
+import {Button, Modal} from 'react-bootstrap'
+import {useMutation, useQueryClient} from 'react-query'
+import {toast} from 'react-toastify'
+import {Auth, AuthContext, Role} from '../utils/Auth'
+import BtnSpinner from '../utils/BtnSpinner'
+import {toastErr} from '../utils/Err'
 
 const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-
-const numToWeekday = new Map<number, string>([
-	[0, "sunday"],
-	[1, "monday"],
-	[2, "tuesday"],
-	[3, "wednesday"],
-	[4, "thursday"],
-	[5, "friday"],
-	[6, "saturday"],
-])
-
-const weekdayLong = new Map<string, string>([
-	['SU', 'sunday'],
-	['MO', 'monday'],
-	['TU', 'tuesday'],
-	['WE', 'wednesday'],
-	['TH', 'thursday'],
-	['FR', 'friday'],
-	['SA', 'saturday'],
-])
 
 const ServiceInfo = ({service}: { service: any }) => {
 	const auth = useContext(AuthContext) as Auth
 	const [show, setShow] = useState(false)
 
-	const handleClose = () => {
-		setShow(false)
-		reset()
-	}
+	const handleClose = () => setShow(false)
 	const handleShow = () => setShow(true)
-
-	const [minTime, setMinTime] = useState<string>('')
-	const [maxTime, setMaxTime] = useState<string>('')
-
-	const {data: invalid, error: qerror} = useQuery<any, Error>(['services', service.id, 'reservations'], () => {
-		return axios.get(`/companies/${service.companyID}/services/${service.id}/reservations`)
-			.then(res =>
-				res.data.data.reservations.map((r: any) => {
-					return {
-						start: r.date,
-						end: r.date,
-					}
-				})
-			)
-	}, {enabled: show, initialData: []})
-
-	const handleDateChange = (event: any) => {
-		const weekday = numToWeekday.get(event.date.getDay()) as string
-		const schedule = service.workSchedule[weekday]
-		if (schedule) {
-			setMinTime(schedule.from)
-			const to = moment(schedule.to, 'HH:mm').subtract(service.visitDuration, 'minutes')
-			setMaxTime(to.format('HH:mm'))
-		}
-	}
-
-	const invalidWeekdays = useMemo(() => {
-		return Array.from(weekdayLong.keys())
-			.map(day => {
-				const long = weekdayLong.get(day)
-				if (!long) return ''
-				return service.workSchedule[long] ? '' : day
-			})
-			.filter(day => day !== '')
-			.join(',')
-	}, [service.workSchedule])
-
-	const {register, handleSubmit, formState: {errors}, setValue, reset} = useForm({
-		resolver: yupResolver(schema),
-		reValidateMode: 'onBlur'
-	})
-	const {mutate, isLoading} = useMutation((data: FieldValues) => {
-		return axios.post(`/companies/${service.companyID}/services/${service.id}/reservations`, data)
-			.then(() => {
-				toast.success('You have successfully made a reservation')
-				handleClose()
-			}).catch(err => toastErr(err))
-	})
-	const onSubmit = (data: FieldValues) => mutate(data)
 
 	const queryClient = useQueryClient()
 	const {mutate: deleteq, isLoading: isDeleting} = useMutation(() => {
@@ -114,10 +27,6 @@ const ServiceInfo = ({service}: { service: any }) => {
 				return queryClient.invalidateQueries(['company', service.companyID, 'services'])
 			}).catch(err => toastErr(err))
 	})
-
-	if (qerror) {
-		return <Err msg={qerror.message}/>
-	}
 
 	return (
 		<>
@@ -197,60 +106,7 @@ const ServiceInfo = ({service}: { service: any }) => {
 			</div>
 
 			{auth.hasAccess(Role.CLIENT) && (
-				<Modal show={show} onHide={handleClose}>
-					<Modal.Header closeButton>
-						<Modal.Title>Time reservation</Modal.Title>
-					</Modal.Header>
-					<form onSubmit={handleSubmit(onSubmit)}>
-						<Modal.Body>
-							<div className={`form-control ${errors.date ? 'is-invalid' : ''}`}>
-								<div className="mbsc-form-group">
-									<div className="mbsc-form-group-title">Select visit time</div>
-									<Datepicker
-										controls={['calendar', 'timegrid']}
-										min={moment().format('YYYY-MM-DD')}
-										minTime={minTime}
-										maxTime={maxTime}
-										stepMinute={service.visitDuration}
-										onCellClick={handleDateChange}
-										invalid={[
-											...invalid,
-											{
-												recurring: {
-													weekDays: invalidWeekdays,
-													repeat: 'weekly',
-												},
-											}
-										]}
-										onTempChange={(event: any) => {
-											setValue('date', moment(event.value).format('YYYY-MM-DD HH:mm'))
-										}}
-										cssClass="booking-datetime"
-									/>
-								</div>
-							</div>
-							{errors.date &&
-                                <div className="invalid-feedback text-center">{errors.date.message as string}</div>}
-							<div className="mt-3">
-								<label htmlFor="comment" className="form-label">Comment</label>
-								<input {...register('comment')} type="text"
-									   className={`form-control ${errors.comment ? 'is-invalid' : ''}`}
-									   placeholder="optional"/>
-								{errors.comment &&
-                                    <div
-                                        className="invalid-feedback text-center">{errors.comment.message as string}</div>}
-							</div>
-						</Modal.Body>
-						<Modal.Footer>
-							<Button variant="secondary" onClick={handleClose}>
-								Close
-							</Button>
-							<button type="submit" className="btn btn-primary" disabled={isLoading}>
-								{isLoading ? <BtnSpinner/> : 'Reserve'}
-							</button>
-						</Modal.Footer>
-					</form>
-				</Modal>
+				<MutateFormModal show={show} service={service} onClose={handleClose}/>
 			)}
 
 			{auth.hasAccess(Role.COMPANY) && (

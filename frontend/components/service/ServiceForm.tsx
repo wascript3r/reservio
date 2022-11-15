@@ -174,7 +174,7 @@ const ServiceForm = ({service}: { service: any }) => {
 								<label htmlFor="visitDuration" className="form-label">Visit duration</label>
 								<input {...register('visitDuration')} type="number"
 									   className={`form-control ${errors.visitDuration ? 'is-invalid' : ''}`}
-									   placeholder={30}
+									   placeholder="30"
 									   disabled={!!service}
 								/>
 								{errors.visitDuration &&
