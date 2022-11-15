@@ -98,15 +98,17 @@ const ServiceForm = ({service}: { service: any }) => {
 	const onSubmit = (data: FieldValues) => {
 		const dirtyData = extractDirtyFields(data, dirtyFields)
 
-		if (typeof dirtyData.specialistName !== 'undefined') {
-			dirtyData.specialistName = {
-				value: dirtyData.specialistName,
+		if (service) {
+			if (typeof dirtyData.specialistName !== 'undefined') {
+				dirtyData.specialistName = {
+					value: dirtyData.specialistName,
+				}
 			}
-		}
 
-		if (typeof dirtyData.specialistPhone !== 'undefined') {
-			dirtyData.specialistPhone = {
-				value: dirtyData.specialistPhone,
+			if (typeof dirtyData.specialistPhone !== 'undefined') {
+				dirtyData.specialistPhone = {
+					value: dirtyData.specialistPhone,
+				}
 			}
 		}
 
@@ -170,8 +172,9 @@ const ServiceForm = ({service}: { service: any }) => {
 							</div>
 							<div className="mb-3">
 								<label htmlFor="visitDuration" className="form-label">Visit duration</label>
-								<input {...register('visitDuration')} type="text"
+								<input {...register('visitDuration')} type="number"
 									   className={`form-control ${errors.visitDuration ? 'is-invalid' : ''}`}
+									   placeholder={30}
 									   disabled={!!service}
 								/>
 								{errors.visitDuration &&
