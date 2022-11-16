@@ -67,7 +67,7 @@ function MyApp({Component, pageProps}: AppProps) {
 			<QueryClientProvider client={queryClient}>
 				<AuthContext.Provider value={auth}>
 					<NextNProgress height={5}/>
-					<Container className={`py-3 ${styles.container}`}>
+					<Container className={`pb-3 pt-1 ${styles.container}`}>
 						<Header/>
 						<Component {...pageProps} />
 						<Footer/>
