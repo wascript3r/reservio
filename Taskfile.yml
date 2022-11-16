@@ -30,6 +30,12 @@ tasks:
     cmds:
       - docker compose build
 
+  compose-rebuild:
+    desc: Rebuilds docker compose
+    dir: "{{ .COMPOSE_DIR }}"
+    cmds:
+      - docker compose up -d --build
+
   db-migrate:
     desc: Migrates DB schema
     cmds:
