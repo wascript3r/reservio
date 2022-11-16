@@ -4,17 +4,18 @@ import (
 	"log"
 	"os"
 
+	"github.com/wascript3r/reservio/cmd/app/config"
 	"github.com/wascript3r/reservio/pkg/logger/usecase"
 )
 
 const AppLoggerPrefix = "[APP]"
 
 type LoggerReg struct {
-	cfg     *Config
+	cfg     *config.Config
 	usecase *usecase.Usecase
 }
 
-func NewLogger(cfg *Config) *LoggerReg {
+func NewLogger(cfg *config.Config) *LoggerReg {
 	return &LoggerReg{
 		cfg: cfg,
 	}

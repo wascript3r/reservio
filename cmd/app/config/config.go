@@ -1,4 +1,4 @@
-package registry
+package config
 
 import (
 	"encoding/json"
@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/wascript3r/reservio"
 )
 
 const (
@@ -50,6 +52,9 @@ type Config struct {
 		Postgres struct {
 			DSN          string   `json:"dsn"`
 			QueryTimeout Duration `json:"queryTimeout"`
+			Integration  struct {
+				DSN string `json:"dsn"`
+			} `json:"integration"`
 		} `json:"postgres"`
 	} `json:"database"`
 
@@ -66,6 +71,9 @@ type Config struct {
 	HTTP struct {
 		Port        string `json:"port"`
 		EnablePprof bool   `json:"enablePprof"`
+		CORS        *struct {
+			AllowOrigin string `json:"allowOrigin"`
+		} `json:"cors"`
 	} `json:"http"`
 }
 
@@ -96,11 +104,15 @@ func parseConfig(path string) (*Config, error) {
 	return cfg, nil
 }
 
-func LoadConfig() (*Config, error) {
+func LoadConfig(tests bool) (*Config, error) {
 	// Get working directory
 	workDir, err := os.Getwd()
 	if err != nil {
 		return nil, err
+	}
+
+	if tests {
+		workDir = reservio.Root
 	}
 
 	path, err := getConfigPath()

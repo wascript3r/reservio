@@ -91,13 +91,15 @@ type GetAllByClientRes struct {
 
 // Update
 
+type Comment struct {
+	Value *string `json:"value" validate:"omitempty,r_comment"`
+}
+
 type UpdateReq struct {
 	ReservationReq
-	ClientID string  `json:"-" validate:"required,uuid"`
-	Date     *string `json:"date" validate:"omitempty,r_date"`
-	Comment  *struct {
-		Value *string `json:"value" validate:"omitempty,r_comment"`
-	} `json:"comment" validate:"omitempty,dive"`
+	ClientID string   `json:"-" validate:"required,uuid"`
+	Date     *string  `json:"date" validate:"omitempty,r_date"`
+	Comment  *Comment `json:"comment" validate:"omitempty,dive"`
 }
 
 func (u *UpdateReq) Escape() {

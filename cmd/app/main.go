@@ -10,12 +10,13 @@ import (
 	"runtime"
 	"syscall"
 
-	httpjson "github.com/wascript3r/httputil/json"
-
-	"github.com/julienschmidt/httprouter"
 	_ "github.com/lib/pq"
 
+	"github.com/julienschmidt/httprouter"
+	httpjson "github.com/wascript3r/httputil/json"
+	"github.com/wascript3r/reservio/cmd/app/config"
 	"github.com/wascript3r/reservio/cmd/app/registry"
+	corsMid "github.com/wascript3r/reservio/pkg/cors/delivery/http/middleware"
 )
 
 const (
@@ -24,14 +25,14 @@ const (
 )
 
 var (
-	Cfg *registry.Config
+	Cfg *config.Config
 )
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	var err error
-	Cfg, err = registry.LoadConfig()
+	Cfg, err = config.LoadConfig(false)
 	if err != nil {
 		fatalError(err)
 	}
@@ -103,6 +104,13 @@ func main() {
 	httpServer := &http.Server{
 		Addr:    ":" + Cfg.HTTP.Port,
 		Handler: httpRouter,
+	}
+	if Cfg.HTTP.CORS != nil {
+		httpServer.Handler = corsMid.NewHTTPMiddleware(
+			Cfg.HTTP.CORS.AllowOrigin,
+		).EnableCors(httpRouter)
+	} else {
+		httpServer.Handler = httpRouter
 	}
 
 	// Graceful shutdown
