@@ -82,9 +82,9 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@mobiscroll/react@https://npm.mobiscroll.com/@mobiscroll/react-trial/-/react-trial-5.19.2.tgz":
-  version "5.19.2"
-  resolved "https://npm.mobiscroll.com/@mobiscroll/react-trial/-/react-trial-5.19.2.tgz#60ea9b2f417187f03121e7d76fa2b0733f486768"
+"@mobiscroll/react@https://npm.mobiscroll.com/@mobiscroll/react-trial/-/react-trial-5.20.0.tgz":
+  version "5.20.0"
+  resolved "https://npm.mobiscroll.com/@mobiscroll/react-trial/-/react-trial-5.20.0.tgz#90d6744ee6127ab7110265b36691002222ac06e8"
 
 "@next/env@12.3.1":
   version "12.3.1"
