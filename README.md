@@ -80,4 +80,24 @@ Wireframe:
 
 Realizacijos langas:
 
-![](.README_images/011_Home_real.png)
+![](.README_images/01_Home_real.png)
+
+**3.2. Informacija apie įmonę**
+
+Wireframe:
+
+![](.README_images/02_CompanyInformation.png)
+
+Realizacijos langas:
+
+![](.README_images/02_CompanyInformation_real.png)
+
+**3.3. Prisijungimo langas**
+
+Wireframe:
+
+![](.README_images/03_Login.png)
+
+Realizacijos langas:
+
+![](.README_images/03_Login_real.png)
