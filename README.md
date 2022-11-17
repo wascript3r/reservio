@@ -67,3 +67,11 @@ Sistemą sudarys dvi dalys:
 ![](.README_images/deployment.png)
 
 **pav. 2.1 Sistemos diegimo diagrama**
+
+### 3. Naudotojo sąsajos projektas
+
+Žemiau pateikiami projektuojamos sąsajos langų wireframe`ai ir juos atitinkančių realizacijų langų iškarpos.
+
+**3.1. Pradinis puslapis**
+
+![](.README_images/01_Home.png)
