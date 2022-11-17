@@ -1010,6 +1010,138 @@ HTTP/1.1 204 No Content
 Content-Type: application/json
 ```
 
+### POST /api/v1/companies/:companyID/services
+
+Create service endpoint. Creates new company service and returns its data.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services
+```
+
+#### Resource information
+|     Response formats     |  JSON   |
+|:------------------------:|:-------:|
+| Requires authentication? |   Yes   |
+|      Required role       | Company |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | 7b5624c2-7713-4bb3-b8d5-ea29b5792115 |
+
+| Name            | Type                      | Required? | Description              | Validations                      | Example                                          |
+|-----------------|---------------------------|-----------|--------------------------|----------------------------------|--------------------------------------------------|
+| title           | string                    | yes       | Service title            | between 3 and 100 chars          | Men's haircut                                    |
+| description     | string                    | yes       | Service description      | greater than or equal to 5 chars | Cheap men's haircut                              |
+| specialistName  | string                    | no        | Service specialist name  | between 5 and 100 chars          | John                                             |
+| specialistPhone | string                    | no        | Service specialist phone | e164 standart                    | +37064343333                                     |
+| visitDuration   | number                    | yes       | Service visit duration   | greater than 0                   | 30                                               |
+| workSchedule    | Map<Weekday, DaySchedule> | yes       | Service work schedule    | size greater than 0              | { "monday": { "from": "08:00", "to": "17:00" } } |
+
+Weekday type:
+
+| Name | Type   | Required? | Description            | Validations                                                            | Example |
+|------|--------|-----------|------------------------|------------------------------------------------------------------------|---------|
+|      | string | yes       | Work schedule week day | One of: monday, tuesday, wednesday, thursday, friday, saturday, sunday | friday  |
+
+DaySchedule type:
+
+| Name | Type   | Required? | Description    | Validations       | Example |
+|------|--------|-----------|----------------|-------------------|---------|
+| from | string | yes       | Day start time | time format HH:mm | 10:30   |
+| to   | string | yes       | Day end time   | time format HH:mm | 18:00   |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name            | Type                      | Can be null? | Description              |
+|-----------------|---------------------------|--------------|--------------------------|
+| id              | string                    | no           | Service ID               |
+| companyID       | string                    | no           | Company ID               |
+| title           | string                    | no           | Service title            |
+| description     | string                    | no           | Service description      |
+| specialistName  | string                    | yes          | Service specialist name  |
+| specialistPhone | string                    | yes          | Service specialist phone |
+| visitDuration   | number                    | no           | Service visit duration   |
+| workSchedule    | Map<Weekday, DaySchedule> | no           | Service work schedule    |
+
+#### Possible errors:
+
+| name                            | message              | HTTP status code |
+|---------------------------------|----------------------|------------------|
+| [unauthorized](#unauthorized)   |                      |                  |
+| [faulty_token](#faulty-token)   |                      |                  |
+| [invalid_token](#invalid-token) |                      |                  |
+| [forbidden](#forbidden)         |                      |                  |
+| [invalid_input](#invalid-input) |                      |                  |
+| company_not_found               | Company not found    | 404              |
+| [unknown](#unknown)             |                      |                  |
+
+#### Example request
+```
+POST /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115/services HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+
+{
+    "title": "Men's haircut",
+    "description": "Cheap men's haircut",
+    "specialistName": "John",
+    "specialistPhone": "+37064343333",
+    "visitDuration": 30,
+    "workSchedule": {
+        "monday": {
+            "from": "08:00",
+            "to": "17:00"
+        },
+        "tuesday": {
+            "from": "11:45",
+            "to": "17:00"
+        },
+        "wednesday": {
+            "from": "08:00",
+            "to": "17:00"
+        }
+    }
+}
+```
+
+#### Example response
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "error": null,
+    "data": {
+        "id": "fda84995-0755-40e3-8ed4-129fc774125b",
+        "companyID": "e91f4c92-1371-48a1-a745-7d66d2178e15",
+        "title": "Men's haircut",
+        "description": "Cheap men's haircut",
+        "specialistName": "John",
+        "specialistPhone": "+37064343333",
+        "visitDuration": 30,
+        "workSchedule": {
+            "monday": {
+                "from": "08:00",
+                "to": "17:00"
+            },
+            "thursday": {
+                "from": "10:15",
+                "to": "14:00"
+            },
+            "tuesday": {
+                "from": "11:45",
+                "to": "17:00"
+            }
+        }
+    }
+}
+```
+
 ## 5. Išvados
 
 Šio modulio metu pavyko sėkmingai įgyvendinti užsibrėžtus projekto tikslus - sukurti *backend API*, ją tinkamai apsaugoti panaudojant *JWT token* authentifikacijai ir autorizacijai, be to, sukurti naudotojo sąsajos dalį, viską patalpinti debesyje, jog būtų galima išorinė prieiga prie sistemos, bei galiausiai, parengti galutinę ataskaitą. Tiesa, projektas nėra visiškai užbaigtas ir jį dar reikėtų nemažai patobulinti norint paleisti į rinką.
