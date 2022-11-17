@@ -663,6 +663,83 @@ Content-Type: application/json
 }
 ```
 
+### POST /api/v1/companies
+
+Create company endpoint. Creates new company and returns its data.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? |  No  |
+
+#### Request parameters
+| Name        | Type   | Required? | Description           | Validations                        | Example            |
+|-------------|--------|-----------|-----------------------|------------------------------------|--------------------|
+| email       | string | yes       | Company email address | less than or equal to 200 chars    | user@gmail.com     |
+| password    | string | yes       | Company password      | between 8 and 100 chars            | Secret444!         |
+| name        | string | yes       | Company name          | between 3 and 100 chars            | My company         |
+| address     | string | yes       | Company address       | between 5 and 200 chars            | Vilnius, Lithuania |
+| description | string | yes       | Company description   | greater than or equal to 200 chars | Very good company  |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name        | Type    | Can be null? | Description                                                 |
+|-------------|---------|--------------|-------------------------------------------------------------|
+| id          | string  | no           | Created company ID                                          |
+| email       | string  | no           | Company email address                                       |
+| name        | string  | no           | Company name                                                |
+| address     | string  | no           | Company address                                             |
+| description | string  | no           | Company description                                         |
+| approved    | boolean | no           | Is company approved by admin? When created, equals to false |
+
+#### Possible errors:
+
+| name                            | message              | HTTP status code |
+|---------------------------------|----------------------|------------------|
+| [invalid_input](#invalid-input) |                      |                  |
+| email_already_exists            | Email already exists | 422              |
+| [unknown](#unknown)             |                      |                  |
+
+#### Example request
+```
+POST /api/v1/companies HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+
+{
+    "email": "user@gmail.com",
+    "password": "Secret444!",
+    "name": "My company",
+    "address": "Vilnius, Lithuania",
+    "description": "Very good company"
+}
+```
+
+#### Example response
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "error": null,
+    "data": {
+        "id": "07c35941-0af3-4011-b42e-40bca152f2b8",
+        "email": "user@gmail.com"
+        "name": "My company",
+        "address": "Vilnius, Lithuania",
+        "description": "Very good company",
+        "approved": false
+    }
+}
+```
 
 ## 5. Išvados
 
