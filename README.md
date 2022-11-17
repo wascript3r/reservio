@@ -101,3 +101,63 @@ Wireframe:
 Realizacijos langas:
 
 ![](.README_images/03_Login_real.png)
+
+**3.4. Kliento registracijos langas**
+
+Wireframe:
+
+![](.README_images/04_ClientRegistration.png)
+
+Realizacijos langas:
+
+![](.README_images/04_ClientRegistration_real.png)
+
+**3.5. Įmonės registracijos langas**
+
+Wireframe:
+
+![](.README_images/05_CompanyRegistration.png)
+
+Realizacijos langas:
+
+![](.README_images/05_CompanyRegistration_real.png)
+
+**3.6. Naujos rezervacijos sukūrimo langas**
+
+Wireframe:
+
+![](.README_images/06_CreateReservation.png)
+
+Realizacijos langas:
+
+![](.README_images/06_CreateReservation_real.png)
+
+**3.7. Kliento rezervacijų sąrašo langas**
+
+Wireframe:
+
+![](.README_images/07_ClientReservations.png)
+
+Realizacijos langas:
+
+![](.README_images/07_ClientReservations_real.png)
+
+**3.8. Kliento rezervacijos peržiūros langas**
+
+Wireframe:
+
+![](.README_images/08_ClientViewReservation.png)
+
+Realizacijos langas:
+
+![](.README_images/08_ClientViewReservation_real.png)
+
+**3.9. Kliento rezervacijos atnaujinimo langas**
+
+Wireframe:
+
+![](.README_images/09_ClientEditReservation.png)
+
+Realizacijos langas:
+
+![](.README_images/09_ClientEditReservation_real.png)
