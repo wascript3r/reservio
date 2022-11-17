@@ -277,6 +277,8 @@ Realizacijos langas:
 
 ### POST /api/v1/users/authenticate
 
+Authentication endpoint. Returns JWT token if authentication is successful.
+
 #### Resource url
 ```
 https://reservio.hs.vc/api/v1/users/authenticate
@@ -333,6 +335,67 @@ Content-Type: application/json
     "data": {
         "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njg3MTMyMjcuNzMzMjM1LCJpYXQiOjE2Njg3MTAyMjcuNzMzMjQyLCJpc3MiOiJyZXNlcnZpbyIsInVzZXJJRCI6IjdiNTYyNGMyLTc3MTMtNGJiMy1iOGQ1LWVhMjliNTc5MjExNSIsInJvbGUiOiJjb21wYW55IiwicnRJRCI6IjY3MWVmNTNmLWY1YWYtNDM0NS05ODQzLWJhMzZkOThkNzlkYiJ9.YzCdBuLYFohulk50yF-hWguSPWR41H2pwqgGXPpnE5Q",
         "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njg3MTc0MjcuNzMzMTc0LCJpYXQiOjE2Njg3MTAyMjcuNzMzMTgyLCJpc3MiOiJyZXNlcnZpbyIsInJ0SUQiOiI2NzFlZjUzZi1mNWFmLTQzNDUtOTg0My1iYTM2ZDk4ZDc5ZGIifQ.aJ20LIyi1M5dXm3RbhKx26WK85q07EamUik0QGd8CqA"
+    }
+}
+```
+
+### POST /api/v1/tokens
+
+Refresh token endpoint. Returns new JWT token if refresh token is valid.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/tokens
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? | Yes  |
+
+#### Request parameters
+| Name         | Type   | Required? | Description       | Validations | Example                                                                                                                                                                                                                                 |
+|--------------|--------|-----------|-------------------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| refreshToken | string | yes       | JWT refresh token | -           | eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njg3MTc0MjcuNzMzMTc0LCJpYXQiOjE2Njg3MTAyMjcuNzMzMTgyLCJpc3MiOiJyZXNlcnZpbyIsInJ0SUQiOiI2NzFlZjUzZi1mNWFmLTQzNDUtOTg0My1iYTM2ZDk4ZDc5ZGIifQ.aJ20LIyi1M5dXm3RbhKx26WK85q07EamUik0QGd8CqA |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name         | Type   | Can be null? | Description       |
+|--------------|--------|--------------|-------------------|
+| accessToken  | string | no           | JWT access token  |
+
+#### Possible errors:
+
+| name                            | message                     | HTTP status code |
+|---------------------------------|-----------------------------|------------------|
+| [invalid_input](#invalid-input) |                             |                  |
+| faulty_token                    | Faulty token provided       | 400              |
+| token_invalid_or_expired        | Token is invalid or expired | 401              |
+| [unknown](#unknown)             |                             |                  |
+
+#### Example request
+```
+POST /api/v1/tokens HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+
+{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njg3MTc0MjcuNzMzMTc0LCJpYXQiOjE2Njg3MTAyMjcuNzMzMTgyLCJpc3MiOiJyZXNlcnZpbyIsInJ0SUQiOiI2NzFlZjUzZi1mNWFmLTQzNDUtOTg0My1iYTM2ZDk4ZDc5ZGIifQ.aJ20LIyi1M5dXm3RbhKx26WK85q07EamUik0QGd8CqA"
+}
+```
+
+#### Example response
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "error": null,
+    "data": {
+        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njg3MTc0MzAuNDQ0MjcyLCJpYXQiOjE2Njg3MTQ0MzAuNDQ0Mjc5LCJpc3MiOiJyZXNlcnZpbyIsInVzZXJJRCI6IjdiNTYyNGMyLTc3MTMtNGJiMy1iOGQ1LWVhMjliNTc5MjExNSIsInJvbGUiOiJjb21wYW55IiwicnRJRCI6IjY3MWVmNTNmLWY1YWYtNDM0NS05ODQzLWJhMzZkOThkNzlkYiJ9.Y2BovB5Tuq3_FLiDdjGUj0XYQB_cG0umWpNJSEfpy9Q"
     }
 }
 ```
