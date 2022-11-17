@@ -224,12 +224,56 @@ Realizacijos langas:
 
 ## 4. API specifikacija
 
-### Error type
+### General types
 
+#### Error
 | Field   | Type   | Description     |
 |---------|--------|-----------------|
 | name    | string | Error code name |
 | message | string | Error message   |
+
+### General errors
+
+#### Not found
+| name      | message   | HTTP status code |
+|-----------|-----------|------------------|
+| not_found | Not found | 404              |
+
+#### Forbidden
+| name      | message   | HTTP status code |
+|-----------|-----------|------------------|
+| forbidden | Forbidden | 403              |
+
+#### Unauthorized
+| name         | message      | HTTP status code |
+|--------------|--------------|------------------|
+| unauthorized | Unauthorized | 401              |
+
+#### Bad request
+| name         | message      | HTTP status code |
+|--------------|--------------|------------------|
+| bad_request  | Bad request  | 400              |
+
+#### Internal server error
+| name                  | message               | HTTP status code |
+|-----------------------|-----------------------|------------------|
+| internal_server_error | Internal server error | 500              |
+
+#### Invalid input
+| name          | message                              | HTTP status code |
+|---------------|--------------------------------------|------------------|
+| invalid_input | Input could not pass the validations | 400              |
+
+#### Unknown
+| name     | message       | HTTP status code |
+|----------|---------------|------------------|
+| unknown  | Unknown error | 500              |
+
+### General response
+| Field | Type            | Null?      | Description                                              |
+|-------|-----------------|------------|----------------------------------------------------------|
+| error | [Error](#error) | on success | If response is unsuccessful, error code will be non null |
+| data  | *any*           | on error   | The data type is specific to each endpoint               |
 
 ### POST /api/v1/users/authenticate
 
@@ -249,9 +293,23 @@ https://reservio.hs.vc/api/v1/users/authenticate
 | email    | string | yes       | User's email address | less than or equal to 200 chars | user@gmail.com |
 | password | string | yes       | User's password      | between 8 and  100 chars        | Secret444!     |
 
-#### Response fields
+#### Successful response
+HTTP status code: `200`
 
-[Error type](#error-type)
+Fields:
+
+| Name         | Type   | Can be null? | Description       |
+|--------------|--------|--------------|-------------------|
+| accessToken  | string | no           | JWT access token  |
+| refreshToken | string | no           | JWT refresh token |
+
+#### Possible errors:
+
+| name                            | message             | HTTP status code |
+|---------------------------------|---------------------|------------------|
+| [invalid_input](#invalid-input) |                     |                  |
+| invalid_credentials             | Invalid credentials | 401              |
+| [unknown](#unknown)             |                     |                  |
 
 #### Example request
 ```
