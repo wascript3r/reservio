@@ -522,6 +522,148 @@ Content-Type: application/json
 }
 ```
 
+### GET /api/v1/clients/:clientID/reservations
+
+Returns all client reservations.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/clients/:clientID/reservations
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? | Yes  |
+
+#### Request parameters
+*none*
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name         | Type          | Can be null? | Description           |
+|--------------|---------------|--------------|-----------------------|
+| reservations | Reservation[] | no           | Array of reservations |
+
+Reservation type:
+
+| Name    | Type    | Can be null? | Description         |
+|---------|---------|--------------|---------------------|
+| id      | string  | no           | Reservation ID      |
+| service | Service | no           | Reservation service |
+| date    | string  | no           | Reservation date    |
+| comment | string  | yes          | Reservation comment |
+
+Service type:
+
+| Name            | Type                      | Can be null? | Description              |
+|-----------------|---------------------------|--------------|--------------------------|
+| id              | string                    | no           | Service ID               |
+| company         | Company                   | no           | Service company          |
+| title           | string                    | no           | Service title            |
+| description     | string                    | no           | Service description      |
+| specialistName  | string                    | yes          | Service specialist name  |
+| specialistPhone | string                    | yes          | Service specialist phone |
+| visitDuration   | number                    | no           | Service visit duration   |
+| workSchedule    | Map<Weekday, DaySchedule> | no           | Service work schedule    |
+
+Weekday type:
+
+| Name | Type   | Can be null? | Description                                                            |
+|------|--------|--------------|------------------------------------------------------------------------|
+|      | string | no           | One of: monday, tuesday, wednesday, thursday, friday, saturday, sunday |
+
+DaySchedule type:
+
+| Name | Type   | Can be null? | Description                |
+|------|--------|--------------|----------------------------|
+| from | string | no           | Day start time (eg. 10:30) |
+| to   | string | no           | Day end time (eg. 18:00)   |
+
+Company type:
+
+| Name        | Type    | Can be null? | Description                   |
+|-------------|---------|--------------|-------------------------------|
+| id          | string  | no           | Company ID                    |
+| email       | string  | no           | Company email address         |
+| name        | string  | no           | Company name                  |
+| address     | string  | no           | Company address               |
+| description | string  | no           | Company description           |
+| approved    | boolean | no           | Is company approved by admin? |
+
+#### Possible errors:
+
+| name                            | message                     | HTTP status code |
+|---------------------------------|-----------------------------|------------------|
+| [unauthorized](#unauthorized)   |                             |                  |
+| [invalid_token](#invalid-token) |                             |                  |
+| [forbidden](#forbidden)         |                             |                  |
+| [unknown](#unknown)             |                             |                  |
+
+#### Example request
+```
+GET /api/v1/clients/d662e339-6fd0-4de3-b3d2-7118ce70ee53/reservations HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "error": null,
+    "data": {
+        "reservations": [
+            {
+                "id": "4ee0457e-e7ff-45bc-9d86-9623ce3e9d15",
+                "service": {
+                    "id": "cba4fef6-490b-4d56-af12-eb153c97893d",
+                    "company": {
+                        "id": "7b5624c2-7713-4bb3-b8d5-ea29b5792115",
+                        "email": "servisas@gmail.com",
+                        "name": "Automobilių servisas",
+                        "address": "Ozo g. 10, Vilnius",
+                        "description": "Automobilių servisas Vilniuje",
+                        "approved": true
+                    },
+                    "title": "Padangų keitimas",
+                    "description": "Pigus automobilio padangų keitimas",
+                    "specialistName": "Jonas",
+                    "specialistPhone": "+37064343332",
+                    "visitDuration": 30,
+                    "workSchedule": {
+                        "monday": {
+                            "from": "08:00",
+                            "to": "16:00"
+                        },
+                        "thursday": {
+                            "from": "10:00",
+                            "to": "14:00"
+                        },
+                        "tuesday": {
+                            "from": "11:30",
+                            "to": "17:00"
+                        },
+                        "wednesday": {
+                            "from": "08:00",
+                            "to": "17:00"
+                        }
+                    }
+                },
+                "date": "2022-11-17 12:30",
+                "comment": "Okaya"
+            }
+        ]
+    }
+}
+```
+
+
 ## 5. Išvados
 
 Šio modulio metu pavyko sėkmingai įgyvendinti užsibrėžtus projekto tikslus - sukurti *backend API*, ją tinkamai apsaugoti panaudojant *JWT token* authentifikacijai ir autorizacijai, be to, sukurti naudotojo sąsajos dalį, viską patalpinti debesyje, jog būtų galima išorinė prieiga prie sistemos, bei galiausiai, parengti galutinę ataskaitą. Tiesa, projektas nėra visiškai užbaigtas ir jį dar reikėtų nemažai patobulinti norint paleisti į rinką.
