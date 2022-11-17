@@ -543,7 +543,9 @@ https://reservio.hs.vc/api/v1/clients/:clientID/reservations
 | Requires authentication? | Yes  |
 
 #### Request parameters
-*none*
+| Name      | Type   | Required? | Description | Validations | Example                              |
+|-----------|--------|-----------|-------------|-------------|--------------------------------------|
+| :clientID | string | yes       | Client ID   | -           | d662e339-6fd0-4de3-b3d2-7118ce70ee53 |
 
 #### Successful response
 HTTP status code: `200`
@@ -608,6 +610,8 @@ Company type:
 | [faulty_token](#faulty-token)   |                             |                  |
 | [invalid_token](#invalid-token) |                             |                  |
 | [forbidden](#forbidden)         |                             |                  |
+| [invalid_input](#invalid-input) |                             |                  |
+| client_not_found                | Client not found            | 404              |
 | [unknown](#unknown)             |                             |                  |
 
 #### Example request
@@ -789,9 +793,6 @@ Company type:
 
 | name                            | message                     | HTTP status code |
 |---------------------------------|-----------------------------|------------------|
-| [unauthorized](#unauthorized)   |                             |                  |
-| [faulty_token](#faulty-token)   |                             |                  |
-| [invalid_token](#invalid-token) |                             |                  |
 | [unknown](#unknown)             |                             |                  |
 
 #### Example request
@@ -827,6 +828,72 @@ Content-Type: application/json
                 "approved": true
             }
         ]
+    }
+}
+```
+
+### GET /api/v1/companies/:companyID
+
+Returns company data by its ID.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? |  No  |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | 7b5624c2-7713-4bb3-b8d5-ea29b5792115 |
+
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name        | Type    | Can be null? | Description                   |
+|-------------|---------|--------------|-------------------------------|
+| id          | string  | no           | Company ID                    |
+| email       | string  | no           | Company email address         |
+| name        | string  | no           | Company name                  |
+| address     | string  | no           | Company address               |
+| description | string  | no           | Company description           |
+| approved    | boolean | no           | Is company approved by admin? |
+
+#### Possible errors:
+
+| name                | message           | HTTP status code |
+|---------------------|-------------------|------------------|
+| company_not_found   | Company not found | 404              |
+| [unknown](#unknown) |                   |                  |
+
+#### Example request
+```
+GET /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115 HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "error": null,
+    "data": {
+        "id": "7b5624c2-7713-4bb3-b8d5-ea29b5792115",
+        "email": "servisas@gmail.com",
+        "name": "Automobilių servisas",
+        "address": "Ozo g. 10, Vilnius",
+        "description": "Automobilių servisas Vilniuje",
+        "approved": true
     }
 }
 ```
