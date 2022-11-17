@@ -249,6 +249,11 @@ Realizacijos langas:
 |--------------|--------------|------------------|
 | unauthorized | Unauthorized | 401              |
 
+#### Faulty token
+| name         | message               | HTTP status code |
+|--------------|-----------------------|------------------|
+| faulty_token | Faulty token provided | 400              |
+
 #### Invalid token
 | name                     | message                     | HTTP status code |
 |--------------------------|-----------------------------|------------------|
@@ -377,7 +382,7 @@ Fields:
 | name                            | message                     | HTTP status code |
 |---------------------------------|-----------------------------|------------------|
 | [invalid_input](#invalid-input) |                             |                  |
-| faulty_token                    | Faulty token provided       | 400              |
+| [faulty_token](#faulty-token)   |                             |                  |
 | [invalid_token](#invalid-token) |                             |                  |
 | [unknown](#unknown)             |                             |                  |
 
@@ -430,6 +435,7 @@ HTTP status code: `204`
 | name                            | message                     | HTTP status code |
 |---------------------------------|-----------------------------|------------------|
 | [unauthorized](#unauthorized)   |                             |                  |
+| [faulty_token](#faulty-token)   |                             |                  |
 | [invalid_token](#invalid-token) |                             |                  |
 | [unknown](#unknown)             |                             |                  |
 
@@ -599,6 +605,7 @@ Company type:
 | name                            | message                     | HTTP status code |
 |---------------------------------|-----------------------------|------------------|
 | [unauthorized](#unauthorized)   |                             |                  |
+| [faulty_token](#faulty-token)   |                             |                  |
 | [invalid_token](#invalid-token) |                             |                  |
 | [forbidden](#forbidden)         |                             |                  |
 | [unknown](#unknown)             |                             |                  |
@@ -737,6 +744,89 @@ Content-Type: application/json
         "address": "Vilnius, Lithuania",
         "description": "Very good company",
         "approved": false
+    }
+}
+```
+
+### GET /api/v1/companies
+
+Returns all registered companies. When requested by admin, returns all companies, otherwise returns only approved companies.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? |  No  |
+
+#### Request parameters
+*none*
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name      | Type      | Can be null? | Description        |
+|-----------|-----------|--------------|--------------------|
+| companies | Company[] | no           | Array of companies |
+
+Company type:
+
+| Name        | Type    | Can be null? | Description                                                                          |
+|-------------|---------|--------------|--------------------------------------------------------------------------------------|
+| id          | string  | no           | Company ID                                                                           |
+| email       | string  | no           | Company email address                                                                |
+| name        | string  | no           | Company name                                                                         |
+| address     | string  | no           | Company address                                                                      |
+| description | string  | no           | Company description                                                                  |
+| approved    | boolean | no           | Is company approved by admin? If request is made not by admin, always equals to true |
+
+#### Possible errors:
+
+| name                            | message                     | HTTP status code |
+|---------------------------------|-----------------------------|------------------|
+| [unauthorized](#unauthorized)   |                             |                  |
+| [faulty_token](#faulty-token)   |                             |                  |
+| [invalid_token](#invalid-token) |                             |                  |
+| [unknown](#unknown)             |                             |                  |
+
+#### Example request
+```
+GET /api/v1/companies HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "error": null,
+    "data": {
+        "companies": [
+            {
+                "id": "7b5624c2-7713-4bb3-b8d5-ea29b5792115",
+                "email": "servisas@gmail.com",
+                "name": "Automobilių servisas",
+                "address": "Ozo g. 10, Vilnius",
+                "description": "Automobilių servisas Vilniuje",
+                "approved": true
+            },
+            {
+                "id": "e91f4c92-1371-48a1-a745-7d66d2178e15",
+                "email": "plovykla@gmail.com",
+                "name": "Plovykla",
+                "address": "Vilniaus g. 17, Kaunas",
+                "description": "Automobilių plovykla Kaune",
+                "approved": true
+            }
+        ]
     }
 }
 ```
