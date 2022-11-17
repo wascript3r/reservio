@@ -362,6 +362,7 @@ https://reservio.hs.vc/api/v1/tokens
 |     Response formats     | JSON |
 |:------------------------:|:----:|
 | Requires authentication? | Yes  |
+|      Required role       | any  |
 
 #### Request parameters
 | Name         | Type   | Required? | Description       | Validations | Example                                                                                                                                                                                                                                 |
@@ -423,6 +424,7 @@ https://reservio.hs.vc/api/v1/users/logout
 |     Response formats     | JSON |
 |:------------------------:|:----:|
 | Requires authentication? | Yes  |
+|      Required role       | any  |
 
 #### Request parameters
 *none*
@@ -538,9 +540,10 @@ https://reservio.hs.vc/api/v1/clients/:clientID/reservations
 ```
 
 #### Resource information
-|     Response formats     | JSON |
-|:------------------------:|:----:|
-| Requires authentication? | Yes  |
+|     Response formats     |  JSON  |
+|:------------------------:|:------:|
+| Requires authentication? |  Yes   |
+|      Required role       | Client |
 
 #### Request parameters
 | Name      | Type   | Required? | Description | Validations | Example                              |
@@ -896,6 +899,67 @@ Content-Type: application/json
         "approved": true
     }
 }
+```
+
+### PATCH /api/v1/companies/:companyID
+
+Updates company data by its ID.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID
+```
+
+#### Resource information
+|     Response formats     |       JSON       |
+|:------------------------:|:----------------:|
+| Requires authentication? |       Yes        |
+|      Required role       | Company or Admin |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | 7b5624c2-7713-4bb3-b8d5-ea29b5792115 |
+
+| Name        | Type    | Required? | Description                                      | Validations                        | Example            |
+|-------------|---------|-----------|--------------------------------------------------|------------------------------------|--------------------|
+| name        | string  | no        | Company name. Can only be set by company.        | between 3 and 100 chars            | My company         |
+| address     | string  | no        | Company address. Can only be set by company.     | between 5 and 200 chars            | Vilnius, Lithuania |
+| description | string  | no        | Company description. Can only be set by company. | greater than or equal to 200 chars | Very good company  |
+| approved    | boolean | no        | Is company approved? Can only be set by admin.   | -                                  | true               |
+
+#### Successful response
+HTTP status code: `204`
+
+#### Possible errors:
+
+| name                            | message           | HTTP status code |
+|---------------------------------|-------------------|------------------|
+| [unauthorized](#unauthorized)   |                   |                  |
+| [faulty_token](#faulty-token)   |                   |                  |
+| [invalid_token](#invalid-token) |                   |                  |
+| [forbidden](#forbidden)         |                   |                  |
+| [invalid_input](#invalid-input) |                   |                  |
+| company_not_found               | Company not found | 404              |
+| nothing_to_update               | Nothing to update | 400              |
+| [unknown](#unknown)             |                   |                  |
+
+#### Example request
+```
+PATCH /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115 HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+
+{
+    "name": "My company",
+    "address": "Vilnius, Lithuania",
+}
+```
+
+#### Example response
+```
+HTTP/1.1 204 No Content
+Content-Type: application/json
 ```
 
 ## 5. Išvados
