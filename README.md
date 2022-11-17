@@ -74,4 +74,10 @@ Sistemą sudarys dvi dalys:
 
 **3.1. Pradinis puslapis**
 
-![](.README_images/011_Home.png)
+Wireframe:
+
+![](.README_images/01_Home.png)
+
+Realizacijos langas:
+
+![](.README_images/01_Home_real.png)
