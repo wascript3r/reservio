@@ -446,6 +446,82 @@ HTTP/1.1 204 No Content
 Content-Type: application/json
 ```
 
+### POST /api/v1/clients
+
+Create client endpoint. Creates new client and returns its data.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/clients
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? |  No  |
+
+#### Request parameters
+| Name      | Type   | Required? | Description          | Validations                     | Example        |
+|-----------|--------|-----------|----------------------|---------------------------------|----------------|
+| email     | string | yes       | Client email address | less than or equal to 200 chars | user@gmail.com |
+| password  | string | yes       | Client password      | between 8 and 100 chars         | Secret444!     |
+| firstName | string | yes       | Client first name    | between 3 and 50 chars          | John           |
+| lastName  | string | yes       | Client last name     | between 3 and 50 chars          | Devo           |
+| phone     | string | yes       | Client phone number  | e164 standart                   | +37061354544   |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name      | Type   | Can be null? | Description          |
+|-----------|--------|--------------|----------------------|
+| id        | string | no           | Created user ID      |
+| email     | string | no           | Client email address |
+| firstName | string | no           | Client first name    |
+| lastName  | string | no           | Client last name     |
+| phone     | string | no           | Client phone number  |
+
+#### Possible errors:
+
+| name                            | message              | HTTP status code |
+|---------------------------------|----------------------|------------------|
+| [invalid_input](#invalid-input) |                      |                  |
+| email_already_exists            | Email already exists | 422              |
+| [unknown](#unknown)             |                      |                  |
+
+#### Example request
+```
+POST /api/v1/clients HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+
+{
+    "email": "user@gmail.com",
+    "password": "Secret444!",
+    "firstName": "John",
+    "lastName": "Devo",
+    "phone": "+37061354544"
+}
+```
+
+#### Example response
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "error": null,
+    "data": {
+        "id": "3b218c3f-b443-4c15-8984-33654aa16a82",
+        "email": "user@gmail.com"
+        "firstName": "John",
+        "lastName": "Devo",
+        "phone": "+37061354544",
+    }
+}
+```
+
 ## 5. Išvados
 
 Šio modulio metu pavyko sėkmingai įgyvendinti užsibrėžtus projekto tikslus - sukurti *backend API*, ją tinkamai apsaugoti panaudojant *JWT token* authentifikacijai ir autorizacijai, be to, sukurti naudotojo sąsajos dalį, viską patalpinti debesyje, jog būtų galima išorinė prieiga prie sistemos, bei galiausiai, parengti galutinę ataskaitą. Tiesa, projektas nėra visiškai užbaigtas ir jį dar reikėtų nemažai patobulinti norint paleisti į rinką.
