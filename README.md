@@ -962,6 +962,54 @@ HTTP/1.1 204 No Content
 Content-Type: application/json
 ```
 
+### DELETE /api/v1/companies/:companyID
+
+Deletes company by its ID.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID
+```
+
+#### Resource information
+|     Response formats     | JSON  |
+|:------------------------:|:-----:|
+| Requires authentication? |  Yes  |
+|      Required role       | Admin |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | 7b5624c2-7713-4bb3-b8d5-ea29b5792115 |
+
+#### Successful response
+HTTP status code: `204`
+
+#### Possible errors:
+
+| name                            | message           | HTTP status code |
+|---------------------------------|-------------------|------------------|
+| [unauthorized](#unauthorized)   |                   |                  |
+| [faulty_token](#faulty-token)   |                   |                  |
+| [invalid_token](#invalid-token) |                   |                  |
+| [forbidden](#forbidden)         |                   |                  |
+| [invalid_input](#invalid-input) |                   |                  |
+| company_not_found               | Company not found | 404              |
+| [unknown](#unknown)             |                   |                  |
+
+#### Example request
+```
+DELETE /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115 HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```
+HTTP/1.1 204 No Content
+Content-Type: application/json
+```
+
 ## 5. Išvados
 
 Šio modulio metu pavyko sėkmingai įgyvendinti užsibrėžtus projekto tikslus - sukurti *backend API*, ją tinkamai apsaugoti panaudojant *JWT token* authentifikacijai ir autorizacijai, be to, sukurti naudotojo sąsajos dalį, viską patalpinti debesyje, jog būtų galima išorinė prieiga prie sistemos, bei galiausiai, parengti galutinę ataskaitą. Tiesa, projektas nėra visiškai užbaigtas ir jį dar reikėtų nemažai patobulinti norint paleisti į rinką.
