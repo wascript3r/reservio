@@ -72,7 +72,7 @@ Sistemą sudarys dvi dalys:
 
 Žemiau pateikiami projektuojamos sąsajos langų wireframe`ai ir juos atitinkančių realizacijų langų iškarpos.
 
-**3.1. Pradinis puslapis**
+**3.1. Pradinis langas**
 
 Wireframe:
 
@@ -82,7 +82,7 @@ Realizacijos langas:
 
 ![](.README_images/01_Home_real.png)
 
-**3.2. Informacija apie įmonę**
+**3.2. Informacijos apie įmonę langas**
 
 Wireframe:
 
@@ -161,3 +161,63 @@ Wireframe:
 Realizacijos langas:
 
 ![](.README_images/09_ClientEditReservation_real.png)
+
+**3.10. Administratoriaus pradinis langas**
+
+Wireframe:
+
+![](.README_images/10_AdminHome.png)
+
+Realizacijos langas:
+
+![](.README_images/10_AdminHome_real.png)
+
+**3.11. Įmonės informacijos atnaujinimo langas**
+
+Wireframe:
+
+![](.README_images/11_UpdateCompany.png)
+
+Realizacijos langas:
+
+![](.README_images/11_UpdateCompany_real.png)
+
+**3.12. Įmonės teikiamų paslaugų sąrašo langas**
+
+Wireframe:
+
+![](.README_images/12_MyServices.png)
+
+Realizacijos langas:
+
+![](.README_images/12_MyServices_real.png)
+
+**3.13. Įmonės paslaugos atnaujinimo langas**
+
+Wireframe:
+
+![](.README_images/13_UpdateService.png)
+
+Realizacijos langas:
+
+![](.README_images/13_UpdateService_real.png)
+
+**3.14. Įmonės naujos paslaugos sukūrimo langas**
+
+Wireframe:
+
+![](.README_images/14_CreateService.png)
+
+Realizacijos langas:
+
+![](.README_images/14_CreateService_real.png)
+
+**3.15. Įmonės paslaugų rezervacijų sąrašo langas**
+
+Wireframe:
+
+![](.README_images/15_CompanyReservations.png)
+
+Realizacijos langas:
+
+![](.README_images/15_CompanyReservations_real.png)
