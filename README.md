@@ -249,6 +249,11 @@ Realizacijos langas:
 |--------------|--------------|------------------|
 | unauthorized | Unauthorized | 401              |
 
+#### Invalid token
+| name                     | message                     | HTTP status code |
+|--------------------------|-----------------------------|------------------|
+| token_invalid_or_expired | Token is invalid or expired | 401              |
+
 #### Bad request
 | name         | message      | HTTP status code |
 |--------------|--------------|------------------|
@@ -373,7 +378,7 @@ Fields:
 |---------------------------------|-----------------------------|------------------|
 | [invalid_input](#invalid-input) |                             |                  |
 | faulty_token                    | Faulty token provided       | 400              |
-| token_invalid_or_expired        | Token is invalid or expired | 401              |
+| [invalid_token](#invalid-token) |                             |                  |
 | [unknown](#unknown)             |                             |                  |
 
 #### Example request
@@ -398,6 +403,47 @@ Content-Type: application/json
         "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njg3MTc0MzAuNDQ0MjcyLCJpYXQiOjE2Njg3MTQ0MzAuNDQ0Mjc5LCJpc3MiOiJyZXNlcnZpbyIsInVzZXJJRCI6IjdiNTYyNGMyLTc3MTMtNGJiMy1iOGQ1LWVhMjliNTc5MjExNSIsInJvbGUiOiJjb21wYW55IiwicnRJRCI6IjY3MWVmNTNmLWY1YWYtNDM0NS05ODQzLWJhMzZkOThkNzlkYiJ9.Y2BovB5Tuq3_FLiDdjGUj0XYQB_cG0umWpNJSEfpy9Q"
     }
 }
+```
+
+### POST /api/v1/users/logout
+
+Logout endpoint. Invalidates refresh token.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/users/logout
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? | Yes  |
+
+#### Request parameters
+*none*
+
+#### Successful response
+HTTP status code: `204`
+
+#### Possible errors:
+
+| name                            | message                     | HTTP status code |
+|---------------------------------|-----------------------------|------------------|
+| [unauthorized](#unauthorized)   |                             |                  |
+| [invalid_token](#invalid-token) |                             |                  |
+| [unknown](#unknown)             |                             |                  |
+
+#### Example request
+```
+POST /api/v1/users/logout HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```
+HTTP/1.1 204 No Content
+Content-Type: application/json
 ```
 
 ## 5. Išvados
