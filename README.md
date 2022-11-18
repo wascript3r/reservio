@@ -328,7 +328,8 @@ Fields:
 POST /api/v1/users/authenticate HTTP/1.1
 Host: reservio.hs.vc
 Content-Type: application/json
-
+```
+```json
 {
     "email": "user@gmail.com",
     "password": "Secret444!"
@@ -336,10 +337,11 @@ Content-Type: application/json
 ```
 
 #### Example response
-```
+```http request
 HTTP/1.1 200 OK
 Content-Type: application/json
-
+```
+```json
 {
     "error": null,
     "data": {
@@ -1113,7 +1115,8 @@ Content-Type: application/json
 ```
 HTTP/1.1 200 OK
 Content-Type: application/json
-
+```
+```json
 {
     "error": null,
     "data": {
