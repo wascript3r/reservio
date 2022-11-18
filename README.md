@@ -1203,7 +1203,7 @@ Fields:
 
 #### Example request
 ```http request
-POST /api/v1/companies/e91f4c92-1371-48a1-a745-7d66d2178e15/services/fda84995-0755-40e3-8ed4-129fc774125b HTTP/1.1
+GET /api/v1/companies/e91f4c92-1371-48a1-a745-7d66d2178e15/services/fda84995-0755-40e3-8ed4-129fc774125b HTTP/1.1
 Host: reservio.hs.vc
 Content-Type: application/json
 ```
@@ -1365,6 +1365,107 @@ Content-Type: application/json
         ]
     }
 }
+```
+
+### PATCH /api/v1/companies/:companyID/services/:serviceID
+
+Update service endpoint. Updates service with given ID.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services/:serviceID
+```
+
+#### Resource information
+|     Response formats     |  JSON   |
+|:------------------------:|:-------:|
+| Requires authentication? |   Yes   |
+|      Required role       | Company |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | e91f4c92-1371-48a1-a745-7d66d2178e15 |
+| :serviceID | string | yes       | Service ID  | -           | fda84995-0755-40e3-8ed4-129fc774125b |
+
+| Name            | Type                      | Required? | Description              | Validations                      | Example                                          |
+|-----------------|---------------------------|-----------|--------------------------|----------------------------------|--------------------------------------------------|
+| title           | string                    | no        | Service title            | between 3 and 100 chars          | Men's haircut                                    |
+| description     | string                    | no        | Service description      | greater than or equal to 5 chars | Cheap men's haircut                              |
+| specialistName  | SpecialistNameUpd         | no        | Service specialist name  | -                                | { "value": John }                                |
+| specialistPhone | SpecialistPhoneUpd        | no        | Service specialist phone | -                                | { "value": null }                                |
+| visitDuration   | number                    | no        | Service visit duration   | greater than 0                   | 30                                               |
+| workSchedule    | Map<Weekday, DaySchedule> | no        | Service work schedule    | size greater than 0              | { "monday": { "from": "08:00", "to": "17:00" } } |
+
+SpecialistNameUpd type:
+
+| Name  | Type   | Required? | Description                                                            | Validations             | Example |
+|-------|--------|-----------|------------------------------------------------------------------------|-------------------------|---------|
+| value | string | no        | Service specialist name value. If null, specialistName is set to null. | between 5 and 100 chars | John    |
+
+SpecialistPhoneUpd type:
+
+| Name  | Type   | Required? | Description                                                              | Validations   | Example      |
+|-------|--------|-----------|--------------------------------------------------------------------------|---------------|--------------|
+| value | string | no        | Service specialist phone value. If null, specialistPhone is set to null. | e164 standart | +37064343333 |
+
+Weekday type:
+
+| Name | Type   | Required? | Description            | Validations                                                            | Example |
+|------|--------|-----------|------------------------|------------------------------------------------------------------------|---------|
+|      | string | yes       | Work schedule week day | One of: monday, tuesday, wednesday, thursday, friday, saturday, sunday | friday  |
+
+DaySchedule type:
+
+| Name | Type   | Required? | Description    | Validations       | Example |
+|------|--------|-----------|----------------|-------------------|---------|
+| from | string | yes       | Day start time | time format HH:mm | 10:30   |
+| to   | string | yes       | Day end time   | time format HH:mm | 18:00   |
+
+#### Successful response
+HTTP status code: `204`
+
+#### Possible errors:
+
+| name                            | message              | HTTP status code |
+|---------------------------------|----------------------|------------------|
+| [unauthorized](#unauthorized)   |                      |                  |
+| [faulty_token](#faulty-token)   |                      |                  |
+| [invalid_token](#invalid-token) |                      |                  |
+| [forbidden](#forbidden)         |                      |                  |
+| [invalid_input](#invalid-input) |                      |                  |
+| company_not_found               | Company not found    | 404              |
+| service_not_found               | Service not found    | 404              |
+| nothing_to_update               | Nothing to update    | 400              |
+| [unknown](#unknown)             |                      |                  |
+
+#### Example request
+```http request
+PATCH /api/v1/companies/e91f4c92-1371-48a1-a745-7d66d2178e15/services/fda84995-0755-40e3-8ed4-129fc774125b HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+```json
+{
+    "title": "Paslauga",
+    "description": "Paslaugos aprasymas",
+    "specialistName": null,
+    "specialistPhone": {
+        "value": "+37065787898"
+    },
+    "workSchedule": {
+        "monday": {
+            "from": "11:55",
+            "to": "15:55"
+        }
+    }
+}
+```
+
+#### Example response
+```http request
+HTTP/1.1 204 No Content
+Content-Type: application/json
 ```
 
 ## 5. Išvados
