@@ -1601,6 +1601,92 @@ Content-Type: application/json
 }
 ```
 
+### GET /api/v1/companies/:companyID/services/:serviceID/reservations/:reservationID
+
+Get reservation endpoint. Returns reservation data.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services/:serviceID/reservations/:reservationID
+```
+
+#### Resource information
+|     Response formats     |       JSON        |
+|:------------------------:|:-----------------:|
+| Requires authentication? |        Yes        |
+|      Required role       | Company or Client |
+
+#### Request parameters
+| Name           | Type   | Required? | Description    | Validations | Example                              |
+|----------------|--------|-----------|----------------|-------------|--------------------------------------|
+| :companyID     | string | yes       | Company ID     | -           | e91f4c92-1371-48a1-a745-7d66d2178e15 |
+| :serviceID     | string | yes       | Service ID     | -           | fda84995-0755-40e3-8ed4-129fc774125b |
+| :reservationID | string | yes       | Reservation ID | -           | b484f566-39ce-4422-8dcb-22734792e05d |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name      | Type   | Can be null? | Description         |
+|-----------|--------|--------------|---------------------|
+| id        | string | no           | Reservation ID      |
+| serviceID | string | no           | Service ID          |
+| client    | Client | no           | Client data         |
+| date      | string | no           | Reservation date    |
+| comment   | string | yes          | Reservation comment |
+
+Client type:
+
+| Name      | Type   | Can be null? | Description          |
+|-----------|--------|--------------|----------------------|
+| id        | string | no           | Client ID            |
+| firstName | string | no           | Client first name    |
+| lastName  | string | no           | Client last name     |
+| phone     | string | no           | Client phone number  |
+| email     | string | no           | Client email address |
+
+#### Possible errors:
+
+| name                            | message               | HTTP status code |
+|---------------------------------|-----------------------|------------------|
+| [invalid_input](#invalid-input) |                       |                  |
+| company_not_found               | Company not found     | 404              |
+| service_not_found               | Service not found     | 404              |
+| reservation_not_found           | Reservation not found | 404              |
+| [unknown](#unknown)             |                       |                  |
+
+#### Example request
+```http request
+GET /api/v1/companies/e91f4c92-1371-48a1-a745-7d66d2178e15/services/fda84995-0755-40e3-8ed4-129fc774125b/reservations/b484f566-39ce-4422-8dcb-22734792e05d HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "id": "b484f566-39ce-4422-8dcb-22734792e05d",
+        "serviceID": "fda84995-0755-40e3-8ed4-129fc774125b",
+        "client": {
+            "id": "d662e339-6fd0-4de3-b3d2-7118ce70ee53",
+            "firstName": "Jonas",
+            "lastName": "Jonaitis",
+            "phone": "+37065555455",
+            "email": "jonas.jonaitis@gmail.com"
+        },
+        "date": "2022-11-21 11:55",
+        "comment": "this is my comment"
+    }
+}
+```
+
 ## 5. Išvados
 
 Šio modulio metu pavyko sėkmingai įgyvendinti užsibrėžtus projekto tikslus - sukurti *backend API*, ją tinkamai apsaugoti panaudojant *JWT token* authentifikacijai ir autorizacijai, be to, sukurti naudotojo sąsajos dalį, viską patalpinti debesyje, jog būtų galima išorinė prieiga prie sistemos, bei galiausiai, parengti galutinę ataskaitą. Tiesa, projektas nėra visiškai užbaigtas ir jį dar reikėtų nemažai patobulinti norint paleisti į rinką.
