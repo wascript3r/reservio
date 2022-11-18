@@ -1156,6 +1156,96 @@ Content-Type: application/json
 }
 ```
 
+### GET /api/v1/companies/:companyID/services/:serviceID
+
+Get service endpoint. Returns service data.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services/:serviceID
+```
+
+#### Resource information
+|     Response formats     |  JSON   |
+|:------------------------:|:-------:|
+| Requires authentication? |   No    |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | e91f4c92-1371-48a1-a745-7d66d2178e15 |
+| :serviceID | string | yes       | Service ID  | -           | fda84995-0755-40e3-8ed4-129fc774125b |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name            | Type                      | Can be null? | Description              |
+|-----------------|---------------------------|--------------|--------------------------|
+| id              | string                    | no           | Service ID               |
+| companyID       | string                    | no           | Company ID               |
+| title           | string                    | no           | Service title            |
+| description     | string                    | no           | Service description      |
+| specialistName  | string                    | yes          | Service specialist name  |
+| specialistPhone | string                    | yes          | Service specialist phone |
+| visitDuration   | number                    | no           | Service visit duration   |
+| workSchedule    | Map<Weekday, DaySchedule> | no           | Service work schedule    |
+
+#### Possible errors:
+
+| name                            | message              | HTTP status code |
+|---------------------------------|----------------------|------------------|
+| [invalid_input](#invalid-input) |                      |                  |
+| company_not_found               | Company not found    | 404              |
+| service_not_found               | Service not found    | 404              |
+| [unknown](#unknown)             |                      |                  |
+
+#### Example request
+```http request
+POST /api/v1/companies/e91f4c92-1371-48a1-a745-7d66d2178e15/services/fda84995-0755-40e3-8ed4-129fc774125b HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "id": "fda84995-0755-40e3-8ed4-129fc774125b",
+        "companyID": "e91f4c92-1371-48a1-a745-7d66d2178e15",
+        "title": "Padangų keitimas",
+        "description": "Pigus automobilio padangų keitimas",
+        "specialistName": "Jonas",
+        "specialistPhone": "+37064343333",
+        "visitDuration": 45,
+        "workSchedule": {
+            "monday": {
+                "from": "08:00",
+                "to": "17:00"
+            },
+            "thursday": {
+                "from": "10:15",
+                "to": "14:00"
+            },
+            "tuesday": {
+                "from": "11:45",
+                "to": "17:00"
+            },
+            "wednesday": {
+                "from": "08:00",
+                "to": "17:00"
+            }
+        }
+    }
+}
+```
+
 ## 5. Išvados
 
 Šio modulio metu pavyko sėkmingai įgyvendinti užsibrėžtus projekto tikslus - sukurti *backend API*, ją tinkamai apsaugoti panaudojant *JWT token* authentifikacijai ir autorizacijai, be to, sukurti naudotojo sąsajos dalį, viską patalpinti debesyje, jog būtų galima išorinė prieiga prie sistemos, bei galiausiai, parengti galutinę ataskaitą. Tiesa, projektas nėra visiškai užbaigtas ir jį dar reikėtų nemažai patobulinti norint paleisti į rinką.
