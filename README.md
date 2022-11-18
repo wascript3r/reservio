@@ -324,7 +324,7 @@ Fields:
 | [unknown](#unknown)             |                     |                  |
 
 #### Example request
-```
+```http request
 POST /api/v1/users/authenticate HTTP/1.1
 Host: reservio.hs.vc
 Content-Type: application/json
@@ -390,21 +390,23 @@ Fields:
 | [unknown](#unknown)             |                             |                  |
 
 #### Example request
-```
+```http request
 POST /api/v1/tokens HTTP/1.1
 Host: reservio.hs.vc
 Content-Type: application/json
-
+```
+```json
 {
     "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njg3MTc0MjcuNzMzMTc0LCJpYXQiOjE2Njg3MTAyMjcuNzMzMTgyLCJpc3MiOiJyZXNlcnZpbyIsInJ0SUQiOiI2NzFlZjUzZi1mNWFmLTQzNDUtOTg0My1iYTM2ZDk4ZDc5ZGIifQ.aJ20LIyi1M5dXm3RbhKx26WK85q07EamUik0QGd8CqA"
 }
 ```
 
 #### Example response
-```
+```http request
 HTTP/1.1 200 OK
 Content-Type: application/json
-
+```
+```json
 {
     "error": null,
     "data": {
@@ -444,14 +446,14 @@ HTTP status code: `204`
 | [unknown](#unknown)             |                             |                  |
 
 #### Example request
-```
+```http request
 POST /api/v1/users/logout HTTP/1.1
 Host: reservio.hs.vc
 Content-Type: application/json
 ```
 
 #### Example response
-```
+```http request
 HTTP/1.1 204 No Content
 Content-Type: application/json
 ```
@@ -501,11 +503,12 @@ Fields:
 | [unknown](#unknown)             |                      |                  |
 
 #### Example request
-```
+```http request
 POST /api/v1/clients HTTP/1.1
 Host: reservio.hs.vc
 Content-Type: application/json
-
+```
+```json
 {
     "email": "user@gmail.com",
     "password": "Secret444!",
@@ -516,18 +519,19 @@ Content-Type: application/json
 ```
 
 #### Example response
-```
+```http request
 HTTP/1.1 200 OK
 Content-Type: application/json
-
+```
+```json
 {
     "error": null,
     "data": {
         "id": "3b218c3f-b443-4c15-8984-33654aa16a82",
-        "email": "user@gmail.com"
+        "email": "user@gmail.com",
         "firstName": "John",
         "lastName": "Devo",
-        "phone": "+37061354544",
+        "phone": "+37061354544"
     }
 }
 ```
@@ -620,17 +624,18 @@ Company type:
 | [unknown](#unknown)             |                             |                  |
 
 #### Example request
-```
+```http request
 GET /api/v1/clients/d662e339-6fd0-4de3-b3d2-7118ce70ee53/reservations HTTP/1.1
 Host: reservio.hs.vc
 Content-Type: application/json
 ```
 
 #### Example response
-```
+```http request
 HTTP/1.1 200 OK
 Content-Type: application/json
-
+```
+```json
 {
     "error": null,
     "data": {
@@ -725,11 +730,12 @@ Fields:
 | [unknown](#unknown)             |                      |                  |
 
 #### Example request
-```
+```http request
 POST /api/v1/companies HTTP/1.1
 Host: reservio.hs.vc
 Content-Type: application/json
-
+```
+```json
 {
     "email": "user@gmail.com",
     "password": "Secret444!",
@@ -740,15 +746,16 @@ Content-Type: application/json
 ```
 
 #### Example response
-```
+```http request
 HTTP/1.1 200 OK
 Content-Type: application/json
-
+```
+```json
 {
     "error": null,
     "data": {
         "id": "07c35941-0af3-4011-b42e-40bca152f2b8",
-        "email": "user@gmail.com"
+        "email": "user@gmail.com",
         "name": "My company",
         "address": "Vilnius, Lithuania",
         "description": "Very good company",
@@ -801,17 +808,18 @@ Company type:
 | [unknown](#unknown)             |                             |                  |
 
 #### Example request
-```
+```http request
 GET /api/v1/companies HTTP/1.1
 Host: reservio.hs.vc
 Content-Type: application/json
 ```
 
 #### Example response
-```
+```http request
 HTTP/1.1 200 OK
 Content-Type: application/json
-
+```
+```json
 {
     "error": null,
     "data": {
@@ -879,17 +887,18 @@ Fields:
 | [unknown](#unknown) |                   |                  |
 
 #### Example request
-```
+```http request
 GET /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115 HTTP/1.1
 Host: reservio.hs.vc
 Content-Type: application/json
 ```
 
 #### Example response
-```
+```http request
 HTTP/1.1 200 OK
 Content-Type: application/json
-
+```
+```json
 {
     "error": null,
     "data": {
@@ -947,19 +956,20 @@ HTTP status code: `204`
 | [unknown](#unknown)             |                   |                  |
 
 #### Example request
-```
+```http request
 PATCH /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115 HTTP/1.1
 Host: reservio.hs.vc
 Content-Type: application/json
-
+```
+```json
 {
     "name": "My company",
-    "address": "Vilnius, Lithuania",
+    "address": "Vilnius, Lithuania"
 }
 ```
 
 #### Example response
-```
+```http request
 HTTP/1.1 204 No Content
 Content-Type: application/json
 ```
@@ -1000,14 +1010,14 @@ HTTP status code: `204`
 | [unknown](#unknown)             |                   |                  |
 
 #### Example request
-```
+```http request
 DELETE /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115 HTTP/1.1
 Host: reservio.hs.vc
 Content-Type: application/json
 ```
 
 #### Example response
-```
+```http request
 HTTP/1.1 204 No Content
 Content-Type: application/json
 ```
@@ -1083,11 +1093,12 @@ Fields:
 | [unknown](#unknown)             |                      |                  |
 
 #### Example request
-```
+```http request
 POST /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115/services HTTP/1.1
 Host: reservio.hs.vc
 Content-Type: application/json
-
+```
+```json
 {
     "title": "Men's haircut",
     "description": "Cheap men's haircut",
@@ -1112,7 +1123,7 @@ Content-Type: application/json
 ```
 
 #### Example response
-```
+```http request
 HTTP/1.1 200 OK
 Content-Type: application/json
 ```
