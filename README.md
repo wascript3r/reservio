@@ -1784,6 +1784,82 @@ Content-Type: application/json
 }
 ```
 
+### PATCH /api/v1/companies/:companyID/services/:serviceID/reservations/:reservationID
+
+Update reservation endpoint. Updates reservation with given ID.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services/:serviceID/reservations/:reservationID
+```
+
+#### Resource information
+|     Response formats     |  JSON  |
+|:------------------------:|:------:|
+| Requires authentication? |  Yes   |
+|      Required role       | Client |
+
+#### Request parameters
+| Name           | Type   | Required? | Description    | Validations | Example                              |
+|----------------|--------|-----------|----------------|-------------|--------------------------------------|
+| :companyID     | string | yes       | Company ID     | -           | e91f4c92-1371-48a1-a745-7d66d2178e15 |
+| :serviceID     | string | yes       | Service ID     | -           | fda84995-0755-40e3-8ed4-129fc774125b |
+| :reservationID | string | yes       | Reservation ID | -           | b484f566-39ce-4422-8dcb-22734792e05d |
+
+| Name    | Type       | Required? | Description         | Validations             | Example                           |
+|---------|------------|-----------|---------------------|-------------------------|-----------------------------------|
+| date    | string     | no        | Reservation date    | format YYYY-MM-DD HH:mm | 2022-10-17 10:00                  |
+| comment | CommentUpd | no        | Reservation comment | -                       | { "value": "This is my comment" } |
+
+CommentUpd type:
+
+| Name  | Type   | Required? | Description                                             | Validations             | Example            |
+|-------|--------|-----------|---------------------------------------------------------|-------------------------|--------------------|
+| value | string | no        | Service comment value. If null, comment is set to null. | between 5 and 200 chars | This is my comment |
+
+#### Successful response
+HTTP status code: `204`
+
+#### Possible errors:
+
+| name                            | message                                          | HTTP status code |
+|---------------------------------|--------------------------------------------------|------------------|
+| [unauthorized](#unauthorized)   |                                                  |                  |
+| [faulty_token](#faulty-token)   |                                                  |                  |
+| [invalid_token](#invalid-token) |                                                  |                  |
+| [forbidden](#forbidden)         |                                                  |                  |
+| [invalid_input](#invalid-input) |                                                  |                  |
+| company_not_found               | Company not found                                | 404              |
+| service_not_found               | Service not found                                | 404              |
+| reservation_not_found           | Reservation not found                            | 404              |
+| time_is_in_past                 | Specified reservation time is in the past        | 400              |
+| invalid_time                    | Invalid reservation time                         | 400              |
+| service_not_available           | Service is not available at the specified time   | 400              |
+| reservation_already_exists      | Reservation already exists at the specified time | 422              |
+| nothing_to_update               | Nothing to update                                | 400              |
+| [unknown](#unknown)             |                                                  |                  |
+
+#### Example request
+```http request
+PATCH /api/v1/companies/e91f4c92-1371-48a1-a745-7d66d2178e15/services/fda84995-0755-40e3-8ed4-129fc774125b/reservations/b484f566-39ce-4422-8dcb-22734792e05d HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+```json
+{
+    "date": "2022-10-17 8:45",
+    "comment": {
+        "value": null
+    }
+}
+```
+
+#### Example response
+```http request
+HTTP/1.1 204 No Content
+Content-Type: application/json
+```
+
 ## 5. Išvados
 
 Šio modulio metu pavyko sėkmingai įgyvendinti užsibrėžtus projekto tikslus - sukurti *backend API*, ją tinkamai apsaugoti panaudojant *JWT token* authentifikacijai ir autorizacijai, be to, sukurti naudotojo sąsajos dalį, viską patalpinti debesyje, jog būtų galima išorinė prieiga prie sistemos, bei galiausiai, parengti galutinę ataskaitą. Tiesa, projektas nėra visiškai užbaigtas ir jį dar reikėtų nemažai patobulinti norint paleisti į rinką.
