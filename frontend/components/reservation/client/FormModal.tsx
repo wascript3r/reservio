@@ -101,7 +101,7 @@ export const FormModal = (p: FormModalProps) => {
 	const onSubmit = useCallback((data: FieldValues) => {
 		const dirtyData = extractDirtyFields(data, dirtyFields)
 
-		if (p.service) {
+		if (p.reservation) {
 			if (typeof dirtyData.comment !== 'undefined') {
 				dirtyData.comment = {
 					value: dirtyData.comment,

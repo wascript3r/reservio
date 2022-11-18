@@ -22,18 +22,6 @@ services:
     ports:
       - "5432:5432"
 
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_SETUP_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_SETUP_PASSWORD}
-      TZ: ${CONTAINERS_TIMEZONE}
-    logging:
-      driver: none
-    ports:
-      - "8080:80"
-
   backend:
     build:
       context: ../../
@@ -62,7 +50,7 @@ services:
       - "traefik.http.routers.frontend.rule=Host(`${DOMAIN_NAME}`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certresolver=myresolver"
-      - "traefik.http.services.frontend.loadbalancer.server.port=80"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
 
   traefik:
     image: "traefik:v2.9"

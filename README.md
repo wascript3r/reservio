@@ -1,6 +1,6 @@
-### 1. Sprendžiamo uždavinio aprašymas
+## 1. Sprendžiamo uždavinio aprašymas
 
-**1.1. Sistemos paskirtis**
+### **1.1. Sistemos paskirtis**
 
 Projekto tikslas – sukurti informacinę sistemą, leidžiančią smulkioms įmonėms ar verslams (kirpykloms, odontologijos kabinetams, grožio salonams ir t.t.), kurių biudžetas neleidžia turėti nuosavos IS, registruoti būsimus vizitus, o jų klientams – rezervuoti pasirinktą vizito laiką.
 
@@ -8,7 +8,7 @@ Projekto tikslas – sukurti informacinę sistemą, leidžiančią smulkioms įm
 
 Įmonė ar verslas, norėdamas pradėti naudotis informacine sistema ir suteikti galimybę savo klientams rezervuoti vizito laikus, iš pradžių turės užsiregistruoti – nurodyti veiklos pavadinimą, rūšį, kontaktus. Atlikusi šiuos veiksmus įmonė turės sulaukti administratoriaus patvirtinimo. Gavusi patvirtinimą įmonė galės pridėti savo teikiamas paslaugas (paslaugos iš esmės galėtų būti ir tokios pačios, tiesiog skirtųsi tas paslaugas suteikiantys specialistai) – kiekvienai jų reikės nurodyti aprašymą, tą paslaugą suteikiančio specialisto darbo laiką, specialisto kontaktus. Klientas, norėdamas atlikti laiko rezervaciją tam tikroje įmonėje, tam tikrai paslaugai, turės taip pat užsiregistruoti nurodydamas savo asmeninius duomenis – vardą, pavardę, el. paštą, telefono numerį. Atlikęs pasirinkto laiko rezervaciją klientas turės sulaukti patvirtinimo iš įmonės, o vėliau, esant poreikiui, tiek klientas, tiek įmonė rezervaciją galės atšaukti.
 
-**1.2. Funkciniai reikalavimai**
+### **1.2. Funkciniai reikalavimai**
 
 Neregistruotas sistemos naudotojas (svečias) galės:
 1. Peržiūrėti įmonių sąrašą
@@ -52,18 +52,1876 @@ Registruotas sistemos naudotojas (administratorius) galės:
 7. Patvirtinti įmonės registraciją
 8. Pašalinti įmonę
 
-### 2. Sistemos architektūra
+## 2. Sistemos architektūra
 
-**2.1. Pasirinktos technologijos**
+### **2.1. Pasirinktos technologijos**
 
 Sistemą sudarys dvi dalys:
 * Serverio pusė (aplikacijų programavimo sąsaja) – ji bus realizuota su Go programavimo kalba. Duomenų bazės valdymo sistema buvo pasirinkta PostgreSQL.
 * Kliento pusė – ji bus realizuota su JavaScript biblioteka React.
 
-**2.2. Diegimo diagrama**
+### **2.2. Diegimo diagrama**
 
 2.1 pav. pavaizduota sistemos diegimo diagrama. Sistemos talpinimui bus panaudotas Amazon Web Services serveris, kuriame sistemos naudotojų užklausas HTTP protokolu apdoros Traefik atvirkštinis tarpinis serveris (angl. reverse proxy) – jis HTTP užklausas persiųs arba į aplikacijų programavimo sąsają (serverio dalį), arba į WEB aplikaciją (kliento dalį), tuomet sulauks atsakymo ir jį persiųs atgal sistemos naudotojui. Sistemos realizacijai prireiks duomenų bazės valdymo serverio, o komunikaciją su juo atliks aplikacijų programavimo sąsaja TCP/IP protokolu.
 
 ![](.README_images/deployment.png)
 
 **pav. 2.1 Sistemos diegimo diagrama**
+
+## 3. Naudotojo sąsajos projektas
+
+Žemiau pateikiami projektuojamos sąsajos langų wireframe`ai ir juos atitinkančių realizacijų langų iškarpos.
+
+### **3.1. Pradinis langas**
+
+Wireframe:
+
+![](.README_images/01_Home.png)
+
+Realizacijos langas:
+
+![](.README_images/01_Home_real.png)
+
+### **3.2. Informacijos apie įmonę langas**
+
+Wireframe:
+
+![](.README_images/02_CompanyInformation.png)
+
+Realizacijos langas:
+
+![](.README_images/02_CompanyInformation_real.png)
+
+### **3.3. Prisijungimo langas**
+
+Wireframe:
+
+![](.README_images/03_Login.png)
+
+Realizacijos langas:
+
+![](.README_images/03_Login_real.png)
+
+### **3.4. Kliento registracijos langas**
+
+Wireframe:
+
+![](.README_images/04_ClientRegistration.png)
+
+Realizacijos langas:
+
+![](.README_images/04_ClientRegistration_real.png)
+
+### **3.5. Įmonės registracijos langas**
+
+Wireframe:
+
+![](.README_images/05_CompanyRegistration.png)
+
+Realizacijos langas:
+
+![](.README_images/05_CompanyRegistration_real.png)
+
+### **3.6. Naujos rezervacijos sukūrimo langas**
+
+Wireframe:
+
+![](.README_images/06_CreateReservation.png)
+
+Realizacijos langas:
+
+![](.README_images/06_CreateReservation_real.png)
+
+### **3.7. Kliento rezervacijų sąrašo langas**
+
+Wireframe:
+
+![](.README_images/07_ClientReservations.png)
+
+Realizacijos langas:
+
+![](.README_images/07_ClientReservations_real.png)
+
+### **3.8. Kliento rezervacijos peržiūros langas**
+
+Wireframe:
+
+![](.README_images/08_ClientViewReservation.png)
+
+Realizacijos langas:
+
+![](.README_images/08_ClientViewReservation_real.png)
+
+### **3.9. Kliento rezervacijos atnaujinimo langas**
+
+Wireframe:
+
+![](.README_images/09_ClientEditReservation.png)
+
+Realizacijos langas:
+
+![](.README_images/09_ClientEditReservation_real.png)
+
+### **3.10. Administratoriaus pradinis langas**
+
+Wireframe:
+
+![](.README_images/10_AdminHome.png)
+
+Realizacijos langas:
+
+![](.README_images/10_AdminHome_real.png)
+
+### **3.11. Įmonės informacijos atnaujinimo langas**
+
+Wireframe:
+
+![](.README_images/11_UpdateCompany.png)
+
+Realizacijos langas:
+
+![](.README_images/11_UpdateCompany_real.png)
+
+### **3.12. Įmonės teikiamų paslaugų sąrašo langas**
+
+Wireframe:
+
+![](.README_images/12_MyServices.png)
+
+Realizacijos langas:
+
+![](.README_images/12_MyServices_real.png)
+
+### **3.13. Įmonės paslaugos atnaujinimo langas**
+
+Wireframe:
+
+![](.README_images/13_UpdateService.png)
+
+Realizacijos langas:
+
+![](.README_images/13_UpdateService_real.png)
+
+### **3.14. Įmonės naujos paslaugos sukūrimo langas**
+
+Wireframe:
+
+![](.README_images/14_CreateService.png)
+
+Realizacijos langas:
+
+![](.README_images/14_CreateService_real.png)
+
+### **3.15. Įmonės paslaugų rezervacijų sąrašo langas**
+
+Wireframe:
+
+![](.README_images/15_CompanyReservations.png)
+
+Realizacijos langas:
+
+![](.README_images/15_CompanyReservations_real.png)
+
+## 4. API specifikacija
+
+### General types
+
+#### Error
+| Field   | Type   | Description     |
+|---------|--------|-----------------|
+| name    | string | Error code name |
+| message | string | Error message   |
+
+### General errors
+
+#### Not found
+| name      | message   | HTTP status code |
+|-----------|-----------|------------------|
+| not_found | Not found | 404              |
+
+#### Forbidden
+| name      | message   | HTTP status code |
+|-----------|-----------|------------------|
+| forbidden | Forbidden | 403              |
+
+#### Unauthorized
+| name         | message      | HTTP status code |
+|--------------|--------------|------------------|
+| unauthorized | Unauthorized | 401              |
+
+#### Faulty token
+| name         | message               | HTTP status code |
+|--------------|-----------------------|------------------|
+| faulty_token | Faulty token provided | 400              |
+
+#### Invalid token
+| name                     | message                     | HTTP status code |
+|--------------------------|-----------------------------|------------------|
+| token_invalid_or_expired | Token is invalid or expired | 401              |
+
+#### Bad request
+| name         | message      | HTTP status code |
+|--------------|--------------|------------------|
+| bad_request  | Bad request  | 400              |
+
+#### Internal server error
+| name                  | message               | HTTP status code |
+|-----------------------|-----------------------|------------------|
+| internal_server_error | Internal server error | 500              |
+
+#### Invalid input
+| name          | message                              | HTTP status code |
+|---------------|--------------------------------------|------------------|
+| invalid_input | Input could not pass the validations | 400              |
+
+#### Unknown
+| name     | message       | HTTP status code |
+|----------|---------------|------------------|
+| unknown  | Unknown error | 500              |
+
+### General response
+| Field | Type            | Null?      | Description                                              |
+|-------|-----------------|------------|----------------------------------------------------------|
+| error | [Error](#error) | on success | If response is unsuccessful, error code will be non null |
+| data  | *any*           | on error   | The data type is specific to each endpoint               |
+
+### Authentication
+
+You can authenticate using JWT token. Token must be provided in the HTTP `Authorization` header.
+
+Example:
+
+```http request
+Authorization: Bearer <accessToken>
+```
+
+### POST /api/v1/users/authenticate
+
+Authentication endpoint. Returns JWT token if authentication is successful.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/users/authenticate
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? |  No  |
+
+#### Request parameters
+| Name     | Type   | Required? | Description          | Validations                     | Example        |
+|----------|--------|-----------|----------------------|---------------------------------|----------------|
+| email    | string | yes       | User's email address | less than or equal to 200 chars | user@gmail.com |
+| password | string | yes       | User's password      | between 8 and  100 chars        | Secret444!     |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name         | Type   | Can be null? | Description       |
+|--------------|--------|--------------|-------------------|
+| accessToken  | string | no           | JWT access token  |
+| refreshToken | string | no           | JWT refresh token |
+
+#### Possible errors:
+
+| name                            | message             | HTTP status code |
+|---------------------------------|---------------------|------------------|
+| [invalid_input](#invalid-input) |                     |                  |
+| invalid_credentials             | Invalid credentials | 401              |
+| [unknown](#unknown)             |                     |                  |
+
+#### Example request
+```http request
+POST /api/v1/users/authenticate HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+```json
+{
+    "email": "user@gmail.com",
+    "password": "Secret444!"
+}
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njg3MTMyMjcuNzMzMjM1LCJpYXQiOjE2Njg3MTAyMjcuNzMzMjQyLCJpc3MiOiJyZXNlcnZpbyIsInVzZXJJRCI6IjdiNTYyNGMyLTc3MTMtNGJiMy1iOGQ1LWVhMjliNTc5MjExNSIsInJvbGUiOiJjb21wYW55IiwicnRJRCI6IjY3MWVmNTNmLWY1YWYtNDM0NS05ODQzLWJhMzZkOThkNzlkYiJ9.YzCdBuLYFohulk50yF-hWguSPWR41H2pwqgGXPpnE5Q",
+        "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njg3MTc0MjcuNzMzMTc0LCJpYXQiOjE2Njg3MTAyMjcuNzMzMTgyLCJpc3MiOiJyZXNlcnZpbyIsInJ0SUQiOiI2NzFlZjUzZi1mNWFmLTQzNDUtOTg0My1iYTM2ZDk4ZDc5ZGIifQ.aJ20LIyi1M5dXm3RbhKx26WK85q07EamUik0QGd8CqA"
+    }
+}
+```
+
+### POST /api/v1/tokens
+
+Refresh token endpoint. Returns new JWT token if refresh token is valid.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/tokens
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? | Yes  |
+|      Required role       | any  |
+
+#### Request parameters
+| Name         | Type   | Required? | Description       | Validations | Example                                                                                                                                                                                                                                 |
+|--------------|--------|-----------|-------------------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| refreshToken | string | yes       | JWT refresh token | -           | eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njg3MTc0MjcuNzMzMTc0LCJpYXQiOjE2Njg3MTAyMjcuNzMzMTgyLCJpc3MiOiJyZXNlcnZpbyIsInJ0SUQiOiI2NzFlZjUzZi1mNWFmLTQzNDUtOTg0My1iYTM2ZDk4ZDc5ZGIifQ.aJ20LIyi1M5dXm3RbhKx26WK85q07EamUik0QGd8CqA |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name         | Type   | Can be null? | Description       |
+|--------------|--------|--------------|-------------------|
+| accessToken  | string | no           | JWT access token  |
+
+#### Possible errors:
+
+| name                            | message                     | HTTP status code |
+|---------------------------------|-----------------------------|------------------|
+| [invalid_input](#invalid-input) |                             |                  |
+| [faulty_token](#faulty-token)   |                             |                  |
+| [invalid_token](#invalid-token) |                             |                  |
+| [unknown](#unknown)             |                             |                  |
+
+#### Example request
+```http request
+POST /api/v1/tokens HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+```json
+{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njg3MTc0MjcuNzMzMTc0LCJpYXQiOjE2Njg3MTAyMjcuNzMzMTgyLCJpc3MiOiJyZXNlcnZpbyIsInJ0SUQiOiI2NzFlZjUzZi1mNWFmLTQzNDUtOTg0My1iYTM2ZDk4ZDc5ZGIifQ.aJ20LIyi1M5dXm3RbhKx26WK85q07EamUik0QGd8CqA"
+}
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njg3MTc0MzAuNDQ0MjcyLCJpYXQiOjE2Njg3MTQ0MzAuNDQ0Mjc5LCJpc3MiOiJyZXNlcnZpbyIsInVzZXJJRCI6IjdiNTYyNGMyLTc3MTMtNGJiMy1iOGQ1LWVhMjliNTc5MjExNSIsInJvbGUiOiJjb21wYW55IiwicnRJRCI6IjY3MWVmNTNmLWY1YWYtNDM0NS05ODQzLWJhMzZkOThkNzlkYiJ9.Y2BovB5Tuq3_FLiDdjGUj0XYQB_cG0umWpNJSEfpy9Q"
+    }
+}
+```
+
+### POST /api/v1/users/logout
+
+Logout endpoint. Invalidates refresh token.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/users/logout
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? | Yes  |
+|      Required role       | any  |
+
+#### Request parameters
+*none*
+
+#### Successful response
+HTTP status code: `204`
+
+#### Possible errors:
+
+| name                            | message                     | HTTP status code |
+|---------------------------------|-----------------------------|------------------|
+| [unauthorized](#unauthorized)   |                             |                  |
+| [faulty_token](#faulty-token)   |                             |                  |
+| [invalid_token](#invalid-token) |                             |                  |
+| [unknown](#unknown)             |                             |                  |
+
+#### Example request
+```http request
+POST /api/v1/users/logout HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```http request
+HTTP/1.1 204 No Content
+Content-Type: application/json
+```
+
+### POST /api/v1/clients
+
+Create client endpoint. Creates new client and returns its data.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/clients
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? |  No  |
+
+#### Request parameters
+| Name      | Type   | Required? | Description          | Validations                     | Example        |
+|-----------|--------|-----------|----------------------|---------------------------------|----------------|
+| email     | string | yes       | Client email address | less than or equal to 200 chars | user@gmail.com |
+| password  | string | yes       | Client password      | between 8 and 100 chars         | Secret444!     |
+| firstName | string | yes       | Client first name    | between 3 and 50 chars          | John           |
+| lastName  | string | yes       | Client last name     | between 3 and 50 chars          | Devo           |
+| phone     | string | yes       | Client phone number  | e164 standart                   | +37061354544   |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name      | Type   | Can be null? | Description          |
+|-----------|--------|--------------|----------------------|
+| id        | string | no           | Created user ID      |
+| email     | string | no           | Client email address |
+| firstName | string | no           | Client first name    |
+| lastName  | string | no           | Client last name     |
+| phone     | string | no           | Client phone number  |
+
+#### Possible errors:
+
+| name                            | message              | HTTP status code |
+|---------------------------------|----------------------|------------------|
+| [invalid_input](#invalid-input) |                      |                  |
+| email_already_exists            | Email already exists | 422              |
+| [unknown](#unknown)             |                      |                  |
+
+#### Example request
+```http request
+POST /api/v1/clients HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+```json
+{
+    "email": "user@gmail.com",
+    "password": "Secret444!",
+    "firstName": "John",
+    "lastName": "Devo",
+    "phone": "+37061354544"
+}
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "id": "3b218c3f-b443-4c15-8984-33654aa16a82",
+        "email": "user@gmail.com",
+        "firstName": "John",
+        "lastName": "Devo",
+        "phone": "+37061354544"
+    }
+}
+```
+
+### GET /api/v1/clients/:clientID/reservations
+
+Returns all client reservations.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/clients/:clientID/reservations
+```
+
+#### Resource information
+|     Response formats     |  JSON  |
+|:------------------------:|:------:|
+| Requires authentication? |  Yes   |
+|      Required role       | Client |
+
+#### Request parameters
+| Name      | Type   | Required? | Description | Validations | Example                              |
+|-----------|--------|-----------|-------------|-------------|--------------------------------------|
+| :clientID | string | yes       | Client ID   | -           | d662e339-6fd0-4de3-b3d2-7118ce70ee53 |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name         | Type          | Can be null? | Description           |
+|--------------|---------------|--------------|-----------------------|
+| reservations | Reservation[] | no           | Array of reservations |
+
+Reservation type:
+
+| Name    | Type    | Can be null? | Description         |
+|---------|---------|--------------|---------------------|
+| id      | string  | no           | Reservation ID      |
+| service | Service | no           | Reservation service |
+| date    | string  | no           | Reservation date    |
+| comment | string  | yes          | Reservation comment |
+
+Service type:
+
+| Name            | Type                      | Can be null? | Description              |
+|-----------------|---------------------------|--------------|--------------------------|
+| id              | string                    | no           | Service ID               |
+| company         | Company                   | no           | Service company          |
+| title           | string                    | no           | Service title            |
+| description     | string                    | no           | Service description      |
+| specialistName  | string                    | yes          | Service specialist name  |
+| specialistPhone | string                    | yes          | Service specialist phone |
+| visitDuration   | number                    | no           | Service visit duration   |
+| workSchedule    | Map<Weekday, DaySchedule> | no           | Service work schedule    |
+
+Weekday type:
+
+| Name | Type   | Can be null? | Description                                                            |
+|------|--------|--------------|------------------------------------------------------------------------|
+|      | string | no           | One of: monday, tuesday, wednesday, thursday, friday, saturday, sunday |
+
+DaySchedule type:
+
+| Name | Type   | Can be null? | Description                |
+|------|--------|--------------|----------------------------|
+| from | string | no           | Day start time (eg. 10:30) |
+| to   | string | no           | Day end time (eg. 18:00)   |
+
+Company type:
+
+| Name        | Type    | Can be null? | Description                   |
+|-------------|---------|--------------|-------------------------------|
+| id          | string  | no           | Company ID                    |
+| email       | string  | no           | Company email address         |
+| name        | string  | no           | Company name                  |
+| address     | string  | no           | Company address               |
+| description | string  | no           | Company description           |
+| approved    | boolean | no           | Is company approved by admin? |
+
+#### Possible errors:
+
+| name                            | message                     | HTTP status code |
+|---------------------------------|-----------------------------|------------------|
+| [unauthorized](#unauthorized)   |                             |                  |
+| [faulty_token](#faulty-token)   |                             |                  |
+| [invalid_token](#invalid-token) |                             |                  |
+| [forbidden](#forbidden)         |                             |                  |
+| [invalid_input](#invalid-input) |                             |                  |
+| client_not_found                | Client not found            | 404              |
+| [unknown](#unknown)             |                             |                  |
+
+#### Example request
+```http request
+GET /api/v1/clients/d662e339-6fd0-4de3-b3d2-7118ce70ee53/reservations HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "reservations": [
+            {
+                "id": "4ee0457e-e7ff-45bc-9d86-9623ce3e9d15",
+                "service": {
+                    "id": "cba4fef6-490b-4d56-af12-eb153c97893d",
+                    "company": {
+                        "id": "7b5624c2-7713-4bb3-b8d5-ea29b5792115",
+                        "email": "servisas@gmail.com",
+                        "name": "Automobilių servisas",
+                        "address": "Ozo g. 10, Vilnius",
+                        "description": "Automobilių servisas Vilniuje",
+                        "approved": true
+                    },
+                    "title": "Padangų keitimas",
+                    "description": "Pigus automobilio padangų keitimas",
+                    "specialistName": "Jonas",
+                    "specialistPhone": "+37064343332",
+                    "visitDuration": 30,
+                    "workSchedule": {
+                        "monday": {
+                            "from": "08:00",
+                            "to": "16:00"
+                        },
+                        "thursday": {
+                            "from": "10:00",
+                            "to": "14:00"
+                        },
+                        "tuesday": {
+                            "from": "11:30",
+                            "to": "17:00"
+                        },
+                        "wednesday": {
+                            "from": "08:00",
+                            "to": "17:00"
+                        }
+                    }
+                },
+                "date": "2022-11-17 12:30",
+                "comment": "Okaya"
+            }
+        ]
+    }
+}
+```
+
+### POST /api/v1/companies
+
+Create company endpoint. Creates new company and returns its data.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? |  No  |
+
+#### Request parameters
+| Name        | Type   | Required? | Description           | Validations                        | Example            |
+|-------------|--------|-----------|-----------------------|------------------------------------|--------------------|
+| email       | string | yes       | Company email address | less than or equal to 200 chars    | user@gmail.com     |
+| password    | string | yes       | Company password      | between 8 and 100 chars            | Secret444!         |
+| name        | string | yes       | Company name          | between 3 and 100 chars            | My company         |
+| address     | string | yes       | Company address       | between 5 and 200 chars            | Vilnius, Lithuania |
+| description | string | yes       | Company description   | greater than or equal to 200 chars | Very good company  |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name        | Type    | Can be null? | Description                                                 |
+|-------------|---------|--------------|-------------------------------------------------------------|
+| id          | string  | no           | Created company ID                                          |
+| email       | string  | no           | Company email address                                       |
+| name        | string  | no           | Company name                                                |
+| address     | string  | no           | Company address                                             |
+| description | string  | no           | Company description                                         |
+| approved    | boolean | no           | Is company approved by admin? When created, equals to false |
+
+#### Possible errors:
+
+| name                            | message              | HTTP status code |
+|---------------------------------|----------------------|------------------|
+| [invalid_input](#invalid-input) |                      |                  |
+| email_already_exists            | Email already exists | 422              |
+| [unknown](#unknown)             |                      |                  |
+
+#### Example request
+```http request
+POST /api/v1/companies HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+```json
+{
+    "email": "user@gmail.com",
+    "password": "Secret444!",
+    "name": "My company",
+    "address": "Vilnius, Lithuania",
+    "description": "Very good company"
+}
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "id": "07c35941-0af3-4011-b42e-40bca152f2b8",
+        "email": "user@gmail.com",
+        "name": "My company",
+        "address": "Vilnius, Lithuania",
+        "description": "Very good company",
+        "approved": false
+    }
+}
+```
+
+### GET /api/v1/companies
+
+Returns all registered companies. When requested by admin, returns all companies, otherwise returns only approved companies.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? |  No  |
+
+#### Request parameters
+*none*
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name      | Type      | Can be null? | Description        |
+|-----------|-----------|--------------|--------------------|
+| companies | Company[] | no           | Array of companies |
+
+Company type:
+
+| Name        | Type    | Can be null? | Description                                                                          |
+|-------------|---------|--------------|--------------------------------------------------------------------------------------|
+| id          | string  | no           | Company ID                                                                           |
+| email       | string  | no           | Company email address                                                                |
+| name        | string  | no           | Company name                                                                         |
+| address     | string  | no           | Company address                                                                      |
+| description | string  | no           | Company description                                                                  |
+| approved    | boolean | no           | Is company approved by admin? If request is made not by admin, always equals to true |
+
+#### Possible errors:
+
+| name                            | message                     | HTTP status code |
+|---------------------------------|-----------------------------|------------------|
+| [unknown](#unknown)             |                             |                  |
+
+#### Example request
+```http request
+GET /api/v1/companies HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "companies": [
+            {
+                "id": "7b5624c2-7713-4bb3-b8d5-ea29b5792115",
+                "email": "servisas@gmail.com",
+                "name": "Automobilių servisas",
+                "address": "Ozo g. 10, Vilnius",
+                "description": "Automobilių servisas Vilniuje",
+                "approved": true
+            },
+            {
+                "id": "e91f4c92-1371-48a1-a745-7d66d2178e15",
+                "email": "plovykla@gmail.com",
+                "name": "Plovykla",
+                "address": "Vilniaus g. 17, Kaunas",
+                "description": "Automobilių plovykla Kaune",
+                "approved": true
+            }
+        ]
+    }
+}
+```
+
+### GET /api/v1/companies/:companyID
+
+Returns company data by its ID.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? |  No  |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | 7b5624c2-7713-4bb3-b8d5-ea29b5792115 |
+
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name        | Type    | Can be null? | Description                   |
+|-------------|---------|--------------|-------------------------------|
+| id          | string  | no           | Company ID                    |
+| email       | string  | no           | Company email address         |
+| name        | string  | no           | Company name                  |
+| address     | string  | no           | Company address               |
+| description | string  | no           | Company description           |
+| approved    | boolean | no           | Is company approved by admin? |
+
+#### Possible errors:
+
+| name                | message           | HTTP status code |
+|---------------------|-------------------|------------------|
+| company_not_found   | Company not found | 404              |
+| [unknown](#unknown) |                   |                  |
+
+#### Example request
+```http request
+GET /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115 HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "id": "7b5624c2-7713-4bb3-b8d5-ea29b5792115",
+        "email": "servisas@gmail.com",
+        "name": "Automobilių servisas",
+        "address": "Ozo g. 10, Vilnius",
+        "description": "Automobilių servisas Vilniuje",
+        "approved": true
+    }
+}
+```
+
+### PATCH /api/v1/companies/:companyID
+
+Updates company data by its ID.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID
+```
+
+#### Resource information
+|     Response formats     |       JSON       |
+|:------------------------:|:----------------:|
+| Requires authentication? |       Yes        |
+|      Required role       | Company or Admin |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | 7b5624c2-7713-4bb3-b8d5-ea29b5792115 |
+
+| Name        | Type    | Required? | Description                                      | Validations                        | Example            |
+|-------------|---------|-----------|--------------------------------------------------|------------------------------------|--------------------|
+| name        | string  | no        | Company name. Can only be set by company.        | between 3 and 100 chars            | My company         |
+| address     | string  | no        | Company address. Can only be set by company.     | between 5 and 200 chars            | Vilnius, Lithuania |
+| description | string  | no        | Company description. Can only be set by company. | greater than or equal to 200 chars | Very good company  |
+| approved    | boolean | no        | Is company approved? Can only be set by admin.   | -                                  | true               |
+
+#### Successful response
+HTTP status code: `204`
+
+#### Possible errors:
+
+| name                            | message           | HTTP status code |
+|---------------------------------|-------------------|------------------|
+| [unauthorized](#unauthorized)   |                   |                  |
+| [faulty_token](#faulty-token)   |                   |                  |
+| [invalid_token](#invalid-token) |                   |                  |
+| [forbidden](#forbidden)         |                   |                  |
+| [invalid_input](#invalid-input) |                   |                  |
+| company_not_found               | Company not found | 404              |
+| nothing_to_update               | Nothing to update | 400              |
+| [unknown](#unknown)             |                   |                  |
+
+#### Example request
+```http request
+PATCH /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115 HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+```json
+{
+    "name": "My company",
+    "address": "Vilnius, Lithuania"
+}
+```
+
+#### Example response
+```http request
+HTTP/1.1 204 No Content
+Content-Type: application/json
+```
+
+### DELETE /api/v1/companies/:companyID
+
+Deletes company by its ID.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID
+```
+
+#### Resource information
+|     Response formats     | JSON  |
+|:------------------------:|:-----:|
+| Requires authentication? |  Yes  |
+|      Required role       | Admin |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | 7b5624c2-7713-4bb3-b8d5-ea29b5792115 |
+
+#### Successful response
+HTTP status code: `204`
+
+#### Possible errors:
+
+| name                            | message           | HTTP status code |
+|---------------------------------|-------------------|------------------|
+| [unauthorized](#unauthorized)   |                   |                  |
+| [faulty_token](#faulty-token)   |                   |                  |
+| [invalid_token](#invalid-token) |                   |                  |
+| [forbidden](#forbidden)         |                   |                  |
+| [invalid_input](#invalid-input) |                   |                  |
+| company_not_found               | Company not found | 404              |
+| [unknown](#unknown)             |                   |                  |
+
+#### Example request
+```http request
+DELETE /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115 HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```http request
+HTTP/1.1 204 No Content
+Content-Type: application/json
+```
+
+### POST /api/v1/companies/:companyID/services
+
+Create service endpoint. Creates new company service and returns its data.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services
+```
+
+#### Resource information
+|     Response formats     |  JSON   |
+|:------------------------:|:-------:|
+| Requires authentication? |   Yes   |
+|      Required role       | Company |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | 7b5624c2-7713-4bb3-b8d5-ea29b5792115 |
+
+| Name            | Type                      | Required? | Description              | Validations                      | Example                                          |
+|-----------------|---------------------------|-----------|--------------------------|----------------------------------|--------------------------------------------------|
+| title           | string                    | yes       | Service title            | between 3 and 100 chars          | Men's haircut                                    |
+| description     | string                    | yes       | Service description      | greater than or equal to 5 chars | Cheap men's haircut                              |
+| specialistName  | string                    | no        | Service specialist name  | between 5 and 100 chars          | John                                             |
+| specialistPhone | string                    | no        | Service specialist phone | e164 standart                    | +37064343333                                     |
+| visitDuration   | number                    | yes       | Service visit duration   | greater than 0                   | 30                                               |
+| workSchedule    | Map<Weekday, DaySchedule> | yes       | Service work schedule    | size greater than 0              | { "monday": { "from": "08:00", "to": "17:00" } } |
+
+Weekday type:
+
+| Name | Type   | Required? | Description            | Validations                                                            | Example |
+|------|--------|-----------|------------------------|------------------------------------------------------------------------|---------|
+|      | string | yes       | Work schedule week day | One of: monday, tuesday, wednesday, thursday, friday, saturday, sunday | friday  |
+
+DaySchedule type:
+
+| Name | Type   | Required? | Description    | Validations       | Example |
+|------|--------|-----------|----------------|-------------------|---------|
+| from | string | yes       | Day start time | time format HH:mm | 10:30   |
+| to   | string | yes       | Day end time   | time format HH:mm | 18:00   |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name            | Type                      | Can be null? | Description              |
+|-----------------|---------------------------|--------------|--------------------------|
+| id              | string                    | no           | Service ID               |
+| companyID       | string                    | no           | Company ID               |
+| title           | string                    | no           | Service title            |
+| description     | string                    | no           | Service description      |
+| specialistName  | string                    | yes          | Service specialist name  |
+| specialistPhone | string                    | yes          | Service specialist phone |
+| visitDuration   | number                    | no           | Service visit duration   |
+| workSchedule    | Map<Weekday, DaySchedule> | no           | Service work schedule    |
+
+#### Possible errors:
+
+| name                            | message              | HTTP status code |
+|---------------------------------|----------------------|------------------|
+| [unauthorized](#unauthorized)   |                      |                  |
+| [faulty_token](#faulty-token)   |                      |                  |
+| [invalid_token](#invalid-token) |                      |                  |
+| [forbidden](#forbidden)         |                      |                  |
+| [invalid_input](#invalid-input) |                      |                  |
+| company_not_found               | Company not found    | 404              |
+| [unknown](#unknown)             |                      |                  |
+
+#### Example request
+```http request
+POST /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115/services HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+```json
+{
+    "title": "Men's haircut",
+    "description": "Cheap men's haircut",
+    "specialistName": "John",
+    "specialistPhone": "+37064343333",
+    "visitDuration": 30,
+    "workSchedule": {
+        "monday": {
+            "from": "08:00",
+            "to": "17:00"
+        },
+        "tuesday": {
+            "from": "11:45",
+            "to": "17:00"
+        },
+        "wednesday": {
+            "from": "08:00",
+            "to": "17:00"
+        }
+    }
+}
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "id": "fda84995-0755-40e3-8ed4-129fc774125b",
+        "companyID": "e91f4c92-1371-48a1-a745-7d66d2178e15",
+        "title": "Men's haircut",
+        "description": "Cheap men's haircut",
+        "specialistName": "John",
+        "specialistPhone": "+37064343333",
+        "visitDuration": 30,
+        "workSchedule": {
+            "monday": {
+                "from": "08:00",
+                "to": "17:00"
+            },
+            "thursday": {
+                "from": "10:15",
+                "to": "14:00"
+            },
+            "tuesday": {
+                "from": "11:45",
+                "to": "17:00"
+            }
+        }
+    }
+}
+```
+
+### GET /api/v1/companies/:companyID/services/:serviceID
+
+Get service endpoint. Returns service data.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services/:serviceID
+```
+
+#### Resource information
+|     Response formats     |  JSON   |
+|:------------------------:|:-------:|
+| Requires authentication? |   No    |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | e91f4c92-1371-48a1-a745-7d66d2178e15 |
+| :serviceID | string | yes       | Service ID  | -           | fda84995-0755-40e3-8ed4-129fc774125b |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name            | Type                      | Can be null? | Description              |
+|-----------------|---------------------------|--------------|--------------------------|
+| id              | string                    | no           | Service ID               |
+| companyID       | string                    | no           | Company ID               |
+| title           | string                    | no           | Service title            |
+| description     | string                    | no           | Service description      |
+| specialistName  | string                    | yes          | Service specialist name  |
+| specialistPhone | string                    | yes          | Service specialist phone |
+| visitDuration   | number                    | no           | Service visit duration   |
+| workSchedule    | Map<Weekday, DaySchedule> | no           | Service work schedule    |
+
+#### Possible errors:
+
+| name                            | message              | HTTP status code |
+|---------------------------------|----------------------|------------------|
+| [invalid_input](#invalid-input) |                      |                  |
+| company_not_found               | Company not found    | 404              |
+| service_not_found               | Service not found    | 404              |
+| [unknown](#unknown)             |                      |                  |
+
+#### Example request
+```http request
+GET /api/v1/companies/e91f4c92-1371-48a1-a745-7d66d2178e15/services/fda84995-0755-40e3-8ed4-129fc774125b HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "id": "fda84995-0755-40e3-8ed4-129fc774125b",
+        "companyID": "e91f4c92-1371-48a1-a745-7d66d2178e15",
+        "title": "Padangų keitimas",
+        "description": "Pigus automobilio padangų keitimas",
+        "specialistName": "Jonas",
+        "specialistPhone": "+37064343333",
+        "visitDuration": 45,
+        "workSchedule": {
+            "monday": {
+                "from": "08:00",
+                "to": "17:00"
+            },
+            "thursday": {
+                "from": "10:15",
+                "to": "14:00"
+            },
+            "tuesday": {
+                "from": "11:45",
+                "to": "17:00"
+            },
+            "wednesday": {
+                "from": "08:00",
+                "to": "17:00"
+            }
+        }
+    }
+}
+```
+
+### GET /api/v1/companies/:companyID/services
+
+Get services endpoint. Returns all company services.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services
+```
+
+#### Resource information
+|     Response formats     | JSON |
+|:------------------------:|:----:|
+| Requires authentication? |  No  |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | e91f4c92-1371-48a1-a745-7d66d2178e15 |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name     | Type      | Can be null? | Description       |
+|----------|-----------|--------------|-------------------|
+| services | Service[] | no           | Array of services |
+
+Service type:
+
+| Name            | Type                      | Can be null? | Description              |
+|-----------------|---------------------------|--------------|--------------------------|
+| id              | string                    | no           | Service ID               |
+| companyID       | string                    | no           | Company ID               |
+| title           | string                    | no           | Service title            |
+| description     | string                    | no           | Service description      |
+| specialistName  | string                    | yes          | Service specialist name  |
+| specialistPhone | string                    | yes          | Service specialist phone |
+| visitDuration   | number                    | no           | Service visit duration   |
+| workSchedule    | Map<Weekday, DaySchedule> | no           | Service work schedule    |
+
+#### Possible errors:
+
+| name                            | message           | HTTP status code |
+|---------------------------------|-------------------|------------------|
+| [invalid_input](#invalid-input) |                   |                  |
+| company_not_found               | Company not found | 404              |
+| [unknown](#unknown)             |                   |                  |
+
+#### Example request
+```http request
+GET /api/v1/companies/e91f4c92-1371-48a1-a745-7d66d2178e15/services HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "services": [
+            {
+                "id": "fda84995-0755-40e3-8ed4-129fc774125b",
+                "companyID": "e91f4c92-1371-48a1-a745-7d66d2178e15",
+                "title": "Padangų keitimas",
+                "description": "Pigus automobilio padangų keitimas",
+                "specialistName": "Jonas",
+                "specialistPhone": "+37064343333",
+                "visitDuration": 45,
+                "workSchedule": {
+                    "monday": {
+                        "from": "08:00",
+                        "to": "17:00"
+                    },
+                    "thursday": {
+                        "from": "10:15",
+                        "to": "14:00"
+                    },
+                    "tuesday": {
+                        "from": "11:45",
+                        "to": "17:00"
+                    },
+                    "wednesday": {
+                        "from": "08:00",
+                        "to": "17:00"
+                    }
+                }
+            },
+            {
+                "id": "bc7f8382-0d87-40bd-910e-67efe1ae15f4",
+                "companyID": "e91f4c92-1371-48a1-a745-7d66d2178e15",
+                "title": "Išorės plovimas",
+                "description": "Pigus automobilio išorės plovimas",
+                "specialistName": "Virgis",
+                "specialistPhone": "+37065678999",
+                "visitDuration": 30,
+                "workSchedule": {
+                    "monday": {
+                        "from": "08:00",
+                        "to": "16:00"
+                    },
+                    "thursday": {
+                        "from": "10:00",
+                        "to": "14:00"
+                    },
+                    "wednesday": {
+                        "from": "08:00",
+                        "to": "17:00"
+                    }
+                }
+            }
+        ]
+    }
+}
+```
+
+### PATCH /api/v1/companies/:companyID/services/:serviceID
+
+Update service endpoint. Updates service with given ID.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services/:serviceID
+```
+
+#### Resource information
+|     Response formats     |  JSON   |
+|:------------------------:|:-------:|
+| Requires authentication? |   Yes   |
+|      Required role       | Company |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | e91f4c92-1371-48a1-a745-7d66d2178e15 |
+| :serviceID | string | yes       | Service ID  | -           | fda84995-0755-40e3-8ed4-129fc774125b |
+
+| Name            | Type                      | Required? | Description              | Validations                      | Example                                          |
+|-----------------|---------------------------|-----------|--------------------------|----------------------------------|--------------------------------------------------|
+| title           | string                    | no        | Service title            | between 3 and 100 chars          | Men's haircut                                    |
+| description     | string                    | no        | Service description      | greater than or equal to 5 chars | Cheap men's haircut                              |
+| specialistName  | SpecialistNameUpd         | no        | Service specialist name  | -                                | { "value": John }                                |
+| specialistPhone | SpecialistPhoneUpd        | no        | Service specialist phone | -                                | { "value": null }                                |
+| visitDuration   | number                    | no        | Service visit duration   | greater than 0                   | 30                                               |
+| workSchedule    | Map<Weekday, DaySchedule> | no        | Service work schedule    | size greater than 0              | { "monday": { "from": "08:00", "to": "17:00" } } |
+
+SpecialistNameUpd type:
+
+| Name  | Type   | Required? | Description                                                            | Validations             | Example |
+|-------|--------|-----------|------------------------------------------------------------------------|-------------------------|---------|
+| value | string | no        | Service specialist name value. If null, specialistName is set to null. | between 5 and 100 chars | John    |
+
+SpecialistPhoneUpd type:
+
+| Name  | Type   | Required? | Description                                                              | Validations   | Example      |
+|-------|--------|-----------|--------------------------------------------------------------------------|---------------|--------------|
+| value | string | no        | Service specialist phone value. If null, specialistPhone is set to null. | e164 standart | +37064343333 |
+
+Weekday type:
+
+| Name | Type   | Required? | Description            | Validations                                                            | Example |
+|------|--------|-----------|------------------------|------------------------------------------------------------------------|---------|
+|      | string | yes       | Work schedule week day | One of: monday, tuesday, wednesday, thursday, friday, saturday, sunday | friday  |
+
+DaySchedule type:
+
+| Name | Type   | Required? | Description    | Validations       | Example |
+|------|--------|-----------|----------------|-------------------|---------|
+| from | string | yes       | Day start time | time format HH:mm | 10:30   |
+| to   | string | yes       | Day end time   | time format HH:mm | 18:00   |
+
+#### Successful response
+HTTP status code: `204`
+
+#### Possible errors:
+
+| name                            | message              | HTTP status code |
+|---------------------------------|----------------------|------------------|
+| [unauthorized](#unauthorized)   |                      |                  |
+| [faulty_token](#faulty-token)   |                      |                  |
+| [invalid_token](#invalid-token) |                      |                  |
+| [forbidden](#forbidden)         |                      |                  |
+| [invalid_input](#invalid-input) |                      |                  |
+| company_not_found               | Company not found    | 404              |
+| service_not_found               | Service not found    | 404              |
+| nothing_to_update               | Nothing to update    | 400              |
+| [unknown](#unknown)             |                      |                  |
+
+#### Example request
+```http request
+PATCH /api/v1/companies/e91f4c92-1371-48a1-a745-7d66d2178e15/services/fda84995-0755-40e3-8ed4-129fc774125b HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+```json
+{
+    "title": "Paslauga",
+    "description": "Paslaugos aprasymas",
+    "specialistName": null,
+    "specialistPhone": {
+        "value": "+37065787898"
+    },
+    "workSchedule": {
+        "monday": {
+            "from": "11:55",
+            "to": "15:55"
+        }
+    }
+}
+```
+
+#### Example response
+```http request
+HTTP/1.1 204 No Content
+Content-Type: application/json
+```
+
+### DELETE /api/v1/companies/:companyID/services/:serviceID
+
+Deletes company service by its ID.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services/:serviceID
+```
+
+#### Resource information
+|     Response formats     |  JSON   |
+|:------------------------:|:-------:|
+| Requires authentication? |   Yes   |
+|      Required role       | Company |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | 7b5624c2-7713-4bb3-b8d5-ea29b5792115 |
+| :serviceID | string | yes       | Service ID  | -           | fda84995-0755-40e3-8ed4-129fc774125b |
+
+#### Successful response
+HTTP status code: `204`
+
+#### Possible errors:
+
+| name                            | message           | HTTP status code |
+|---------------------------------|-------------------|------------------|
+| [unauthorized](#unauthorized)   |                   |                  |
+| [faulty_token](#faulty-token)   |                   |                  |
+| [invalid_token](#invalid-token) |                   |                  |
+| [forbidden](#forbidden)         |                   |                  |
+| [invalid_input](#invalid-input) |                   |                  |
+| company_not_found               | Company not found | 404              |
+| service_not_found               | Service not found | 404              |
+| [unknown](#unknown)             |                   |                  |
+
+#### Example request
+```http request
+DELETE /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115/services/fda84995-0755-40e3-8ed4-129fc774125b HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```http request
+HTTP/1.1 204 No Content
+Content-Type: application/json
+```
+
+### POST /api/v1/companies/:companyID/services/:serviceID/reservations
+
+Creates new reservation for service and returns its data.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services/:serviceID/reservations
+```
+
+#### Resource information
+|     Response formats     |  JSON  |
+|:------------------------:|:------:|
+| Requires authentication? |  Yes   |
+|      Required role       | Client |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | 7b5624c2-7713-4bb3-b8d5-ea29b5792115 |
+| :serviceID | string | yes       | Service ID  | -           | fda84995-0755-40e3-8ed4-129fc774125b |
+
+| Name    | Type                      | Required? | Description         | Validations             | Example            |
+|---------|---------------------------|-----------|---------------------|-------------------------|--------------------|
+| date    | string                    | yes       | Reservation date    | format YYYY-MM-DD HH:mm | 2022-10-17 10:00   |
+| comment | string                    | no        | Reservation comment | between 5 and 200 chars | This is my comment |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name          | Type   | Can be null? | Description         |
+|---------------|--------|--------------|---------------------|
+| id            | string | no           | Reservation ID      |
+| companyID     | string | no           | Company ID          |
+| serviceID     | string | no           | Service ID          |
+| date          | string | no           | Reservation date    |
+| comment       | string | yes          | Reservation comment |
+
+#### Possible errors:
+
+| name                            | message                                          | HTTP status code |
+|---------------------------------|--------------------------------------------------|------------------|
+| [unauthorized](#unauthorized)   |                                                  |                  |
+| [faulty_token](#faulty-token)   |                                                  |                  |
+| [invalid_token](#invalid-token) |                                                  |                  |
+| [forbidden](#forbidden)         |                                                  |                  |
+| [invalid_input](#invalid-input) |                                                  |                  |
+| company_not_found               | Company not found                                | 404              |
+| service_not_found               | Service not found                                | 404              |
+| time_is_in_past                 | Specified reservation time is in the past        | 400              |
+| invalid_time                    | Invalid reservation time                         | 400              |
+| service_not_available           | Service is not available at the specified time   | 400              |
+| reservation_already_exists      | Reservation already exists at the specified time | 422              |
+| [unknown](#unknown)             |                                                  |                  |
+
+#### Example request
+```http request
+POST /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115/services/fda84995-0755-40e3-8ed4-129fc774125b HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+```json
+{
+    "date": "2022-11-21 11:55",
+    "comment": "this is my comment"
+}
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "id": "b484f566-39ce-4422-8dcb-22734792e05d",
+        "serviceID": "fda84995-0755-40e3-8ed4-129fc774125b",
+        "clientID": "d662e339-6fd0-4de3-b3d2-7118ce70ee53",
+        "date": "2022-11-21 11:55",
+        "comment": "this is my comment"
+    }
+}
+```
+
+### GET /api/v1/companies/:companyID/services/:serviceID/reservations/:reservationID
+
+Get reservation endpoint. Returns reservation data.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services/:serviceID/reservations/:reservationID
+```
+
+#### Resource information
+|     Response formats     |       JSON        |
+|:------------------------:|:-----------------:|
+| Requires authentication? |        Yes        |
+|      Required role       | Company or Client |
+
+#### Request parameters
+| Name           | Type   | Required? | Description    | Validations | Example                              |
+|----------------|--------|-----------|----------------|-------------|--------------------------------------|
+| :companyID     | string | yes       | Company ID     | -           | e91f4c92-1371-48a1-a745-7d66d2178e15 |
+| :serviceID     | string | yes       | Service ID     | -           | fda84995-0755-40e3-8ed4-129fc774125b |
+| :reservationID | string | yes       | Reservation ID | -           | b484f566-39ce-4422-8dcb-22734792e05d |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name      | Type   | Can be null? | Description         |
+|-----------|--------|--------------|---------------------|
+| id        | string | no           | Reservation ID      |
+| serviceID | string | no           | Service ID          |
+| client    | Client | no           | Client data         |
+| date      | string | no           | Reservation date    |
+| comment   | string | yes          | Reservation comment |
+
+Client type:
+
+| Name      | Type   | Can be null? | Description          |
+|-----------|--------|--------------|----------------------|
+| id        | string | no           | Client ID            |
+| firstName | string | no           | Client first name    |
+| lastName  | string | no           | Client last name     |
+| phone     | string | no           | Client phone number  |
+| email     | string | no           | Client email address |
+
+#### Possible errors:
+
+| name                            | message               | HTTP status code |
+|---------------------------------|-----------------------|------------------|
+| [invalid_input](#invalid-input) |                       |                  |
+| company_not_found               | Company not found     | 404              |
+| service_not_found               | Service not found     | 404              |
+| reservation_not_found           | Reservation not found | 404              |
+| [unknown](#unknown)             |                       |                  |
+
+#### Example request
+```http request
+GET /api/v1/companies/e91f4c92-1371-48a1-a745-7d66d2178e15/services/fda84995-0755-40e3-8ed4-129fc774125b/reservations/b484f566-39ce-4422-8dcb-22734792e05d HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "id": "b484f566-39ce-4422-8dcb-22734792e05d",
+        "serviceID": "fda84995-0755-40e3-8ed4-129fc774125b",
+        "client": {
+            "id": "d662e339-6fd0-4de3-b3d2-7118ce70ee53",
+            "firstName": "Jonas",
+            "lastName": "Jonaitis",
+            "phone": "+37065555455",
+            "email": "jonas.jonaitis@gmail.com"
+        },
+        "date": "2022-11-21 11:55",
+        "comment": "this is my comment"
+    }
+}
+```
+
+### GET /api/v1/companies/:companyID/services/:serviceID/reservations
+
+Get reservations endpoint. Returns all service reservations. The response is different when the user is authenticated as a company or is not authenticated/authenticated as a different role.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services/:serviceID/reservations
+```
+
+#### Resource information
+|     Response formats     |  JSON   |
+|:------------------------:|:-------:|
+| Requires authentication? |   No    |
+
+#### Request parameters
+| Name       | Type   | Required? | Description | Validations | Example                              |
+|------------|--------|-----------|-------------|-------------|--------------------------------------|
+| :companyID | string | yes       | Company ID  | -           | e91f4c92-1371-48a1-a745-7d66d2178e15 |
+| :serviceID | string | yes       | Service ID  | -           | fda84995-0755-40e3-8ed4-129fc774125b |
+
+#### Successful response
+HTTP status code: `200`
+
+Fields:
+
+| Name         | Type          | Can be null? | Description           |
+|--------------|---------------|--------------|-----------------------|
+| reservations | Reservation[] | no           | Array of reservations |
+
+Reservation type:
+
+| Name      | Type   | Can be null? | Description                                                       |
+|-----------|--------|--------------|-------------------------------------------------------------------|
+| id        | string | no           | Reservation ID                                                    |
+| serviceID | string | no           | Service ID                                                        |
+| client    | Client | no           | Client data. Only provided when authenticated as company.         |
+| date      | string | no           | Reservation date                                                  |
+| comment   | string | yes          | Reservation comment. Only provided when authenticated as company. |
+
+Client type:
+
+| Name      | Type   | Can be null? | Description          |
+|-----------|--------|--------------|----------------------|
+| id        | string | no           | Client ID            |
+| firstName | string | no           | Client first name    |
+| lastName  | string | no           | Client last name     |
+| phone     | string | no           | Client phone number  |
+| email     | string | no           | Client email address |
+
+#### Possible errors:
+
+| name                            | message           | HTTP status code |
+|---------------------------------|-------------------|------------------|
+| [invalid_input](#invalid-input) |                   |                  |
+| company_not_found               | Company not found | 404              |
+| service_not_found               | Service not found | 404              |
+| [unknown](#unknown)             |                   |                  |
+
+#### Example request
+```http request
+GET /api/v1/companies/e91f4c92-1371-48a1-a745-7d66d2178e15/services/fda84995-0755-40e3-8ed4-129fc774125b/reservations HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```http request
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+```json
+{
+    "error": null,
+    "data": {
+        "reservations": [
+            {
+                "id": "b484f566-39ce-4422-8dcb-22734792e05d",
+                "serviceID": "fda84995-0755-40e3-8ed4-129fc774125b",
+                "client": {
+                    "id": "d662e339-6fd0-4de3-b3d2-7118ce70ee53",
+                    "firstName": "Jonas",
+                    "lastName": "Jonaitis",
+                    "phone": "+37065555455",
+                    "email": "jonas.jonaitis@gmail.com"
+                },
+                "date": "2022-11-21 11:55",
+                "comment": "this is my comment"
+            }
+        ]
+    }
+}
+```
+
+### PATCH /api/v1/companies/:companyID/services/:serviceID/reservations/:reservationID
+
+Update reservation endpoint. Updates reservation with given ID.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services/:serviceID/reservations/:reservationID
+```
+
+#### Resource information
+|     Response formats     |  JSON  |
+|:------------------------:|:------:|
+| Requires authentication? |  Yes   |
+|      Required role       | Client |
+
+#### Request parameters
+| Name           | Type   | Required? | Description    | Validations | Example                              |
+|----------------|--------|-----------|----------------|-------------|--------------------------------------|
+| :companyID     | string | yes       | Company ID     | -           | e91f4c92-1371-48a1-a745-7d66d2178e15 |
+| :serviceID     | string | yes       | Service ID     | -           | fda84995-0755-40e3-8ed4-129fc774125b |
+| :reservationID | string | yes       | Reservation ID | -           | b484f566-39ce-4422-8dcb-22734792e05d |
+
+| Name    | Type       | Required? | Description         | Validations             | Example                           |
+|---------|------------|-----------|---------------------|-------------------------|-----------------------------------|
+| date    | string     | no        | Reservation date    | format YYYY-MM-DD HH:mm | 2022-10-17 10:00                  |
+| comment | CommentUpd | no        | Reservation comment | -                       | { "value": "This is my comment" } |
+
+CommentUpd type:
+
+| Name  | Type   | Required? | Description                                             | Validations             | Example            |
+|-------|--------|-----------|---------------------------------------------------------|-------------------------|--------------------|
+| value | string | no        | Service comment value. If null, comment is set to null. | between 5 and 200 chars | This is my comment |
+
+#### Successful response
+HTTP status code: `204`
+
+#### Possible errors:
+
+| name                            | message                                          | HTTP status code |
+|---------------------------------|--------------------------------------------------|------------------|
+| [unauthorized](#unauthorized)   |                                                  |                  |
+| [faulty_token](#faulty-token)   |                                                  |                  |
+| [invalid_token](#invalid-token) |                                                  |                  |
+| [forbidden](#forbidden)         |                                                  |                  |
+| [invalid_input](#invalid-input) |                                                  |                  |
+| company_not_found               | Company not found                                | 404              |
+| service_not_found               | Service not found                                | 404              |
+| reservation_not_found           | Reservation not found                            | 404              |
+| time_is_in_past                 | Specified reservation time is in the past        | 400              |
+| invalid_time                    | Invalid reservation time                         | 400              |
+| service_not_available           | Service is not available at the specified time   | 400              |
+| reservation_already_exists      | Reservation already exists at the specified time | 422              |
+| nothing_to_update               | Nothing to update                                | 400              |
+| [unknown](#unknown)             |                                                  |                  |
+
+#### Example request
+```http request
+PATCH /api/v1/companies/e91f4c92-1371-48a1-a745-7d66d2178e15/services/fda84995-0755-40e3-8ed4-129fc774125b/reservations/b484f566-39ce-4422-8dcb-22734792e05d HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+```json
+{
+    "date": "2022-10-17 8:45",
+    "comment": {
+        "value": null
+    }
+}
+```
+
+#### Example response
+```http request
+HTTP/1.1 204 No Content
+Content-Type: application/json
+```
+
+### DELETE /api/v1/companies/:companyID/services/:serviceID/reservations/:reservationID
+
+Delete reservation endpoint. Deletes reservation with given ID.
+
+#### Resource url
+```
+https://reservio.hs.vc/api/v1/companies/:companyID/services/:serviceID/reservations/:reservationID
+```
+
+#### Resource information
+|     Response formats     |  JSON  |
+|:------------------------:|:------:|
+| Requires authentication? |  Yes   |
+|      Required role       | Client |
+
+#### Request parameters
+| Name           | Type   | Required? | Description    | Validations | Example                              |
+|----------------|--------|-----------|----------------|-------------|--------------------------------------|
+| :companyID     | string | yes       | Company ID     | -           | 7b5624c2-7713-4bb3-b8d5-ea29b5792115 |
+| :serviceID     | string | yes       | Service ID     | -           | fda84995-0755-40e3-8ed4-129fc774125b |
+| :reservationID | string | yes       | Reservation ID | -           | b484f566-39ce-4422-8dcb-22734792e05d |
+
+#### Successful response
+HTTP status code: `204`
+
+#### Possible errors:
+
+| name                            | message               | HTTP status code |
+|---------------------------------|-----------------------|------------------|
+| [unauthorized](#unauthorized)   |                       |                  |
+| [faulty_token](#faulty-token)   |                       |                  |
+| [invalid_token](#invalid-token) |                       |                  |
+| [forbidden](#forbidden)         |                       |                  |
+| [invalid_input](#invalid-input) |                       |                  |
+| company_not_found               | Company not found     | 404              |
+| service_not_found               | Service not found     | 404              |
+| reservation_not_found           | Reservation not found | 404              |
+| [unknown](#unknown)             |                       |                  |
+
+#### Example request
+```http request
+DELETE /api/v1/companies/7b5624c2-7713-4bb3-b8d5-ea29b5792115/services/fda84995-0755-40e3-8ed4-129fc774125b/reservations/b484f566-39ce-4422-8dcb-22734792e05d HTTP/1.1
+Host: reservio.hs.vc
+Content-Type: application/json
+```
+
+#### Example response
+```http request
+HTTP/1.1 204 No Content
+Content-Type: application/json
+```
+
+## 5. Išvados
+
+Šio modulio metu pavyko sėkmingai įgyvendinti užsibrėžtus projekto tikslus - sukurti *backend API*, ją tinkamai apsaugoti panaudojant *JWT token* authentifikacijai ir autorizacijai, be to, sukurti naudotojo sąsajos dalį, viską patalpinti debesyje, jog būtų galima išorinė prieiga prie sistemos, bei galiausiai, parengti galutinę ataskaitą. Tiesa, projektas nėra visiškai užbaigtas ir jį dar reikėtų nemažai patobulinti norint paleisti į rinką.
