@@ -285,6 +285,16 @@ Realizacijos langas:
 | error | [Error](#error) | on success | If response is unsuccessful, error code will be non null |
 | data  | *any*           | on error   | The data type is specific to each endpoint               |
 
+### Authentication
+
+You can authenticate using JWT token. Token must be provided in the HTTP `Authorization` header.
+
+Example:
+
+```http request
+Authorization: Bearer <accessToken>
+```
+
 ### POST /api/v1/users/authenticate
 
 Authentication endpoint. Returns JWT token if authentication is successful.
