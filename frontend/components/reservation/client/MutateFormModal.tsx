@@ -67,11 +67,17 @@ export const MutateFormModal = (p: MutateFormModalProps) => {
 				p.onClose()
 			}).catch(err => toastErr(err))
 	}, {
-		onSuccess: (_data, variables) => form.reset(formatNullable({
-			date: p.reservation?.date,
-			comment: p.reservation?.comment,
-			...variables,
-		}))
+		onSuccess: (_data, variables) => {
+			if (p.reservation) {
+				form.reset(formatNullable({
+					date: p.reservation?.date,
+					comment: p.reservation?.comment,
+					...variables,
+				}))
+			} else {
+				form.reset()
+			}
+		},
 	})
 
 	const onSubmit = (data: FieldValues) => mutate(data)
