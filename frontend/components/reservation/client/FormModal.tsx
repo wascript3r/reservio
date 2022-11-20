@@ -1,4 +1,3 @@
-import {yupResolver} from '@hookform/resolvers/yup'
 import {Datepicker, setOptions} from '@mobiscroll/react'
 import '@mobiscroll/react/dist/css/mobiscroll.min.css'
 import BtnSpinner from 'components/utils/BtnSpinner'
@@ -6,8 +5,7 @@ import {extractDirtyFields} from 'components/utils/form'
 import moment from 'moment/moment'
 import {useCallback, useMemo, useState} from 'react'
 import {Button, Modal} from 'react-bootstrap'
-import {FieldValues, useForm} from 'react-hook-form'
-import * as yup from 'yup'
+import {FieldValues, UseFormReturn} from 'react-hook-form'
 
 const numToWeekday = new Map<number, string>([
 	[0, 'sunday'],
@@ -37,12 +35,11 @@ export type FormModalProps = {
 	isReserving: boolean,
 	onClose: () => void,
 	onSubmit: (data: FieldValues) => void,
+	form: UseFormReturn<{
+		date: any,
+		comment: any,
+	}, any>
 }
-
-const schema = yup.object().shape({
-	date: yup.string().required(),
-	comment: yup.string().notRequired().min(5).nullable().transform(value => value === '' ? null : value),
-}).required()
 
 setOptions({
 	theme: 'ios',
@@ -50,14 +47,7 @@ setOptions({
 })
 
 export const FormModal = (p: FormModalProps) => {
-	const {register, handleSubmit, formState: {errors, isDirty, dirtyFields}, setValue, getValues, reset} = useForm({
-		resolver: yupResolver(schema),
-		reValidateMode: 'onBlur',
-		defaultValues: {
-			date: p.reservation?.date,
-			comment: p.reservation?.comment,
-		},
-	})
+	const {register, handleSubmit, formState: {errors, isDirty, dirtyFields}, setValue, getValues, reset} = p.form
 
 	const handleClose = () => {
 		p.onClose()
